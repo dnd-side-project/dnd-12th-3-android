@@ -1,0 +1,26 @@
+name: Feature request Template
+description: 기능, UI 개선 및 추가 요청을 위한 템플릿입니다.
+title: "[Feature]: "
+labels: "feat"
+body:
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: 어떤 기능인가요?
+    validations:
+      required: false
+  - type: textarea
+    id: Screenshot
+    attributes:
+      label: Screenshot
+      description: 스크린샷이 있나요?
+    validations:
+      required: false
+  - type: textarea
+    id: Links
+    attributes:
+      label: Links
+      description: 링크가 있는가요?
+    validations:
+      required: false
