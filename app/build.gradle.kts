@@ -150,6 +150,13 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material.icon)
 
+    //Google Services & Maps
     implementation(libs.maps.compose)
     implementation(libs.maps.compose.utils)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+
+    //Accompanist (Permission)
+    implementation(libs.accompanist.permissions)
+
 }

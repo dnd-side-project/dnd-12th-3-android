@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.31.3-beta"
 agp = "8.7.3"
 composeBom = "2025.01.00"
 converterGson = "2.11.0"
@@ -16,9 +17,12 @@ retrofitKotlinxSerializationJson = "1.0.0"
 landscapistCoil = "2.4.6"
 lifecycleViewmodelCompose = "2.8.7"
 loggingInterceptor = "4.12.0"
+mapsComposeVersion = "2.9.0"
 material = "1.12.0"
 navigationCompose = "2.8.5"
 okhttp = "4.12.0"
+playServicesLocation = "21.0.1"
+playServicesMaps = "19.0.0"
 playServicesAuth = "21.3.0"
 retrofit = "2.11.0"
 roomCompiler = "2.6.1"
@@ -26,8 +30,6 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 runtimeAndroid = "1.7.6"
 sandwich = "1.3.7"
-mapsCompose = "2.8.1"
-playServicesMaps = "19.0.0"
 sandwichRetrofit = "2.1.0"
 activityCompose = "1.10.0"
 ksp = "2.0.0-1.0.22"
@@ -39,6 +41,7 @@ v2All = "2.20.6"
 
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
@@ -76,8 +79,9 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "mapsComposeUtils" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
