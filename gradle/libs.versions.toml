@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.31.3-beta"
 agp = "8.7.3"
 composeBom = "2025.01.00"
 converterGson = "2.11.0"
@@ -14,9 +15,12 @@ kotlinxCoroutinesAndroid = "1.9.0"
 kotlinxSerializationJson = "1.6.2"
 lifecycleViewmodelCompose = "2.8.7"
 loggingInterceptor = "4.12.0"
+mapsComposeVersion = "2.9.0"
 material = "1.12.0"
 navigationCompose = "2.8.5"
 okhttp = "4.12.0"
+playServicesLocation = "21.0.1"
+playServicesMaps = "19.0.0"
 retrofit = "2.11.0"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
@@ -31,6 +35,7 @@ mapsComposeUtils = "6.4.1"
 firebase = "3.0.2"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
@@ -65,6 +70,8 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 sandwich = { module = "com.github.skydoves:sandwich", version.ref = "sandwich" }
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
