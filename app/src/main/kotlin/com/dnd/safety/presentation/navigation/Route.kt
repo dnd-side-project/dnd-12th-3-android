@@ -53,10 +53,7 @@ sealed interface Route {
 sealed interface MainTabRoute : Route {
 
     @Serializable
-    data object Home : MainTabRoute {
-        override val route: String
-            get() = "home"
-    }
+    data object Home : Route
 
 }
 
