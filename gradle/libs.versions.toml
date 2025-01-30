@@ -104,4 +104,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "roomKtx" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleService" }
-google-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+google-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin" }
