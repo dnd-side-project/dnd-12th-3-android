@@ -1,4 +1,4 @@
-package com.dnd.safety.location.di
+package com.dnd.safety.di
 
 import android.content.Context
 import com.dnd.safety.location.LocationService

@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Looper
 import androidx.annotation.RequiresApi
+import com.dnd.safety.utils.Logger
 import com.dnd.safety.utils.hasLocationPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
 class LocationServiceImpl @Inject constructor(
@@ -52,5 +54,8 @@ class LocationServiceImpl @Inject constructor(
         awaitClose {
             locationClient.removeLocationUpdates(locationCallback)
         }
+    }.catch {
+        Logger.e("$it")
+        emit(null)
     }
 }
