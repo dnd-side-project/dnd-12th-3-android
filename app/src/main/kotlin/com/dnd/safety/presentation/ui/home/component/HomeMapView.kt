@@ -9,11 +9,14 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun HomeMapView(modifier: Modifier = Modifier) {
-    val singapore = LatLng(1.35, 103.87)
+fun HomeMapView(
+    ratLng: LatLng,
+    modifier: Modifier = Modifier
+) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        position = CameraPosition.fromLatLngZoom(ratLng, 10f)
     }
+
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState

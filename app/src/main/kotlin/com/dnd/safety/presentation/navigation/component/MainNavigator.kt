@@ -9,8 +9,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.dnd.safety.presentation.navigation.MainBottomNavItem
-import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 
 class MainNavigator(
@@ -20,7 +18,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Route.Splash.route
+    val startDestination = Route.Splash
 
     val currentItem: MainBottomNavItem?
         get() = MainBottomNavItem.find { tab ->
@@ -52,7 +50,7 @@ class MainNavigator(
 
 
     fun popBackStackIfNotHome(): Boolean {
-        return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<MainTabRoute.Home>()) {
+        return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<Route.Home>()) {
             true
         } else {
             popBackStack()

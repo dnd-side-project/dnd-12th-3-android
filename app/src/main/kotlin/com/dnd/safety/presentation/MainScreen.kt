@@ -25,6 +25,7 @@ import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
 import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
 import com.dnd.safety.presentation.ui.splash.SplashScreen
+import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
 
 @Composable
 fun MainScreen(
@@ -72,6 +73,7 @@ internal fun MainNavHost(
             navController = navigator.navController,
             startDestination = Route.Splash.route,
         ) {
+            homeNavGraph()
             composable(Route.Splash.route) {
                 SplashScreen(navigator = navigator)
             }
@@ -80,6 +82,7 @@ internal fun MainNavHost(
                 LoginScreen(navigator = navigator)
             }
 
+            )
             composable(Route.NicknameForm.route) {
                 NicknameFormScreen(navigator = navigator)
             }
