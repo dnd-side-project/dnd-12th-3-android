@@ -39,6 +39,7 @@ mapsComposeUtils = "6.4.1"
 firebase = "3.0.2"
 v2All = "2.20.6"
 
+secretsGradlePlugin = "2.0.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -89,6 +90,7 @@ sandwich = { module = "com.github.skydoves:sandwich", version.ref = "sandwich" }
 sandwich-retrofit = { module = "com.github.skydoves:sandwich-retrofit", version.ref = "sandwichRetrofit" }
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 firebase = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebase" }
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
 
 [plugins]
@@ -102,3 +104,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "roomKtx" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleService" }
+google-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }

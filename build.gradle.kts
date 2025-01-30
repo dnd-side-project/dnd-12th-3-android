@@ -10,6 +10,7 @@ buildscript {
         classpath(libs.kotlin.gradlePlugin)
         classpath(libs.compose.compiler.gradle.plugin)
         classpath(libs.firebase)
+        classpath(libs.secrets.gradle.plugin)
     }
 }
 
