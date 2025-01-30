@@ -2,7 +2,9 @@ package com.dnd.safety.presentation.ui.home.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -21,4 +23,8 @@ fun HomeMapView(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
     )
+
+    LaunchedEffect(ratLng) {
+        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(ratLng, 15f))
+    }
 }

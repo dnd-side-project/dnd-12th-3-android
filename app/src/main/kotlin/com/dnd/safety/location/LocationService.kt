@@ -4,5 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
 
 interface LocationService {
-    fun requestLocationUpdates(): Flow<LatLng?>
+    fun requestLocationUpdates(
+        intervalMillis: Long = 100000L
+    ): Flow<LatLng?>
 }

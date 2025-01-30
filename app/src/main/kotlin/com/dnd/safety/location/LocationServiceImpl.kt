@@ -7,11 +7,7 @@ import android.os.Looper
 import androidx.annotation.RequiresApi
 import com.dnd.safety.utils.Logger
 import com.dnd.safety.utils.hasLocationPermission
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.Priority
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -26,14 +22,21 @@ class LocationServiceImpl @Inject constructor(
 
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.S)
-    override fun requestLocationUpdates(): Flow<LatLng?> = callbackFlow {
+    override fun requestLocationUpdates(intervalMillis: Long): Flow<LatLng?> = callbackFlow {
         if (!context.hasLocationPermission()) {
             trySend(null)
             return@callbackFlow
         }
 
-        val request = LocationRequest.Builder(10000L)
-            .setIntervalMillis(10000L)
+        locationClient.lastLocation.addOnSuccessListener { location ->
+            location?.let {
+                Logger.d("Initial Location: ${it.latitude}, ${it.longitude}")
+                trySend(LatLng(it.latitude, it.longitude))
+            }
+        }
+
+        val request = LocationRequest.Builder(0L)
+            .setIntervalMillis(intervalMillis)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
 
