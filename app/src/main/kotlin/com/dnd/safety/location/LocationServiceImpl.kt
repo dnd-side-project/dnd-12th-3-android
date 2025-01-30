@@ -40,6 +40,7 @@ class LocationServiceImpl @Inject constructor(
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.locations.lastOrNull()?.let {
+                    Logger.d("Location: ${it.latitude}, ${it.longitude}")
                     trySend(LatLng(it.latitude, it.longitude))
                 }
             }
