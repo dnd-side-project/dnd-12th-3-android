@@ -4,5 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class IncidentsRequest(
-    val a: Int
+    val pointTopRightX: Double,
+    val pointTopRightY: Double,
+    val pointBottomLeftX: Double,
+    val pointBottomLeftY: Double
 )

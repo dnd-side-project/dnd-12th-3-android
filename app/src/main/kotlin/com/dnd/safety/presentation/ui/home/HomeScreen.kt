@@ -15,16 +15,19 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val location by viewModel.location.collectAsStateWithLifecycle()
+    val location by viewModel.locationState.collectAsStateWithLifecycle()
+    val incidentsState by viewModel.incidentsState.collectAsStateWithLifecycle()
 
     HomeScreen(
-        location = location ?: LatLng(0.0, 0.0)
+        location = location,
+        onUpdateBoundingBox = viewModel::updateBoundingBoxState
     )
 }
 
 @Composable
 fun HomeScreen(
-    location: LatLng
+    location: LatLng,
+    onUpdateBoundingBox: (LatLng, LatLng) -> Unit
 ) {
     Scaffold {
         Box(
@@ -32,7 +35,8 @@ fun HomeScreen(
                 .padding(it)
         ) {
             HomeMapView(
-                ratLng = location
+                ratLng = location,
+                onUpdateBoundingBox = onUpdateBoundingBox
             )
         }
     }
