@@ -1,5 +1,7 @@
 package com.dnd.safety.di
 
+import com.dnd.safety.data.remote.api.IncidentsApi
+import com.dnd.safety.data.remote.api.SampleApi
 import com.dnd.safety.BuildConfig
 import com.dnd.safety.data.remote.api.GoogleAuthService
 import com.dnd.safety.data.remote.api.LocationService
@@ -126,4 +128,10 @@ object NetworkModule {
     ): GoogleAuthService {
         return retrofit.create(GoogleAuthService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideIncidentsApi(retrofit: Retrofit): IncidentsApi =
+        retrofit.create(IncidentsApi::class.java)
+
 }
