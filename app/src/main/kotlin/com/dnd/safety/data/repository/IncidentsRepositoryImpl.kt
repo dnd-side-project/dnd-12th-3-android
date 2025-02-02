@@ -8,6 +8,7 @@ import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.domain.repository.IncidentsRepository
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
+import retrofit2.Response
 import javax.inject.Inject
 
 class IncidentsRepositoryImpl @Inject constructor(
@@ -17,15 +18,6 @@ class IncidentsRepositoryImpl @Inject constructor(
     override suspend fun getIncidents(
         boundingBox: BoundingBox
     ): ApiResponse<List<Incidents>> {
-        return incidentsApi.getIncidents(
-            IncidentsRequest(
-                pointTopRightX = boundingBox.topRight.x,
-                pointTopRightY = boundingBox.topRight.y,
-                pointBottomLeftX = boundingBox.bottomLeft.x,
-                pointBottomLeftY = boundingBox.bottomLeft.y
-            )
-        ).mapSuccess {
-            toIncidentsList()
-        }
+        return ApiResponse.Success(Response.success(emptyList()))
     }
 }
