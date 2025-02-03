@@ -1,7 +1,7 @@
 package com.dnd.safety.di
 
-import com.dnd.safety.data.repository.SampleRepositoryImpl
-import com.dnd.safety.domain.repository.SampleRepository
+import com.dnd.safety.data.repository.AuthRepositoryImpl
+import com.dnd.safety.domain.repository.AuthRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun provideSampleRepository(
-        sampleRepositoryImpl: SampleRepositoryImpl
-    ): SampleRepository
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
 }
