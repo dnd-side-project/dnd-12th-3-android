@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -19,7 +20,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = MainTabRoute.Home
+    val startDestination = Route.Splash.route
 
     val currentItem: MainBottomNavItem?
         get() = MainBottomNavItem.find { tab ->
@@ -39,7 +40,16 @@ class MainNavigator(
         when (menuItem) {
             MainBottomNavItem.Home -> TODO()
         }
-    };
+    }
+
+    // 기본 네비게이션
+    fun <T : Route> navigateTo(
+        route: T,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigate(route.route, navOptions)
+    }
+
 
     fun popBackStackIfNotHome(): Boolean {
         return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<MainTabRoute.Home>()) {
