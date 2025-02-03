@@ -15,7 +15,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.login.LoginScreen
+import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
+import com.dnd.safety.presentation.ui.splash.SplashScreen
 
 @Composable
 fun MainScreen(
@@ -63,7 +68,17 @@ internal fun MainNavHost(
             navController = navigator.navController,
             startDestination = navigator.startDestination,
         ) {
+            composable(Route.Splash.route) {
+                SplashScreen(navigator = navigator)
+            }
 
+            composable(Route.Login.route) {
+                LoginScreen(navigator = navigator)
+            }
+
+            composable(Route.NicknameForm.route) {
+                NicknameFormScreen(navigator = navigator)
+            }
         }
     }
 }
