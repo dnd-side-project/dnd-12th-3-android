@@ -32,6 +32,7 @@ android {
         )
 
         buildConfigField("String", "KAKAO_REST_API_KEY", "\"${properties.getProperty("KAKAO_REST_API_KEY")}\"")
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties.getProperty("KAKAO_NATIVE_APP_KEY")}\"")
         buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${properties.getProperty("GOOGLE_MAPS_API_KEY")}\"")
         buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${properties.getProperty("GOOGLE_CLIENT_ID")}\"")
     }
@@ -97,9 +98,16 @@ dependencies {
 
     // Sandwich
     implementation(libs.sandwich)
+    implementation(libs.sandwich.retrofit)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // KakaoTalk
+    implementation(libs.v2.all)
+
+    // Google Auth
+    implementation (libs.play.services.auth)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
