@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.navigation.component.rememberMainNavigator
-import com.dnd.safety.presentation.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
