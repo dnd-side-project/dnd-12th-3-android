@@ -19,7 +19,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val kakaoLoginUseCase: KakaoLoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val googleSignInHelper: GoogleSignInHelper,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
