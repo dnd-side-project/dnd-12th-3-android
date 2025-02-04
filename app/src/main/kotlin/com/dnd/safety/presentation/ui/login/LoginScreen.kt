@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
+import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
@@ -144,7 +145,7 @@ fun LoginContent(
 
                     Spacer(modifier = Modifier.height(48.dp))
                 }
-                LoadingIndicator(state.isLoading)
+                WatchOutLoadingIndicator(state.isLoading)
             }
 
         }
@@ -181,16 +182,6 @@ fun SocialLoginButton(
                 .fillMaxWidth()
                 .height(50.dp)
         )
-    }
-}
-
-@Composable
-fun LoadingIndicator(
-    isLoading: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    if (isLoading) {
-        CircularProgressIndicator(modifier = modifier)
     }
 }
 
