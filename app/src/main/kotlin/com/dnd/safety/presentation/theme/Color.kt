@@ -2,10 +2,18 @@ package com.dnd.safety.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Main = Color(0xFFEB4E1F)
+val Background = Color(0xFF202020)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Black = Color(0xFF030303)
+
+val Gray80 = Color(0xFF222227)
+val Gray70 = Color(0xFF3D3D43)
+val Gray60 = Color(0xFF69696F)
+val Gray50 = Color(0xFF88888C)
+val Gray40 = Color(0xFF9A9A9F)
+val Gray30 = Color(0xFFBDBDBE)
+val Gray20 = Color(0xFFDCDCDC)
+val Gray10 = Color(0xFFEFEFEF)
+
+val White = Color(0xFFFFFFFF)
