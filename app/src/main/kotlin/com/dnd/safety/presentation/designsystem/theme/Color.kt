@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.theme
+package com.dnd.safety.presentation.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
