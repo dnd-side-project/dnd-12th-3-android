@@ -22,6 +22,17 @@ sealed interface Route {
         override val route: String
             get() = "nicknameForm"
     }
+
+    data class SearchLocation(
+        val nickname: String
+    ) : Route {
+        override val route: String = "search_location/$nickname"
+
+        companion object {
+            const val route = "search_location/{nickname}"
+            const val argNickname = "nickname"
+        }
+    }
 }
 
 sealed interface MainTabRoute : Route {

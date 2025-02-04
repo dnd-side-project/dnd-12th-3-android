@@ -24,9 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.dnd.safety.presentation.common.components.WatchOutButton
 import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.common.components.WatchOutTextField
+import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.theme.SafetyTheme
 
@@ -42,6 +44,14 @@ fun NicknameFormScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is NicknameFormEffect.NavigationToMain -> {
+                    navigator.navigateTo(
+                        Route.SearchLocation(state.text),
+                        navOptions {
+                            popUpTo(Route.Splash.route) {
+                                inclusive = true
+                            }
+                        }
+                    )
                 }
             }
         }
