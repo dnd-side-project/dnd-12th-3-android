@@ -1,6 +1,7 @@
 package com.dnd.safety.di
 
 import com.dnd.safety.BuildConfig
+import com.dnd.safety.data.remote.api.GoogleAuthService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -77,4 +78,26 @@ object NetworkModule {
             .build()
     }
 
+    @Provides
+    @Named("googleRetrofit")
+    fun provideGoogleRetrofit(
+        @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:8080/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .build()
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun provideAuthService(
+        @Named("googleRetrofit") retrofit: Retrofit
+    ): GoogleAuthService {
+        return retrofit.create(GoogleAuthService::class.java)
+    }
 }

@@ -1,6 +1,9 @@
 package com.dnd.safety.presentation.ui.login
 
-import android.widget.Toast
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
 import com.dnd.safety.presentation.theme.SafetyTheme
 
 @Composable
@@ -41,17 +45,37 @@ fun LoginScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val signInHelper = remember { GoogleSignInHelper(context) }
 
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.let { intent ->
+                val signInResult = signInHelper.getSignInResult(intent)
+                signInResult.data?.let { data ->
+                    viewModel.onLoginEvent(LoginEvent.GoogleSignInSuccess(data.idToken))
+                } ?: run {
+                    viewModel.onLoginEvent(
+                        LoginEvent.GoogleSignInError(
+                            Exception(signInResult.errorMessage ?: "로그인 실패")
+                        )
+                    )
+                }
+            }
+        }
+    }
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
-            when(effect) {
+            when (effect) {
                 is LoginEffect.ShowToast -> {
-                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
+
                 is LoginEffect.NavigateToNickName -> {
                     navigator.navigateTo(Route.NicknameForm)
                 }
+
             }
         }
     }
@@ -59,7 +83,21 @@ fun LoginScreen(
     LoginContent(
         state = state,
         onKakaoLoginClick = viewModel::loginWithKakao,
-        onGoogleLoginClick = {}
+        onGoogleLoginClick = {
+            try {
+                signInHelper.getSignInIntent()
+                    .addOnSuccessListener { result ->
+                        launcher.launch(
+                            IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
+                        )
+                    }
+                    .addOnFailureListener { e ->
+                        viewModel.onLoginEvent(LoginEvent.GoogleSignInError(e))
+                    }
+            } catch (e: Exception) {
+                viewModel.onLoginEvent(LoginEvent.GoogleSignInError(e))
+            }
+        }
     )
 }
 
