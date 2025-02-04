@@ -14,12 +14,15 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
+import com.dnd.safety.presentation.ui.searchlocation.SearchLocationScreen
 import com.dnd.safety.presentation.ui.splash.SplashScreen
 
 @Composable
@@ -78,6 +81,19 @@ internal fun MainNavHost(
 
             composable(Route.NicknameForm.route) {
                 NicknameFormScreen(navigator = navigator)
+            }
+
+            composable(
+                route = Route.SearchLocation.route,
+                arguments = listOf(
+                    navArgument(Route.SearchLocation.argNickname) { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val nickname = backStackEntry.arguments?.getString(Route.SearchLocation.argNickname) ?: ""
+                SearchLocationScreen(
+                    nickname = nickname,
+                    navigator = navigator
+                )
             }
         }
     }
