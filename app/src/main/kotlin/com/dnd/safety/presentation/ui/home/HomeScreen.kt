@@ -9,6 +9,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
+import com.dnd.safety.presentation.ui.home.component.IncidentList
+import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -20,6 +22,7 @@ fun HomeRoute(
 
     HomeScreen(
         location = location,
+        incidentsState = incidentsState,
         onUpdateBoundingBox = viewModel::updateBoundingBoxState
     )
 }
@@ -27,11 +30,14 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     location: LatLng,
+    incidentsState: IncidentsState,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit
 ) {
     HomeBottomSheetScaffold(
         sheetContent = {
-
+            IncidentContent(
+                incidentsState = incidentsState
+            )
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -43,3 +49,16 @@ private fun HomeScreen(
     }
 }
 
+@Composable
+fun IncidentContent(
+    incidentsState: IncidentsState
+) {
+    when (incidentsState) {
+        IncidentsState.Loading -> {}
+        is IncidentsState.Success -> {
+            IncidentList(
+                incidents = incidentsState.incidents
+            )
+        }
+    }
+}

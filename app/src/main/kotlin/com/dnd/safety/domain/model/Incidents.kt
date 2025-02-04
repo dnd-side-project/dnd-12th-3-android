@@ -13,4 +13,20 @@ data class Incidents(
     val updatedDate: LocalDateTime,
 
     val imageUrl: String,
-)
+) {
+
+    companion object {
+        val sampleIncidents = listOf(
+            Incidents(
+                id = 1,
+                title = "title",
+                description = "description",
+                pointX = 0.0,
+                pointY = 0.0,
+                imageUrl = "imageUrl",
+                createdDate = LocalDateTime.now(),
+                updatedDate = LocalDateTime.now()
+            )
+        )
+    }
+}

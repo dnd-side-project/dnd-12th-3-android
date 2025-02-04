@@ -3,6 +3,7 @@ package com.dnd.safety.presentation.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
+import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.IncidentsRepository
 import com.dnd.safety.location.LocationService
@@ -11,7 +12,6 @@ import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.google.android.gms.maps.model.LatLng
-import com.skydoves.sandwich.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,8 +54,7 @@ class HomeViewModel @Inject constructor(
     private val _locationState = MutableStateFlow(SEOUL_LAT_LNG)
     val locationState: StateFlow<LatLng> get() = _locationState
 
-    private val boundingBoxState =
-        MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
+    private val boundingBoxState = MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
@@ -64,10 +63,11 @@ class HomeViewModel @Inject constructor(
         when (boxState) {
             BoundingBoxState.NotInitialized -> IncidentsState.Loading
             is BoundingBoxState.Success -> {
-                when (val incidents = incidentsRepository.getIncidents(boxState.boundingBox)) {
-                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
-                    else -> IncidentsState.Loading
-                }
+//                when (val incidents = incidentsRepository.getIncidents(boxState.boundingBox)) {
+//                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
+//                    else -> IncidentsState.Loading
+//                }
+                IncidentsState.Success(Incidents.sampleIncidents)
             }
         }
     }.stateIn(
@@ -100,7 +100,6 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updateLocationBySearch() {
-        // TODO
     }
 
     fun updateBoundingBoxState(
