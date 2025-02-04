@@ -29,12 +29,29 @@ android {
         manifestPlaceholders += mapOf(
             "KAKAO_NATIVE_APP_KEY" to properties.getProperty("KAKAO_NATIVE_APP_KEY"),
             "GOOGLE_MAPS_API_KEY" to properties.getProperty("GOOGLE_MAPS_API_KEY"),
+            "GOOGLE_CLIENT_ID" to properties.getProperty("GOOGLE_CLIENT_ID"),
         )
 
-        buildConfigField("String", "KAKAO_REST_API_KEY", "\"${properties.getProperty("KAKAO_REST_API_KEY")}\"")
-        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties.getProperty("KAKAO_NATIVE_APP_KEY")}\"")
-        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${properties.getProperty("GOOGLE_MAPS_API_KEY")}\"")
-        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${properties.getProperty("GOOGLE_CLIENT_ID")}\"")
+        buildConfigField(
+            "String",
+            "KAKAO_REST_API_KEY",
+            "\"${properties.getProperty("KAKAO_REST_API_KEY")}\""
+        )
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            "\"${properties.getProperty("KAKAO_NATIVE_APP_KEY")}\""
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_MAPS_API_KEY",
+            "\"${properties.getProperty("GOOGLE_MAPS_API_KEY")}\""
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_CLIENT_ID",
+            "\"${properties.getProperty("GOOGLE_CLIENT_ID")}\""
+        )
     }
 
     buildTypes {
@@ -107,7 +124,7 @@ dependencies {
     implementation(libs.v2.all)
 
     // Google Auth
-    implementation (libs.play.services.auth)
+    implementation(libs.play.services.auth)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
