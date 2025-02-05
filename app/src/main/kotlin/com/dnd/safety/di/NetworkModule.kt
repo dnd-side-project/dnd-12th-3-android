@@ -2,6 +2,7 @@ package com.dnd.safety.di
 
 import com.dnd.safety.BuildConfig
 import com.dnd.safety.data.remote.api.GoogleAuthService
+import com.dnd.safety.data.remote.api.LocationService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -91,6 +92,13 @@ object NetworkModule {
             .build()
     }
 
+    @Provides
+    @Singleton
+    fun provideLocationService(
+        @Named("kakaoRetrofit") retrofit: Retrofit
+    ): LocationService {
+        return retrofit.create(LocationService::class.java)
+    }
 
 
     @Provides

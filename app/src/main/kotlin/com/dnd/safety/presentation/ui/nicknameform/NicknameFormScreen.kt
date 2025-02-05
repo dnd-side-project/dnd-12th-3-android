@@ -47,9 +47,7 @@ fun NicknameFormScreen(
                     navigator.navigateTo(
                         Route.SearchLocation(state.text),
                         navOptions {
-                            popUpTo(Route.Splash.route) {
-                                inclusive = true
-                            }
+                            popUpTo(Route.Splash.route) { inclusive = true }
                         }
                     )
                 }
