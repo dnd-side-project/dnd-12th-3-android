@@ -33,4 +33,8 @@ object SafetyTheme {
     val typography: SafetyTypography
         @Composable
         get() = LocalTypography.current
+
+    val shapes: SafetyShapes
+        @Composable
+        get() = LocalShapes.current
 }

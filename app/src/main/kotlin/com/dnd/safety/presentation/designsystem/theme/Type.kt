@@ -1,5 +1,6 @@
 package com.dnd.safety.presentation.designsystem.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.PlatformTextStyle
@@ -7,6 +8,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dnd.safety.R
 
@@ -123,5 +125,22 @@ val LocalTypography = staticCompositionLocalOf {
         label1 = pretendardStyle,
         label2 = pretendardStyle,
         smallText = pretendardStyle,
+    )
+}
+
+@Immutable
+data class SafetyShapes(
+    val r10: RoundedCornerShape,
+    val r15: RoundedCornerShape,
+    val r30: RoundedCornerShape,
+    val r100: RoundedCornerShape,
+)
+
+val LocalShapes = staticCompositionLocalOf {
+    SafetyShapes(
+        r10 = RoundedCornerShape(10.dp),
+        r15 = RoundedCornerShape(15.dp),
+        r30 = RoundedCornerShape(30.dp),
+        r100 = RoundedCornerShape(100.dp),
     )
 }
