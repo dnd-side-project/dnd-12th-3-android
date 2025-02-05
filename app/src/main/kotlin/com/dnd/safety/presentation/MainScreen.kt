@@ -20,9 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
+import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
 import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
-import com.dnd.safety.presentation.ui.searchlocation.SearchLocationScreen
 import com.dnd.safety.presentation.ui.splash.SplashScreen
 
 @Composable
@@ -69,7 +70,7 @@ internal fun MainNavHost(
     ) {
         NavHost(
             navController = navigator.navController,
-            startDestination = navigator.startDestination,
+            startDestination = Route.Splash.route,
         ) {
             composable(Route.Splash.route) {
                 SplashScreen(navigator = navigator)
@@ -88,12 +89,18 @@ internal fun MainNavHost(
                 arguments = listOf(
                     navArgument(Route.SearchLocation.argNickname) { type = NavType.StringType }
                 )
-            ) { backStackEntry ->
-                val nickname = backStackEntry.arguments?.getString(Route.SearchLocation.argNickname) ?: ""
-                SearchLocationScreen(
-                    nickname = nickname,
-                    navigator = navigator
+            ) {
+                LocationSearchScreen(navigator = navigator)
+            }
+
+            composable(
+                route = Route.LocationConfirm.route,
+                arguments = listOf(
+                    navArgument(Route.LocationConfirm.argNickname) { type = NavType.StringType },
+                    navArgument(Route.LocationConfirm.argLocation) { type = NavType.StringType }
                 )
+            ) {
+                LocationConfirmScreen(navigator = navigator)
             }
         }
     }
