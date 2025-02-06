@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray20
@@ -30,6 +31,7 @@ fun IconButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    style: TextStyle = SafetyTheme.typography.label3,
     containerColor: Color = Gray70,
     contentColor: Color = Gray20
 ) {
@@ -52,7 +54,7 @@ fun IconButton(
         ) {
             Text(
                 text = text,
-                style = SafetyTheme.typography.smallText,
+                style = style,
                 color = contentColor,
             )
             Spacer(modifier = Modifier.width(2.dp))

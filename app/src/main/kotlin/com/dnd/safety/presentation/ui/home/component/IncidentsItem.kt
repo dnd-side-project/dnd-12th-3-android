@@ -86,7 +86,12 @@ fun IncidentsItem(
                 style = SafetyTheme.typography.label1,
                 color = Gray30
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "·",
+                style = SafetyTheme.typography.label1,
+                color = Gray30,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
             Text(
                 text = incidents.daysAgo,
                 style = SafetyTheme.typography.label1,
