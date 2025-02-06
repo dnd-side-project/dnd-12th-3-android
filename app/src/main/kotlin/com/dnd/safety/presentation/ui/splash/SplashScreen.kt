@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.dnd.safety.R
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.navigation.component.MainNavigator
-import com.dnd.safety.presentation.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.splash.effect.SplashNavigationEffect
 
 @Composable

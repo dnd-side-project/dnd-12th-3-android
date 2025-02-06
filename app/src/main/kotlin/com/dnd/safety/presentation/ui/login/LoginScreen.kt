@@ -31,10 +31,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
-import com.dnd.safety.presentation.theme.SafetyTheme
 
 @Composable
 fun LoginScreen(

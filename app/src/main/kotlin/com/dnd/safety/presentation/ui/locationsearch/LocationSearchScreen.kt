@@ -42,9 +42,9 @@ import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.common.components.WatchOutTextField
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
-import com.dnd.safety.presentation.theme.SafetyTheme
 import kotlinx.coroutines.delay
 
 @Composable

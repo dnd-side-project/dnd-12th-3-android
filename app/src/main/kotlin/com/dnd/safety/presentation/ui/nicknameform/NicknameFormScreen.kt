@@ -28,9 +28,9 @@ import androidx.navigation.navOptions
 import com.dnd.safety.presentation.common.components.WatchOutButton
 import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.common.components.WatchOutTextField
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
-import com.dnd.safety.presentation.theme.SafetyTheme
 
 @Composable
 fun NicknameFormScreen(
