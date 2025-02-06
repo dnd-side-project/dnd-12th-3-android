@@ -32,6 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.common.components.WatchOutButton
+import com.dnd.safety.presentation.designsystem.theme.Typography
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.navigation.component.rememberMainNavigator
 import com.google.android.gms.maps.model.CameraPosition
@@ -134,9 +136,8 @@ fun LocationConfirmScreen(
 
                 Text(
                     text = "해당 주소로 알림을\n보내드릴까요?",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = Typography.title1,
+                    color = White,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
 
@@ -176,22 +177,3 @@ fun LocationConfirmScreen(
         Text("위치 권한 또는 알림 권한이 필요합니다.")
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLocationConfirmScreen() {
-    val mockNavigator = rememberMainNavigator()
-    val mockLocation = Location(
-        latitude = 37.5665,
-        longitude = 126.9780,
-        placeName = "서울특별시청",
-        address = "서울 중구 세종대로 110"
-    )
-
-
-    LocationConfirmScreen(
-        viewModel = hiltViewModel(),
-        navigator = mockNavigator
-    )
-}
-

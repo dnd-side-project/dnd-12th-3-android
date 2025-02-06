@@ -29,6 +29,8 @@ import com.dnd.safety.presentation.common.components.WatchOutButton
 import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.common.components.WatchOutTextField
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.Typography
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 
@@ -58,7 +60,7 @@ fun NicknameFormScreen(
     Scaffold(
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
-        Box(    // Box로 감싸서 중첩 레이아웃 구성
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -76,9 +78,8 @@ fun NicknameFormScreen(
 
                     Text(
                         text = "닉네임을 작성해주세요",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = Typography.title1,
+                        color = White,
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -120,7 +121,6 @@ private fun NicknameTextField(
         WatchOutTextField(
             value = value,
             onValueChange = onValueChange,
-            maxLength = 10,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             )

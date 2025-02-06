@@ -18,8 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dnd.safety.presentation.designsystem.theme.Gray70
+import com.dnd.safety.presentation.designsystem.theme.White
 
 @Composable
 fun WatchOutTextField(
@@ -36,7 +40,6 @@ fun WatchOutTextField(
     BasicTextField(
         value = value,
         onValueChange = { newValue ->
-            // maxLength가 설정된 경우 글자수 제한
             val finalValue = maxLength?.let {
                 newValue.take(it)
             } ?: newValue
@@ -48,7 +51,7 @@ fun WatchOutTextField(
                 color = if (isError) {
                     MaterialTheme.colorScheme.errorContainer
                 } else {
-                    MaterialTheme.colorScheme.surfaceVariant
+                    Gray70
                 },
                 shape = RoundedCornerShape(8.dp)
             )
@@ -57,14 +60,16 @@ fun WatchOutTextField(
             color = if (isError) {
                 MaterialTheme.colorScheme.error
             } else {
-                MaterialTheme.colorScheme.onSurface
-            }
+                White
+            },
+            textDecoration = null
         ),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         singleLine = singleLine,
+        cursorBrush = SolidColor(Color.White),
         decorationBox = { innerTextField ->
-            Box {
+            Box(modifier = Modifier.padding(0.dp)) {
                 if (value.isEmpty()) {
                     Text(
                         text = hint,
@@ -74,7 +79,7 @@ fun WatchOutTextField(
                 }
                 innerTextField()
             }
-        }
+        },
     )
 }
 
