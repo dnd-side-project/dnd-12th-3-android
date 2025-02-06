@@ -1,6 +1,7 @@
 package com.dnd.safety.presentation.ui.home.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,15 +25,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dnd.safety.domain.model.IncidentType
+import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.presentation.designsystem.component.SmallButton
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray30
+import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
 fun IncidentsItem(
-    incidents: Incidents = Incidents.sampleIncidents.first(),
+    incidents: Incidents,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -143,7 +148,7 @@ private fun IncidentsImages(
 }
 
 @Composable
-fun IncidentsImage(
+private fun IncidentsImage(
     url: String,
     modifier: Modifier = Modifier
 ) {
@@ -162,10 +167,13 @@ fun IncidentsImage(
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
 private fun IncidentsSheetPreview() {
     SafetyTheme {
-        IncidentsItem()
+        IncidentsItem(
+            incidents = Incidents.sampleIncidents.first()
+        )
     }
 }

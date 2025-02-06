@@ -58,7 +58,9 @@ private fun IncidentContent(
         is IncidentsState.Success -> {
             IncidentList(
                 incidents = incidentsState.incidents,
-                filter = "최신순",
+                typeFilters = incidentsState.typeFilters,
+                sort = incidentsState.selectedSort.sort.text,
+                onSortClick = {},
                 onFilterClick = {},
                 onSearchClick = {}
             )

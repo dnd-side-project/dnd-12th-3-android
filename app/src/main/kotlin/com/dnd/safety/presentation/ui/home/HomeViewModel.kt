@@ -3,8 +3,11 @@ package com.dnd.safety.presentation.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
+import com.dnd.safety.domain.model.IncidentType
+import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.domain.model.Point
+import com.dnd.safety.domain.model.SortFilter
 import com.dnd.safety.domain.repository.IncidentsRepository
 import com.dnd.safety.location.LocationService
 import com.dnd.safety.presentation.ui.home.component.LocationSource
@@ -67,7 +70,11 @@ class HomeViewModel @Inject constructor(
 //                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
 //                    else -> IncidentsState.Loading
 //                }
-                IncidentsState.Success(Incidents.sampleIncidents)
+                IncidentsState.Success(
+                    Incidents.sampleIncidents,
+                    IncidentTypeFilter.entries,
+                    SortFilter.entries
+                )
             }
         }
     }.stateIn(

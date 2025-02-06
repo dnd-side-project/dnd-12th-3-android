@@ -33,6 +33,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray30
+import com.dnd.safety.presentation.designsystem.theme.Gray80
 import kotlinx.coroutines.launch
 
 enum class ExpandedType {
@@ -81,7 +82,7 @@ fun HomeBottomSheetScaffold(
         sheetPeekHeight = peekHeight.dp,
         modifier = Modifier.fillMaxSize(),
         sheetShadowElevation = 2.dp,
-        sheetContainerColor = MaterialTheme.colorScheme.surfaceDim,
+        sheetContainerColor = Gray80,
         sheetDragHandle = null,
         content = content
     )

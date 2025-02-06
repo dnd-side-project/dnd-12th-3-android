@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray20
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.nonScaledSp
 
 @Composable
 fun IconButton(
@@ -34,6 +35,36 @@ fun IconButton(
     style: TextStyle = SafetyTheme.typography.label3,
     containerColor: Color = Gray70,
     contentColor: Color = Gray20
+) {
+    SmallButton(
+        text = text,
+        onClick = onClick,
+        modifier = modifier,
+        style = style,
+        containerColor = containerColor,
+        contentColor = contentColor,
+        icon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier
+                    .size(15.dp)
+
+            )
+        }
+    )
+}
+
+@Composable
+fun SmallButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    style: TextStyle = SafetyTheme.typography.label3,
+    containerColor: Color = Gray70,
+    contentColor: Color = Gray20,
+    icon: (@Composable () -> Unit)? = null
 ) {
     Box(
         modifier = modifier
@@ -57,15 +88,10 @@ fun IconButton(
                 style = style,
                 color = contentColor,
             )
-            Spacer(modifier = Modifier.width(2.dp))
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier
-                    .size(15.dp)
-
-            )
+            icon?.let {
+                Spacer(modifier = Modifier.width(2.dp))
+                icon()
+            }
         }
     }
 }
