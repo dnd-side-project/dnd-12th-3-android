@@ -1,16 +1,33 @@
 package com.dnd.safety.presentation.designsystem.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dnd.safety.R
+
+val TextUnit.nonScaledSp
+    @Composable
+    @ReadOnlyComposable
+    get() = (this.value / LocalDensity.current.fontScale).sp
+
+val TextStyle.nonScaledSp
+    @Composable
+    @ReadOnlyComposable
+    get() = this.copy(
+        fontSize = this.fontSize.nonScaledSp,
+        lineHeight = this.lineHeight.nonScaledSp
+    )
 
 val pretendard = FontFamily(
     Font(R.font.pretendard_bold, FontWeight.Bold),
