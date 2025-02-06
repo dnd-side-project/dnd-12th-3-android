@@ -160,4 +160,6 @@ dependencies {
     //Accompanist (Permission)
     implementation(libs.accompanist.permissions)
 
+    implementation(libs.landscapist.coil)
+
 }

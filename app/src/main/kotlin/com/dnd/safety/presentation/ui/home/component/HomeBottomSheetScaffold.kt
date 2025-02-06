@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.dnd.safety.presentation.theme.Gray30
+import com.dnd.safety.presentation.designsystem.theme.Gray30
 import kotlinx.coroutines.launch
 
 enum class ExpandedType {
