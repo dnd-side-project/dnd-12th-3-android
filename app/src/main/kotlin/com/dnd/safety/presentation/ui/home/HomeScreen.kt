@@ -1,14 +1,32 @@
 package com.dnd.safety.presentation.ui.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.presentation.designsystem.component.BottomSheet
+import com.dnd.safety.presentation.designsystem.theme.Gray80
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
 import com.dnd.safety.presentation.ui.home.component.IncidentList
@@ -56,10 +74,17 @@ private fun HomeScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
             HomeMapView(
                 ratLng = location,
                 onUpdateBoundingBox = viewModel::updateBoundingBoxState
+            )
+            HomeSearchBar(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp)
             )
         }
     }
@@ -88,7 +113,28 @@ private fun IncidentContent(
 
 @Composable
 fun HomeSearchBar(modifier: Modifier = Modifier) {
-
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(60.dp))
+            .background(
+                Gray80,
+                RoundedCornerShape(60.dp)
+            )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(
+                vertical = 4.dp, horizontal = 10.dp
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
