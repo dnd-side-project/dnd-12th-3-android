@@ -1,6 +1,7 @@
 package com.dnd.safety.presentation.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 fun IconButton(
     text: String,
     icon: ImageVector,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = Gray70,
     contentColor: Color = Gray20
@@ -37,6 +39,9 @@ fun IconButton(
             .background(
                 containerColor,
                 SafetyTheme.shapes.r100
+            )
+            .clickable(
+                onClick = onClick
             )
     ) {
         Row(
@@ -70,6 +75,7 @@ private fun IconButtonPreview() {
         IconButton(
             text = "Button",
             icon = Icons.Default.Check,
+            onClick = {},
             modifier = Modifier.padding(16.dp)
         )
     }

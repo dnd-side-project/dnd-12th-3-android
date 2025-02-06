@@ -50,14 +50,17 @@ private fun HomeScreen(
 }
 
 @Composable
-fun IncidentContent(
+private fun IncidentContent(
     incidentsState: IncidentsState
 ) {
     when (incidentsState) {
         IncidentsState.Loading -> {}
         is IncidentsState.Success -> {
             IncidentList(
-                incidents = incidentsState.incidents
+                incidents = incidentsState.incidents,
+                filter = "최신순",
+                onFilterClick = {},
+                onSearchClick = {}
             )
         }
     }

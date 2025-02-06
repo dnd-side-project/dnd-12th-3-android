@@ -29,7 +29,7 @@ data class Incidents(
                 description = "description",
                 pointX = 0.0,
                 pointY = 0.0,
-                imageUrls = emptyList(),
+                imageUrls = listOf("https://www.example.com"),
                 distance = "distance",
                 userName = "userName",
                 address = "address",

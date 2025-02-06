@@ -39,6 +39,7 @@ val pretendard = FontFamily(
 private val pretendardStyle = TextStyle(
     fontFamily = pretendard,
     fontWeight = FontWeight.Normal,
+    color = White,
     letterSpacing = 0.sp,
     platformStyle = PlatformTextStyle(
         includeFontPadding = false

@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +38,7 @@ fun IncidentsItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = 16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -111,7 +115,7 @@ private fun IncidentsImages(
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(150.dp)
     ) {
         if (imageUrls.size == 1) {
             item {
@@ -121,13 +125,14 @@ private fun IncidentsImages(
                         .fillMaxWidth()
                 )
             }
-        }
-        items(imageUrls) { url ->
-            IncidentsImage(
-                url = url,
-                modifier = Modifier
-                    .width(screenWidthDp.dp / 2)
-            )
+        } else {
+            items(imageUrls) { url ->
+                IncidentsImage(
+                    url = url,
+                    modifier = Modifier
+                        .width(screenWidthDp.dp / 2)
+                )
+            }
         }
     }
 }
@@ -140,10 +145,14 @@ fun IncidentsImage(
     CoilImage(
         imageModel = { url },
         modifier = modifier
-            .height(100.dp)
+            .height(150.dp)
             .clip(RoundedCornerShape(4.dp)),
         failure = {
-            Text(text = "image request failed.")
+            Box(
+                modifier = modifier
+                    .size(150.dp)
+                    .background(Color.Red)
+            )
         }
     )
 }
