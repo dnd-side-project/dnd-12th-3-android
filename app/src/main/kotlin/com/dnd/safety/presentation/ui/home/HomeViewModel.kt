@@ -12,6 +12,7 @@ import com.dnd.safety.domain.repository.IncidentsRepository
 import com.dnd.safety.location.LocationService
 import com.dnd.safety.presentation.ui.home.component.LocationSource
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
+import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.google.android.gms.maps.model.LatLng
@@ -70,11 +71,7 @@ class HomeViewModel @Inject constructor(
 //                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
 //                    else -> IncidentsState.Loading
 //                }
-                IncidentsState.Success(
-                    Incidents.sampleIncidents,
-                    IncidentTypeFilter.entries,
-                    SortFilter.entries
-                )
+                IncidentsState.Success(Incidents.sampleIncidents)
             }
         }
     }.stateIn(
@@ -82,6 +79,9 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3000L),
         initialValue = IncidentsState.Loading
     )
+
+    private val _homeModalState = MutableStateFlow<HomeModalState>(HomeModalState.Dismiss)
+    val homeModalState: StateFlow<HomeModalState> get() = _homeModalState
 
     init {
         updateLocationState(LocationSource.CurrentLocation)
@@ -121,6 +121,36 @@ class HomeViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun setIncidentTypeFilter(type: IncidentTypeFilter) {
+        _homeUiState.update {
+            it.copy(
+                typeFilters = it.typeFilters.map { filter ->
+                    filter.copy(isSelected = filter == type)
+                }
+            )
+        }
+    }
+
+    fun setSortFilter(sort: SortFilter) {
+        _homeUiState.update {
+            it.copy(
+                sortFilters = it.sortFilters.map { filter ->
+                    filter.copy(isSelected = filter == sort)
+                }
+            )
+        }
+    }
+
+    fun showSortModal() {
+        _homeModalState.update {
+            HomeModalState.ShowSortSheet(homeUiState.value.sortFilters)
+        }
+    }
+
+    fun dismissModal() {
+        _homeModalState.update { HomeModalState.Dismiss }
     }
 
     companion object {

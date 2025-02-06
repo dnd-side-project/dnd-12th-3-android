@@ -14,12 +14,8 @@ sealed interface IncidentsState {
 
     @Immutable
     data class Success(
-        val incidents: List<Incidents>,
-        val typeFilters: List<IncidentTypeFilter>,
-        val sortFilters: List<SortFilter>,
+        val incidents: List<Incidents>
     ) : IncidentsState {
 
-        val selectedSort: SortFilter
-            get() = sortFilters.first { it.isSelected }
     }
 }
