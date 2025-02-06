@@ -1,6 +1,7 @@
 package com.dnd.safety.presentation.ui.locationsearch
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,10 @@ import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.common.components.WatchOutTextField
+import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.Typography
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import kotlinx.coroutines.delay
@@ -80,12 +84,13 @@ fun LocationSearchScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = Gray80,
     ) { paddingValues ->
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            color = MaterialTheme.colorScheme.background
+            color = Gray80,
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -95,9 +100,8 @@ fun LocationSearchScreen(
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     text = "주소를 설정해주세요",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = Typography.title1,
+                    color = White,
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -184,8 +188,8 @@ private fun LocationSearchItem(
             )
             Text(
                 text = location.placeName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                style = Typography.paragraph1,
+                color = White
             )
         }
         Spacer(modifier = Modifier.height(12.dp))

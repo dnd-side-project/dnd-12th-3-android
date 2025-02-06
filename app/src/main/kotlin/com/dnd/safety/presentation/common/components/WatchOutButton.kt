@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dnd.safety.presentation.designsystem.theme.Gray30
 
 
 @Composable
@@ -30,7 +31,7 @@ fun WatchOutButton(
     val backgroundColor = if (enabled) {
         MaterialTheme.colorScheme.primary
     } else {
-        MaterialTheme.colorScheme.surfaceVariant
+        Gray30
     }
 
     val contentColor = if (enabled) {
