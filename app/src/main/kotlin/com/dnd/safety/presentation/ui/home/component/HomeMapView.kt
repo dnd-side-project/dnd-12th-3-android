@@ -8,6 +8,7 @@ import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 
@@ -23,7 +24,8 @@ fun HomeMapView(
 
     GoogleMap(
         modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
+        mapColorScheme = ComposeMapColorScheme.DARK,
     )
 
     LaunchedEffect(ratLng) {
