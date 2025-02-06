@@ -9,6 +9,7 @@ private val LightColorScheme = lightColorScheme(
     primary = Main,
     surfaceDim = Background,
     onSurface = White,
+    surface = Background,
 )
 
 @Composable
