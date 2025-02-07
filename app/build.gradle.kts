@@ -120,6 +120,12 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // FlowLayout
+    implementation(libs.accompanist.flowlayout)
+
+    // Landscapist
+    implementation(libs.landscapist.coil)
+
     // KakaoTalk
     implementation(libs.v2.all)
 
@@ -147,4 +153,5 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material.icon)
 }
