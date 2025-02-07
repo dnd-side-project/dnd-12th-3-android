@@ -1,10 +1,10 @@
 package com.dnd.safety.presentation.ui.home.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -22,11 +22,15 @@ fun HomeMapView(
         position = CameraPosition.fromLatLngZoom(ratLng, 10f)
     }
 
-    GoogleMap(
-        modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        mapColorScheme = ComposeMapColorScheme.DARK,
-    )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        GoogleMap(
+            modifier = modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            mapColorScheme = ComposeMapColorScheme.DARK,
+        )
+    }
 
     LaunchedEffect(ratLng) {
         cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(ratLng, 15f))

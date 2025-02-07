@@ -24,12 +24,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dnd.safety.presentation.designsystem.component.BottomSheet
+import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
 import com.dnd.safety.presentation.ui.home.component.IncidentList
+import com.dnd.safety.presentation.ui.home.component.LocationSource
 import com.dnd.safety.presentation.ui.home.component.SortSheet
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
@@ -81,7 +82,10 @@ private fun HomeScreen(
                 ratLng = location,
                 onUpdateBoundingBox = viewModel::updateBoundingBoxState
             )
+
             HomeSearchBar(
+                keyword = homeUiState.keyword,
+                onShowSearchDialog = viewModel::showSearchModal,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
@@ -89,6 +93,43 @@ private fun HomeScreen(
         }
     }
 }
+
+@Composable
+private fun HomeSearchBar(
+    keyword: String,
+    onShowSearchDialog: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(60.dp))
+            .background(
+                Gray80,
+                RoundedCornerShape(60.dp)
+            )
+            .clickable(onClick = onShowSearchDialog)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(
+                vertical = 10.dp, horizontal = 10.dp
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+        Text(
+            text = keyword,
+            style = SafetyTheme.typography.paragraph2,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
 
 @Composable
 private fun IncidentContent(
@@ -111,32 +152,6 @@ private fun IncidentContent(
     }
 }
 
-@Composable
-fun HomeSearchBar(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(60.dp))
-            .background(
-                Gray80,
-                RoundedCornerShape(60.dp)
-            )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(
-                vertical = 4.dp, horizontal = 10.dp
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-                modifier = Modifier.size(30.dp)
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ModalContent(
@@ -152,5 +167,13 @@ private fun ModalContent(
                 onDismissRequest = viewModel::dismissModal
             )
         }
+        HomeModalState.ShowSearchDialog -> {
+            SearchDialog(
+                onPlaceSelected = viewModel::setSearchPlace,
+                onDismissRequest = viewModel::dismissModal,
+            )
+        }
     }
 }
+
+

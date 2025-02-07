@@ -1,9 +1,9 @@
 package com.dnd.safety.presentation.ui.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
-import com.dnd.safety.domain.model.IncidentType
 import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.domain.model.Point
@@ -17,6 +17,7 @@ import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +32,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val locationService: LocationService,
-    incidentsRepository: IncidentsRepository
+    incidentsRepository: IncidentsRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     /**
@@ -89,12 +91,12 @@ class HomeViewModel @Inject constructor(
 
     private var contentJob: Job? = null
 
-    private fun updateLocationState(locationSource: LocationSource) {
+    fun updateLocationState(locationSource: LocationSource) {
         contentJob?.cancel()
 
         when (locationSource) {
             LocationSource.CurrentLocation -> updateLocationByCurrent()
-            is LocationSource.Search -> updateLocationBySearch()
+            is LocationSource.Search -> updateLocationBySearch(locationSource)
         }
     }
 
@@ -106,7 +108,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun updateLocationBySearch() {
+    private fun updateLocationBySearch(locationSource: LocationSource.Search) {
+        viewModelScope.launch {
+            _locationState.update { locationSource.location }
+        }
     }
 
     fun updateBoundingBoxState(
@@ -143,9 +148,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun setSearchPlace(latLng: LatLng, placeName: String) {
+        updateLocationBySearch(LocationSource.Search(latLng))
+        _homeUiState.update {
+            it.copy(keyword = placeName)
+        }
+    }
+
     fun showSortModal() {
         _homeModalState.update {
             HomeModalState.ShowSortSheet(homeUiState.value.sortFilters)
+        }
+    }
+
+    fun showSearchModal() {
+        _homeModalState.update {
+            HomeModalState.ShowSearchDialog
         }
     }
 

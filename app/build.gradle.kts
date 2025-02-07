@@ -156,6 +156,7 @@ dependencies {
     implementation(libs.maps.compose.utils)
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)
+    implementation(libs.places)
 
     //Accompanist (Permission)
     implementation(libs.accompanist.permissions)
