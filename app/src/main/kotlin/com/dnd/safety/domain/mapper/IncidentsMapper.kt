@@ -1,11 +1,12 @@
 package com.dnd.safety.domain.mapper
 
 import com.dnd.safety.data.model.response.IncidentsResponse
-import com.dnd.safety.domain.model.IncidentType
+import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.domain.model.MediaFile
 import com.dnd.safety.utils.toLocalDateTime
 
-fun IncidentsResponse.toIncidentsList() = this.incidents.map { it.toIncidents() }
+fun IncidentsResponse.toIncidentsList() = this.data.map { it.toIncidents() }
 
 fun IncidentsResponse.IncidentDto.toIncidents(): Incidents = Incidents(
     id = id,
@@ -13,11 +14,17 @@ fun IncidentsResponse.IncidentDto.toIncidents(): Incidents = Incidents(
     description = description,
     pointX = pointX,
     pointY = pointY,
-    incidentType = IncidentType.붕괴,
+    incidentCategory = IncidentCategory.fromString(disasterGroup),
     userName = "userName",
     distance = "distance",
     address = "address",
     createdDate = createdDate.toLocalDateTime(),
     updatedDate = updatedDate.toLocalDateTime(),
-    imageUrls = emptyList()
+    mediaFiles = mediaFiles.map(IncidentsResponse.MediaFileDto::toMediaFile)
+)
+
+fun IncidentsResponse.MediaFileDto.toMediaFile() = MediaFile(
+    incidentId = incidentId,
+    mediaType = mediaType,
+    fileUrl = fileUrl
 )

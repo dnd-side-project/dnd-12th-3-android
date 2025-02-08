@@ -1,12 +1,10 @@
 package com.dnd.safety.presentation.ui.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,13 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dnd.safety.domain.model.IncidentType
-import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incidents
-import com.dnd.safety.presentation.designsystem.component.SmallButton
+import com.dnd.safety.domain.model.MediaFile
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray30
-import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.skydoves.landscapist.coil.CoilImage
 
@@ -62,7 +57,7 @@ fun IncidentsItem(
                     )
             ) {
                 Text(
-                    text = incidents.incidentType.name,
+                    text = incidents.incidentCategory.name,
                     style = SafetyTheme.typography.smallText,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                 )
@@ -110,14 +105,14 @@ fun IncidentsItem(
         )
         Spacer(modifier = Modifier.height(16.dp))
         IncidentsImages(
-            imageUrls = incidents.imageUrls
+            imageUrls = incidents.mediaFiles
         )
     }
 }
 
 @Composable
 private fun IncidentsImages(
-    imageUrls: List<String>,
+    imageUrls: List<MediaFile>,
     modifier: Modifier = Modifier
 ) {
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
@@ -130,7 +125,7 @@ private fun IncidentsImages(
         if (imageUrls.size == 1) {
             item {
                 IncidentsImage(
-                    url = imageUrls.first(),
+                    url = imageUrls.first().fileUrl,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
@@ -138,7 +133,7 @@ private fun IncidentsImages(
         } else {
             items(imageUrls) { url ->
                 IncidentsImage(
-                    url = url,
+                    url = url.fileUrl,
                     modifier = Modifier
                         .width(screenWidthDp.dp / 2)
                 )

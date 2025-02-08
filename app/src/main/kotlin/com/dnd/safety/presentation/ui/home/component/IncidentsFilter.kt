@@ -36,7 +36,7 @@ fun IncidentsFilter(
         }
         items(typeFilters) { filter ->
             SmallButton(
-                text = filter.incidentType.name,
+                text = filter.incidentCategory.korTitle,
                 onClick = { onFilterClick(filter) },
                 containerColor = if (filter.isSelected) {
                     MaterialTheme.colorScheme.primary

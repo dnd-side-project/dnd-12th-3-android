@@ -5,18 +5,29 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class IncidentsResponse(
-    val incidents: List<IncidentDto>
+    val code: String = "",
+    val timestamp: String = "",
+    val data: List<IncidentDto>
 ) {
 
     @Serializable
     data class IncidentDto(
         val id: Long,
-        @SerializedName("writer_id") val writerId: Long,
+        val writerId: Long,
         val title: String,
         val description: String,
-        @SerializedName("point_x") val pointX: Double,
-        @SerializedName("point_Y") val pointY: Double,
-        @SerializedName("created_at") val createdDate: String,
-        @SerializedName("updated_at") val updatedDate: String,
+        val disasterGroup: String,
+        val pointX: Double,
+        val pointY: Double,
+        @SerializedName("createdAt") val createdDate: String,
+        @SerializedName("updatedAt") val updatedDate: String,
+        val mediaFiles: List<MediaFileDto>
+    )
+
+    @Serializable
+    data class MediaFileDto(
+        val incidentId: Int,
+        val mediaType: String,
+        val fileUrl: String,
     )
 }

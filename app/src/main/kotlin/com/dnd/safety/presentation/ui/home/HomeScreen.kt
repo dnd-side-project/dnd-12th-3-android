@@ -80,6 +80,7 @@ private fun HomeScreen(
         ) {
             HomeMapView(
                 ratLng = location,
+                incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
                 onUpdateBoundingBox = viewModel::updateBoundingBoxState
             )
 

@@ -1,15 +1,16 @@
 package com.dnd.safety.data.remote.api
 
-import com.dnd.safety.data.model.request.IncidentsRequest
 import com.dnd.safety.data.model.response.IncidentsResponse
 import com.skydoves.sandwich.ApiResponse
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface IncidentsApi {
 
-    @POST("incidents")
+    @GET("/api/incidents/nearby")
     suspend fun getIncidents(
-        @Body request: IncidentsRequest
+        @Query("pointX") latitude: Double,
+        @Query("pointY") longitude: Double,
+        @Query("radiusInKm") distance: Int
     ): ApiResponse<IncidentsResponse>
 }

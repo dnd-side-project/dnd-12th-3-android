@@ -3,7 +3,6 @@ package com.dnd.safety.domain.model
 import com.dnd.safety.utils.daysAgo
 import java.time.LocalDateTime
 
-@Suppress("서버와 협의하여 수정되어야 함")
 data class Incidents(
     val id: Long,
     val title: String,
@@ -15,8 +14,8 @@ data class Incidents(
     val pointY: Double,
     val createdDate: LocalDateTime,
     val updatedDate: LocalDateTime,
-    val incidentType: IncidentType,
-    val imageUrls: List<String>,
+    val incidentCategory: IncidentCategory,
+    val mediaFiles: List<MediaFile>,
 ) {
 
     val daysAgo get() = "${createdDate.daysAgo()}일 전"
@@ -27,13 +26,13 @@ data class Incidents(
                 id = 1,
                 title = "title",
                 description = "description",
-                pointX = 0.0,
-                pointY = 0.0,
-                imageUrls = listOf("https://www.example.com"),
+                pointX = 37.0,
+                pointY = 127.0,
+                mediaFiles = listOf(MediaFile(1, "mediaType", "fileUrl")),
                 distance = "distance",
                 userName = "userName",
                 address = "address",
-                incidentType = IncidentType.교통,
+                incidentCategory = IncidentCategory.FIRE,
                 createdDate = LocalDateTime.now(),
                 updatedDate = LocalDateTime.now()
             )

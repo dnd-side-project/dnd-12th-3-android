@@ -109,7 +109,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updateLocationBySearch(locationSource: LocationSource.Search) {
-        viewModelScope.launch {
+        contentJob = viewModelScope.launch {
             _locationState.update { locationSource.location }
         }
     }
