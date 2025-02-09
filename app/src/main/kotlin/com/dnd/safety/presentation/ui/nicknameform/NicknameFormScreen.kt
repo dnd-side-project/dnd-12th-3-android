@@ -17,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,9 +24,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.dnd.safety.presentation.common.components.WatchOutButton
-import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
-import com.dnd.safety.presentation.common.components.WatchOutTextField
+import com.dnd.safety.presentation.designsystem.component.WatchOutButton
+import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
+import com.dnd.safety.presentation.designsystem.component.WatchOutTextField
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
