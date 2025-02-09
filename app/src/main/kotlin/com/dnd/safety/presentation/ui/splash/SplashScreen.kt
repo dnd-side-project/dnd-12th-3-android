@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,7 +39,7 @@ fun SplashScreen(
 @Composable
 private fun SplashImage(modifier: Modifier = Modifier) {
     Image(
-        painter = painterResource(R.drawable.ic_launcher_background),
+        painter = painterResource(R.drawable.ic_splash_watch_out),
         contentDescription = "앱 스플래쉬 이미지",
         modifier = modifier.size(200.dp)
     )
