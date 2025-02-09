@@ -130,9 +130,6 @@ dependencies {
     implementation (libs.maps.compose)
     implementation (libs.play.services.maps)
 
-    // Splash
-    implementation(libs.androidx.core.splashscreen)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -150,5 +147,4 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.material.icon)
 }
