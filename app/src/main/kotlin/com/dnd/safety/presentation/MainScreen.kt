@@ -14,8 +14,17 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
+import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
+import com.dnd.safety.presentation.ui.login.LoginScreen
+import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
+import com.dnd.safety.presentation.ui.splash.SplashScreen
 
 @Composable
 fun MainScreen(
@@ -61,9 +70,38 @@ internal fun MainNavHost(
     ) {
         NavHost(
             navController = navigator.navController,
-            startDestination = navigator.startDestination,
+            startDestination = Route.Splash.route,
         ) {
+            composable(Route.Splash.route) {
+                SplashScreen(navigator = navigator)
+            }
 
+            composable(Route.Login.route) {
+                LoginScreen(navigator = navigator)
+            }
+
+            composable(Route.NicknameForm.route) {
+                NicknameFormScreen(navigator = navigator)
+            }
+
+            composable(
+                route = Route.SearchLocation.route,
+                arguments = listOf(
+                    navArgument(Route.SearchLocation.argNickname) { type = NavType.StringType }
+                )
+            ) {
+                LocationSearchScreen(navigator = navigator)
+            }
+
+            composable(
+                route = Route.LocationConfirm.route,
+                arguments = listOf(
+                    navArgument(Route.LocationConfirm.argNickname) { type = NavType.StringType },
+                    navArgument(Route.LocationConfirm.argLocation) { type = NavType.StringType }
+                )
+            ) {
+                LocationConfirmScreen(navigator = navigator)
+            }
         }
     }
 }
