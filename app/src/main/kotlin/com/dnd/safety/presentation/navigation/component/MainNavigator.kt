@@ -12,6 +12,7 @@ import androidx.navigation.navOptions
 import com.dnd.safety.presentation.navigation.MainBottomNavItem
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
+import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
 
 class MainNavigator(
     val navController: NavHostController
@@ -20,7 +21,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Route.Splash.route
+    val startDestination = Route.Splash
 
     val currentItem: MainBottomNavItem?
         get() = MainBottomNavItem.find { tab ->
@@ -38,18 +39,18 @@ class MainNavigator(
         }
 
         when (menuItem) {
-            MainBottomNavItem.Home -> TODO()
+            MainBottomNavItem.Home -> navController.navigateToHome(navOptions)
+            MainBottomNavItem.Add -> {}
+            MainBottomNavItem.MyPage -> {}
         }
     }
 
-    // 기본 네비게이션
     fun <T : Route> navigateTo(
         route: T,
         navOptions: NavOptions? = null
     ) {
         navController.navigate(route.route, navOptions)
     }
-
 
     fun popBackStackIfNotHome(): Boolean {
         return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<MainTabRoute.Home>()) {

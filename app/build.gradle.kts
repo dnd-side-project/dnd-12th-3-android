@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.secrets)
 }
 
 val properties = Properties().apply {
@@ -148,4 +149,18 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material.icon)
+
+    //Google Services & Maps
+    implementation(libs.maps.compose)
+    implementation(libs.maps.compose.utils)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+    implementation(libs.places)
+
+    //Accompanist (Permission)
+    implementation(libs.accompanist.permissions)
+
+    implementation(libs.landscapist.coil)
+
 }

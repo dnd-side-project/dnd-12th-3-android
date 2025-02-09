@@ -48,7 +48,7 @@ class HttpNetworkLogger : Interceptor {
             logMessage.appendLine("Response Time: ${durationMs}ms")
 
             Logger.e(logMessage.toString())
-            throw e // 예외를 다시 던져 상위 호출자가 처리할 수 있도록 함
+            throw e
         }
     }
 }

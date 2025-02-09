@@ -15,6 +15,8 @@ import androidx.compose.ui.platform.LocalView
 private val LightColorScheme = lightColorScheme(
     primary = Main,
     surfaceDim = Background,
+    onSurface = White,
+    surface = Background,
     background = Gray80, // 항상 Gray80 사용
 )
 
@@ -57,4 +59,8 @@ object SafetyTheme {
     val typography: SafetyTypography
         @Composable
         get() = LocalTypography.current
+
+    val shapes: SafetyShapes
+        @Composable
+        get() = LocalShapes.current
 }

@@ -1,9 +1,11 @@
 package com.dnd.safety.di
 
+import com.dnd.safety.data.remote.api.IncidentsApi
 import com.dnd.safety.BuildConfig
 import com.dnd.safety.data.remote.api.GoogleAuthService
 import com.dnd.safety.data.remote.api.LocationService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,13 +61,14 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        okHttpClient: OkHttpClient,
+        @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl("http://3.37.245.234:8080")
             .client(okHttpClient)
             .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .build()
 
     @Provides
@@ -93,6 +96,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl("https://dapi.kakao.com/")
             .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .client(okHttpClient)
             .build()
     }
@@ -106,6 +110,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080/")
             .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .client(okHttpClient)
             .build()
     }
@@ -126,4 +131,10 @@ object NetworkModule {
     ): GoogleAuthService {
         return retrofit.create(GoogleAuthService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideIncidentsApi(retrofit: Retrofit): IncidentsApi =
+        retrofit.create(IncidentsApi::class.java)
+
 }

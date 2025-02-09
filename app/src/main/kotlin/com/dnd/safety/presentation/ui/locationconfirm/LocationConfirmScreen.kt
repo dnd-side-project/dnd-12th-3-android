@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
-import com.dnd.safety.presentation.common.components.WatchOutButton
+import com.dnd.safety.presentation.designsystem.component.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.component.MainNavigator

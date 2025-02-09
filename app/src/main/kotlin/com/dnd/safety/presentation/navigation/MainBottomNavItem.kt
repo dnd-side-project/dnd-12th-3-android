@@ -1,21 +1,28 @@
 package com.dnd.safety.presentation.navigation
 
-import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class MainBottomNavItem(
-    @StringRes val titleRes: Int,
     val icon: ImageVector,
     val route: MainTabRoute,
 ) {
     Home(
-        titleRes = 1,
         icon = Icons.Default.Home,
         route = MainTabRoute.Home,
-    )
+    ),
+    Add(
+        icon = Icons.Default.CameraEnhance,
+        route = MainTabRoute.Add,
+    ),
+    MyPage(
+        icon = Icons.Default.Person,
+        route = MainTabRoute.MyPage,
+    ),
     ;
 
     companion object {

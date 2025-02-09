@@ -18,19 +18,21 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.dnd.safety.presentation.navigation.MainBottomNavItem
 import com.dnd.safety.presentation.navigation.Route
+import com.dnd.safety.presentation.navigation.component.MainBottomBar
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
 import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
 import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
 import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
-import com.dnd.safety.presentation.ui.splash.SplashScreen
+import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
 
 @Composable
 fun MainScreen(
     navigator: MainNavigator,
     snackBarHostState: SnackbarHostState,
-    appRestart: () -> Unit,
     onShowSnackBar: (String) -> Unit
 ) {
     Scaffold(
@@ -38,6 +40,14 @@ fun MainScreen(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding(),
+        bottomBar = {
+            MainBottomBar(
+                visible = navigator.shouldShowBottomBar(),
+                bottomItems = MainBottomNavItem.entries,
+                currentItem = navigator.currentItem,
+                onBottomItemClicked = navigator::navigateTo
+            )
+        },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -48,7 +58,6 @@ fun MainScreen(
         MainNavHost(
             navigator = navigator,
             paddingValues = it,
-            appRestart = appRestart,
             onShowSnackBar = onShowSnackBar,
         )
     }
@@ -58,7 +67,6 @@ fun MainScreen(
 internal fun MainNavHost(
     paddingValues: PaddingValues,
     navigator: MainNavigator,
-    appRestart: () -> Unit,
     onShowSnackBar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,12 +78,15 @@ internal fun MainNavHost(
     ) {
         NavHost(
             navController = navigator.navController,
-            startDestination = Route.Splash.route,
+            startDestination = navigator.startDestination,
         ) {
-            composable(Route.Splash.route) {
-                SplashScreen(navigator = navigator)
-            }
+            splashNavGraph(
+                navigator = navigator,
+                onPermissionAllowed = { navigator.navigateTo(MainBottomNavItem.Home) },
+            )
+            homeNavGraph(
 
+            )
             composable(Route.Login.route) {
                 LoginScreen(navigator = navigator)
             }
