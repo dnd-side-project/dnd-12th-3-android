@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -126,6 +127,11 @@ fun LoginContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    WatchOutImage()
+
                     Spacer(modifier = Modifier.weight(1f))
 
                     SocialLoginButton(
@@ -152,6 +158,16 @@ fun LoginContent(
 }
 
 @Composable
+fun WatchOutImage(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.ic_splash_watch_out),
+        contentDescription = "앱 스플래쉬 이미지",
+        modifier = modifier.size(200.dp)
+    )
+}
+
+
+@Composable
 fun SocialLoginButton(
     type: SocialLoginType,
     onClick: () -> Unit,
@@ -161,7 +177,6 @@ fun SocialLoginButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
             .clickable(
                 enabled = enabled,
                 interactionSource = remember { MutableInteractionSource() },
@@ -172,14 +187,12 @@ fun SocialLoginButton(
         Image(
             painter = painterResource(
                 id = when (type) {
-                    SocialLoginType.KAKAO -> R.drawable.kakao_login_large_wide
+                    SocialLoginType.KAKAO -> R.drawable.ic_kakao_login
                     SocialLoginType.GOOGLE -> R.drawable.ic_google_login
                 }
             ),
             contentDescription = "${type.name} 로그인",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
