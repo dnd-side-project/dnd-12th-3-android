@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationDisabled
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,12 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.presentation.designsystem.theme.Gray40
+import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
 import com.dnd.safety.presentation.ui.home.component.IncidentList
-import com.dnd.safety.presentation.ui.home.component.LocationSource
 import com.dnd.safety.presentation.ui.home.component.SortSheet
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
@@ -81,7 +85,8 @@ private fun HomeScreen(
             HomeMapView(
                 ratLng = location,
                 incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
-                onUpdateBoundingBox = viewModel::updateBoundingBoxState
+                onUpdateBoundingBox = viewModel::updateBoundingBoxState,
+                onUpdateLocation = viewModel::setSearchPlace,
             )
 
             HomeSearchBar(
@@ -91,6 +96,21 @@ private fun HomeScreen(
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             )
+
+            FloatingActionButton(
+                onClick = viewModel::setIsCurrentLocation,
+                modifier = Modifier
+                    .padding(it)
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                containerColor = Gray60,
+                contentColor = White
+            ) {
+                Icon(
+                    imageVector = if (homeUiState.isCurrentLocation) Icons.Default.MyLocation else Icons.Default.LocationDisabled,
+                    contentDescription = "내 위치로 이동"
+                )
+            }
         }
     }
 }
