@@ -29,7 +29,6 @@ import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
 import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionScreen
 import com.dnd.safety.presentation.ui.postreport.PostReportScreen
-import com.dnd.safety.presentation.ui.splash.SplashScreen
 import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
 
 @Composable

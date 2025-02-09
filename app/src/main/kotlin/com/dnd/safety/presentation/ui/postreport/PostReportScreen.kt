@@ -52,13 +52,12 @@ import coil.request.ImageRequest
 import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.IncidentCategory
-import com.dnd.safety.presentation.common.components.WatchOutButton
+import com.dnd.safety.presentation.designsystem.component.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Gray20
 import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray50
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.Gray80
-import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
