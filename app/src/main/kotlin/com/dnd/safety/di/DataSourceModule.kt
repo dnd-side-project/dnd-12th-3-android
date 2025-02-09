@@ -1,28 +1,20 @@
 package com.dnd.safety.di
 
-import android.content.ContentResolver
-import android.content.Context
-import com.dnd.safety.data.datasorce.MediaPagingSource
+import com.dnd.safety.data.remote.datasource.KakaoLoginDataSourceImpl
+import com.dnd.safety.domain.datasource.KakaoLoginDataSource
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataSourceModule {
-
-    @Provides
+abstract class DataSourceModule {
+    @Binds
     @Singleton
-    fun provideContentResolver(
-        @ApplicationContext context: Context
-    ): ContentResolver = context.contentResolver
+    abstract fun bindKakaoLoginDataSource(
+        kakaoLoginDataSourceImpl: KakaoLoginDataSourceImpl
+    ): KakaoLoginDataSource
 
-    @Provides
-    @Singleton
-    fun provideMediaPagingSource(
-        contentResolver: ContentResolver
-    ): MediaPagingSource = MediaPagingSource(contentResolver)
 }

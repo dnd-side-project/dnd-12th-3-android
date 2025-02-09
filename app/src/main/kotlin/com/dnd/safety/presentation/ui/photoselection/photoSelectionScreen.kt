@@ -129,7 +129,7 @@ fun PhotoSelectionScreen(
                         Route.PostReport.selectedMedia,
                         state.selectedMedia.map { it.uri }
                     )
-                    navigator.popBackStack()
+                    navigator.popBackStackIfNotHome()
                 }
                 is PhotoSelectionEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
@@ -143,7 +143,7 @@ fun PhotoSelectionScreen(
 
     PhotoSelectionContent(
         state = state,
-        onNavigateBack = { navigator.popBackStack() },
+        onNavigateBack = { navigator.popBackStackIfNotHome() },
         onConfirmClick = viewModel::onConfirmClick,
         onMediaSelected = viewModel::onMediaSelected,
         onCameraClick = {

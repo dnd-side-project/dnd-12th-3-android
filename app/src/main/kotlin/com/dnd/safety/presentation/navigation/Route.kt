@@ -40,13 +40,20 @@ sealed interface Route {
         val nickname: String,
         val location: Location
     ) : Route {
-        override val route: String = "location_confirm/$nickname/${Json.encodeToString(Location.serializer(), location)}"
+        override val route: String =
+            "location_confirm/$nickname/${Json.encodeToString(Location.serializer(), location)}"
 
         companion object {
             const val route = "location_confirm/{nickname}/{location}"
             const val argNickname = "nickname"
             const val argLocation = "location"
         }
+    }
+
+    @Serializable
+    data object PostReport : Route {
+        override val route: String = "post_report"
+        const val selectedMedia = "selected_media"
     }
 }
 
