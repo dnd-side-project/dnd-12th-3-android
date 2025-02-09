@@ -34,7 +34,6 @@ sealed interface Route {
         }
     }
 
-
     @Serializable
     data class LocationConfirm(
         val nickname: String,
@@ -50,10 +49,25 @@ sealed interface Route {
     }
 }
 
-sealed interface MainTabRoute : Route {
+sealed interface MainTabRoute: Route {
 
     @Serializable
-    data object Home : Route
+    data object Home : MainTabRoute {
+        override val route: String
+            get() = "temp"
+    }
+
+    @Serializable
+    data object Add : MainTabRoute {
+        override val route: String
+            get() = "temp"
+    }
+
+    @Serializable
+    data object MyPage : MainTabRoute {
+        override val route: String
+            get() = "temp"
+    }
 
 }
 

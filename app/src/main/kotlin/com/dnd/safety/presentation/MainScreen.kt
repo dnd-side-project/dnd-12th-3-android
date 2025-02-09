@@ -1,5 +1,6 @@
 package com.dnd.safety.presentation
 
+import android.window.SplashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,14 +19,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.dnd.safety.presentation.navigation.MainBottomNavItem
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
 import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
 import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
-import com.dnd.safety.presentation.ui.splash.SplashScreen
 import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
+import com.dnd.safety.presentation.ui.splash.SplashRoute
 import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
 
 @Composable
@@ -72,16 +74,15 @@ internal fun MainNavHost(
     ) {
         NavHost(
             navController = navigator.navController,
-            startDestination = Route.Splash.route,
+            startDestination = navigator.startDestination,
         ) {
             splashNavGraph(
-                onPermissionAllowed = navigator::navigateToHome,
+                navigator = navigator,
+                onPermissionAllowed = { navigator.navigateTo(MainBottomNavItem.Home) },
             )
-            homeNavGraph()
-            composable(Route.Splash.route) {
-                SplashScreen(navigator = navigator)
-            }
+            homeNavGraph(
 
+            )
             composable(Route.Login.route) {
                 LoginScreen(navigator = navigator)
             }

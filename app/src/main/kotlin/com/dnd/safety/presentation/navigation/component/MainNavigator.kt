@@ -9,6 +9,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.dnd.safety.presentation.navigation.MainBottomNavItem
+import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
 
@@ -37,7 +39,9 @@ class MainNavigator(
         }
 
         when (menuItem) {
-            MainBottomNavItem.Home -> TODO()
+            MainBottomNavItem.Home -> navController.navigateToHome(navOptions)
+            MainBottomNavItem.Add -> {}
+            MainBottomNavItem.MyPage -> {}
         }
     }
 
@@ -51,7 +55,7 @@ class MainNavigator(
 
 
     fun popBackStackIfNotHome(): Boolean {
-        return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<Route.Home>()) {
+        return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<MainTabRoute.Home>()) {
             true
         } else {
             popBackStack()

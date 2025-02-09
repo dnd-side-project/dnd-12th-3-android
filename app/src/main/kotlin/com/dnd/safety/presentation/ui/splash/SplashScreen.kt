@@ -44,7 +44,7 @@ fun SplashRoute(
     SplashNavigationEffect(navigator)
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Gray80),
         contentAlignment = Alignment.Center,
@@ -62,6 +62,7 @@ fun SplashRoute(
     }
 }
 
+@Composable
 private fun SplashImage(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.ic_splash_watch_out),
@@ -79,6 +80,9 @@ fun SplashScreenPreview() {
             MainNavigator(fakeNavController)
         }
 
-        SplashScreen(navigator = fakeNavigator)
+        SplashRoute(
+            navigator = fakeNavigator,
+            onPermissionAllowed = {}
+        )
     }
 }
