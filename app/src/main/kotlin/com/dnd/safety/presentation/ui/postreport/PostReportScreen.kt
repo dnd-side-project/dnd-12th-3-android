@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -46,6 +44,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dnd.safety.R
 import com.dnd.safety.domain.model.IncidentCategory
+import com.dnd.safety.presentation.common.components.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Gray20
 import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray50
@@ -306,19 +305,14 @@ private fun PostReportContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
+        WatchOutButton(
+            text = "완료",
             onClick = onCompleteClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 27.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Main
-            ),
-            shape = RoundedCornerShape(4.dp)
-        ) {
-            Text("완료", color = White)
-        }
+        )
     }
 }
 
