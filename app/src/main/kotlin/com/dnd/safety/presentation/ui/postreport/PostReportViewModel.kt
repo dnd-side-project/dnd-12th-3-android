@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.IncidentCategory
+import com.dnd.safety.domain.usecase.GetCurrentLocationUseCase
 import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PostReportViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
 ) : ViewModel() {
     private val selectedMediaItems =
         savedStateHandle.getStateFlow<List<Uri>>("selectedMedia", emptyList())
@@ -29,23 +31,16 @@ class PostReportViewModel @Inject constructor(
     private val _effect = Channel<PostReportEffect>()
     val effect = _effect.receiveAsFlow()
 
-
-    init {
-        viewModelScope.launch {
-            selectedMediaItems.collect { uris ->
-                Log.d("PostReport", "Received URIs in selectedMediaItems: $uris")
-                _state.update { it.copy(imageUris = uris) }
+    fun fetchCurrentLocation() = viewModelScope.launch {
+        getCurrentLocationUseCase()
+            .onSuccess { location ->
+                _state.update { it.copy(location = location) }
             }
-        }
-
-        Log.d(
-            "PostReport", "Direct savedStateHandle value: ${
-                savedStateHandle.get<List<Uri>>(
-                    PhotoSelectionViewModel.KEY_SELECTED_MEDIA
-                )
-            }"
-        )
+            .onFailure { throwable ->
+                Log.e("PostReportViewModel", "위치 정보 가져오기 실패", throwable)
+            }
     }
+
 
     fun updateContent(content: String) {
         _state.update { it.copy(content = content) }

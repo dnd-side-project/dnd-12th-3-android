@@ -1,6 +1,11 @@
 package com.dnd.safety.presentation.ui.postreport
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,11 +44,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dnd.safety.R
+import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.presentation.common.components.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Gray20
@@ -68,6 +75,30 @@ fun PostReportScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val currentBackStackEntry = navigator.navController.currentBackStackEntry
+    val context = LocalContext.current
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.values.all { it }
+        if (allGranted) {
+            viewModel.fetchCurrentLocation()
+        }
+    }
+
+
+    LaunchedEffect(Unit) {
+        if (hasLocationPermissions(context)) {
+            viewModel.fetchCurrentLocation()
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
 
     LaunchedEffect(currentBackStackEntry) {
         currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Uri>?>(
@@ -98,6 +129,17 @@ fun PostReportScreen(
         onLocationClick = viewModel::onLocationClick,
         onCompleteClick = viewModel::onCompleteClick
     )
+}
+
+private fun hasLocationPermissions(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
 }
 
 @Composable
@@ -266,7 +308,7 @@ private fun PostReportContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = state.location,
+                text = state.location.address.ifEmpty { "위치를 선택해주세요" },
                 style = MaterialTheme.typography.bodyLarge,
                 color = White
             )
@@ -276,7 +318,7 @@ private fun PostReportContent(
                     .clickable(onClick = onLocationClick)
                     .padding(8.dp),
                 style = TextStyle(textDecoration = TextDecoration.Underline),
-                color = Main
+                color = White
             )
         }
 
@@ -349,7 +391,12 @@ private fun PostReportScreenPreview() {
                 content = "",
                 selectedCategory = null,
                 imageUris = listOf(),
-                location = "서울특별시 강남구 역삼동 123-45"
+                location = Location(
+                    latitude = 37.501311,
+                    longitude = 127.039471,
+                    placeName = "강남역",
+                    address = "서울특별시 강남구 역삼동 123-45"
+                )
             ),
             onImageAdd = {},
             onContentChange = {},
@@ -370,7 +417,12 @@ private fun PostReportScreenWithContentPreview() {
                 content = "사고 내용을 작성한 상태입니다.",
                 selectedCategory = IncidentCategory.TRAFFIC,
                 imageUris = listOf(),
-                location = "서울특별시 강남구 역삼동 123-45"
+                location = Location(
+                    latitude = 37.501311,
+                    longitude = 127.039471,
+                    placeName = "강남역",
+                    address = "서울특별시 강남구 역삼동 123-45"
+                )
             ),
             onImageAdd = {},
             onContentChange = {},
