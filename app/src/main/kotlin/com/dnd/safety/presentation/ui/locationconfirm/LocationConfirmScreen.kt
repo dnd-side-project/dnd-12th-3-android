@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.common.components.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Typography
@@ -38,7 +40,9 @@ import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.navigation.component.rememberMainNavigator
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -51,6 +55,10 @@ fun LocationConfirmScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    val mapStyle = remember {
+        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_dark_style)
+    }
 
     // 위치 권한 요청
     val locationPermissionState = rememberUpdatedState(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -148,7 +156,10 @@ fun LocationConfirmScreen(
                         .fillMaxWidth()
                         .height(320.dp)
                         .clip(RoundedCornerShape(16.dp)),
-                    cameraPositionState = cameraPositionState
+                    cameraPositionState = cameraPositionState,
+                    properties = MapProperties(
+                        mapStyleOptions = mapStyle
+                    )
                 ) {
                     Marker(
                         state = MarkerState(
