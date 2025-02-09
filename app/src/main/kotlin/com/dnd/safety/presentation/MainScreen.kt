@@ -24,6 +24,8 @@ import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
 import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
 import com.dnd.safety.presentation.ui.login.LoginScreen
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
+import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionScreen
+import com.dnd.safety.presentation.ui.postreport.PostReportScreen
 import com.dnd.safety.presentation.ui.splash.SplashScreen
 
 @Composable
@@ -101,6 +103,18 @@ internal fun MainNavHost(
                 )
             ) {
                 LocationConfirmScreen(navigator = navigator)
+            }
+
+            composable(
+                route = Route.PostReport.route,
+            ) {
+                PostReportScreen(navigator = navigator)
+            }
+
+            composable(
+                route = Route.PhotoSelection.route,
+            ) {
+                PhotoSelectionScreen(navigator = navigator)
             }
         }
     }

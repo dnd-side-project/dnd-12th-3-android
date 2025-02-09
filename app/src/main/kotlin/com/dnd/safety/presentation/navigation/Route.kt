@@ -55,6 +55,11 @@ sealed interface Route {
         override val route: String = "post_report"
         const val selectedMedia = "selected_media"
     }
+
+    @Serializable
+    data object PhotoSelection : Route {
+        override val route: String = "photo_selection"
+    }
 }
 
 sealed interface MainTabRoute : Route {

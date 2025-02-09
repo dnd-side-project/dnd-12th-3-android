@@ -55,6 +55,7 @@ import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -82,7 +83,9 @@ fun PostReportScreen(
             when (effect) {
                 is PostReportEffect.NavigateBack -> navigator.popBackStackIfNotHome()
                 is PostReportEffect.ShowToast -> {}
-                is PostReportEffect.NavigateToPhotoSelection -> {}
+                is PostReportEffect.NavigateToPhotoSelection -> {
+                    navigator.navigateTo(Route.PhotoSelection)
+                }
             }
         }
     }
