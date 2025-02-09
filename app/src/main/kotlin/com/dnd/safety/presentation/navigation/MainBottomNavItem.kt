@@ -15,9 +15,9 @@ enum class MainBottomNavItem(
         icon = Icons.Default.Home,
         route = MainTabRoute.Home,
     ),
-    Add(
+    PostReport(
         icon = Icons.Default.CameraEnhance,
-        route = MainTabRoute.Add,
+        route = MainTabRoute.PostReport,
     ),
     MyPage(
         icon = Icons.Default.Person,

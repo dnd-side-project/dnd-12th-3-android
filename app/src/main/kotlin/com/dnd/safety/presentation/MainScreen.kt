@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.dnd.safety.presentation.navigation.MainBottomNavItem
+import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainBottomBar
 import com.dnd.safety.presentation.navigation.component.MainNavigator
@@ -116,9 +117,7 @@ internal fun MainNavHost(
                 LocationConfirmScreen(navigator = navigator)
             }
 
-            composable(
-                route = Route.PostReport.route,
-            ) {
+            composable<MainTabRoute.PostReport> {
                 PostReportScreen(navigator = navigator)
             }
 

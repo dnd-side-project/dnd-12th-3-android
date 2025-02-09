@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.dnd.safety.domain.model.Media
 import com.dnd.safety.domain.usecase.GetMediaFromGalleryUseCase
+import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -66,7 +67,7 @@ class PhotoSelectionViewModel @Inject constructor(
 
     fun onConfirmClick() = viewModelScope.launch {
         val selectedUris = state.value.selectedMedia.map { it.uri }
-        savedStateHandle[Route.PostReport.selectedMedia] = selectedUris
+        savedStateHandle[MainTabRoute.PostReport.selectedMedia] = selectedUris
         _effect.send(PhotoSelectionEffect.NavigateBack)
     }
 

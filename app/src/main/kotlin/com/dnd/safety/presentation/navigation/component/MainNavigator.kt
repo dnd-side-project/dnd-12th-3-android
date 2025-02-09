@@ -40,7 +40,7 @@ class MainNavigator(
 
         when (menuItem) {
             MainBottomNavItem.Home -> navController.navigateToHome(navOptions)
-            MainBottomNavItem.Add -> {}
+            MainBottomNavItem.PostReport -> navController.navigate(MainTabRoute.PostReport, navOptions)
             MainBottomNavItem.MyPage -> {}
         }
     }

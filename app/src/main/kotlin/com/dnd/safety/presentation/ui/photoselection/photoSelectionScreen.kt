@@ -69,6 +69,7 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import java.io.File
@@ -132,7 +133,7 @@ fun PhotoSelectionScreen(
             when (effect) {
                 is PhotoSelectionEffect.NavigateBack -> {
                     navigator.navController.previousBackStackEntry?.savedStateHandle?.set(
-                        Route.PostReport.selectedMedia,
+                        MainTabRoute.PostReport.selectedMedia,
                         state.selectedMedia.map { it.uri }
                     )
                     navigator.popBackStackIfNotHome()
