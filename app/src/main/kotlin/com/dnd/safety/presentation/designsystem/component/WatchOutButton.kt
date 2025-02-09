@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.common.components
+package com.dnd.safety.presentation.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

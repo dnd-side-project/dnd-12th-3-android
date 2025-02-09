@@ -18,5 +18,9 @@ enum class IncidentCategory(val korTitle: String) {
         fun getAll(): List<IncidentCategory> {
             return entries.toList()
         }
+
+        fun fromString(value: String): IncidentCategory {
+            return entries.firstOrNull { it.name == value } ?: ALL
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.dnd.safety.di
 
+import dagger.Binds
 import com.dnd.safety.data.repository.AuthRepositoryImpl
 import com.dnd.safety.data.repository.IncidentRepositoryImpl
 import com.dnd.safety.data.repository.LocationRepositoryImpl
@@ -11,6 +12,8 @@ import com.dnd.safety.domain.repository.MediaRepository
 import com.dnd.safety.utils.AndroidFileManager
 import com.dnd.safety.utils.FileManager
 import dagger.Binds
+import com.dnd.safety.data.repository.IncidentsRepositoryImpl
+import com.dnd.safety.domain.repository.IncidentsRepository
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -47,4 +50,9 @@ abstract class RepositoryModule {
         impl: AndroidFileManager
     ): FileManager
 
+    @Binds
+    @Singleton
+    abstract fun provideIncidentsRepository(
+        repositoryImpl: IncidentsRepositoryImpl
+    ): IncidentsRepository
 }

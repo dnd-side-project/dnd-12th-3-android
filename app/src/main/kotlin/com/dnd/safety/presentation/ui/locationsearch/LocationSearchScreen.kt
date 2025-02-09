@@ -1,7 +1,6 @@
 package com.dnd.safety.presentation.ui.locationsearch
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +31,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,8 +39,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
-import com.dnd.safety.presentation.common.components.WatchOutLoadingIndicator
-import com.dnd.safety.presentation.common.components.WatchOutTextField
+import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
+import com.dnd.safety.presentation.designsystem.component.WatchOutTextField
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
