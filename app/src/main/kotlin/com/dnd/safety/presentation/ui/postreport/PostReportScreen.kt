@@ -3,6 +3,7 @@ package com.dnd.safety.presentation.ui.postreport
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -140,6 +141,11 @@ private fun PostReportContent(
                             .size(100.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(Gray70)
+                            .border(
+                                width = 1.dp,
+                                color = Gray50,
+                                shape = RoundedCornerShape(8.dp)
+                            )
                             .clickable { onImageAdd() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -172,7 +178,12 @@ private fun PostReportContent(
                             contentDescription = null,
                             modifier = Modifier
                                 .size(100.dp)
-                                .clip(RoundedCornerShape(8.dp)),
+                                .clip(RoundedCornerShape(8.dp))
+                                .border(
+                                    width = 1.dp,
+                                    color = Gray50,
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
                             contentScale = ContentScale.Crop,
                         )
                     }
@@ -200,6 +211,11 @@ private fun PostReportContent(
                 .padding(horizontal = 16.dp)
                 .background(
                     color = Gray70,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .border(
+                    width = 1.dp,
+                    color = Gray50,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .padding(16.dp),
@@ -233,11 +249,16 @@ private fun PostReportContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+                .border(
+                    width = 1.dp,
+                    color = Gray50,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .background(
                     color = Gray70,
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(16.dp),
+                .padding(vertical = 8.dp, horizontal = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
