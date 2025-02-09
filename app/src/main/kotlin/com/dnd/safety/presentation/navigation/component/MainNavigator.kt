@@ -45,14 +45,12 @@ class MainNavigator(
         }
     }
 
-    // 기본 네비게이션
     fun <T : Route> navigateTo(
         route: T,
         navOptions: NavOptions? = null
     ) {
         navController.navigate(route.route, navOptions)
     }
-
 
     fun popBackStackIfNotHome(): Boolean {
         return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<MainTabRoute.Home>()) {
