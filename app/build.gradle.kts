@@ -119,6 +119,7 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit.kotlin.serialization)
 
     // KakaoTalk
     implementation(libs.v2.all)

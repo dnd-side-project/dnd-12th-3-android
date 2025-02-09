@@ -3,16 +3,17 @@ package com.dnd.safety.di
 import com.dnd.safety.BuildConfig
 import com.dnd.safety.data.remote.api.GoogleAuthService
 import com.dnd.safety.data.remote.api.LocationService
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -23,32 +24,49 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson {
-        return GsonBuilder().create()
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-    }
-
-    @Provides
-    @Singleton
     @Named("baseOkHttpClient")
-    fun provideBaseOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient {
+    fun provideBaseOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+            .addInterceptor(HttpNetworkLogger())
+            .addInterceptor { chain ->
+                val token = runBlocking { "" }
+
+                val requestBuilder = chain.request().newBuilder()
+                    .header("Content-Type", "application/json; charset=utf-8")
+                    .header("token", token)
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        encodeDefaults = true
+    }
+
+    @Provides
+    @Singleton
+    fun provideConverterFactory(json: Json): Converter.Factory = json.asConverterFactory("application/json".toMediaType())
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("http://3.37.245.234:8080")
+            .client(okHttpClient)
+            .addConverterFactory(converterFactory)
+            .build()
 
     @Provides
     @Singleton
@@ -70,11 +88,11 @@ object NetworkModule {
     @Named("kakaoRetrofit")
     fun provideKakaoRetrofit(
         @Named("kakaoOkHttpClient") okHttpClient: OkHttpClient,
-        gson: Gson
+        converterFactory: Converter.Factory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://dapi.kakao.com/")
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(converterFactory)
             .client(okHttpClient)
             .build()
     }
@@ -83,11 +101,11 @@ object NetworkModule {
     @Named("googleRetrofit")
     fun provideGoogleRetrofit(
         @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
-        gson: Gson
+        converterFactory: Converter.Factory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080/")
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(converterFactory)
             .client(okHttpClient)
             .build()
     }
