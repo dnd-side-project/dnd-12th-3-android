@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -35,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -62,7 +65,10 @@ import coil.request.ImageRequest
 import com.dnd.safety.domain.model.Media
 import com.dnd.safety.domain.model.MediaType
 import com.dnd.safety.presentation.designsystem.theme.Gray40
+import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
+import com.dnd.safety.presentation.designsystem.theme.Typography
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import java.io.File
@@ -252,15 +258,27 @@ private fun PhotoSelectionTopBar(
     isConfirmEnabled: Boolean
 ) {
     TopAppBar(
-        title = { Text("미디어 선택") },
+        title = {
+            Text(
+                text = "최근 항목",
+                style = Typography.paragraph1,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = White
+            )
+        },
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "뒤로가기"
+                    contentDescription = "뒤로가기",
+                    tint = White
                 )
             }
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Gray80
+        ),
         actions = {
             TextButton(
                 onClick = onConfirmClick,

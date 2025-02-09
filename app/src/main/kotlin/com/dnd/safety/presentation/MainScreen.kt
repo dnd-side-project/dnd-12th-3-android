@@ -72,7 +72,7 @@ internal fun MainNavHost(
     ) {
         NavHost(
             navController = navigator.navController,
-            startDestination = Route.Splash.route,
+            startDestination = Route.PostReport.route,
         ) {
             composable(Route.Splash.route) {
                 SplashScreen(navigator = navigator)
