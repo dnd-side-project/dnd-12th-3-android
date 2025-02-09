@@ -3,7 +3,10 @@ package com.dnd.safety.di
 import com.dnd.safety.data.remote.api.IncidentsApi
 import com.dnd.safety.BuildConfig
 import com.dnd.safety.data.remote.api.GoogleAuthService
+import com.dnd.safety.data.remote.api.IncidentService
 import com.dnd.safety.data.remote.api.LocationService
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
@@ -116,6 +119,20 @@ object NetworkModule {
     }
 
     @Provides
+    @Named("baseRetrofit")
+    fun provideBaseRetrofit(
+        @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://3.37.245.234:8080/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
     @Singleton
     fun provideLocationService(
         @Named("kakaoRetrofit") retrofit: Retrofit
@@ -134,6 +151,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideIncidentService(
+        @Named("baseRetrofit") retrofit: Retrofit
+    ): IncidentService {
+        return retrofit.create(IncidentService::class.java)
+    }
+    
     fun provideIncidentsApi(retrofit: Retrofit): IncidentsApi =
         retrofit.create(IncidentsApi::class.java)
 

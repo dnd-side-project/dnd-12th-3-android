@@ -122,6 +122,12 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.kotlin.serialization)
 
+    // FlowLayout
+    implementation(libs.accompanist.flowlayout)
+
+    // Landscapist
+    implementation(libs.landscapist.coil)
+
     // KakaoTalk
     implementation(libs.v2.all)
 
@@ -131,6 +137,14 @@ dependencies {
     // Google Maps
     implementation (libs.maps.compose)
     implementation (libs.play.services.maps)
+
+    // Paging3
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
+
+    // Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.video)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -149,6 +163,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.compose.material.icon)
 
     //Google Services & Maps
