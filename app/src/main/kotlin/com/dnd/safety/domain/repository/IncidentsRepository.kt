@@ -1,12 +1,12 @@
 package com.dnd.safety.domain.repository
 
-import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.Incidents
+import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
 
 interface IncidentsRepository {
 
     suspend fun getIncidents(
-        boundingBox: BoundingBox
+        location: LatLng
     ): ApiResponse<List<Incidents>>
 }

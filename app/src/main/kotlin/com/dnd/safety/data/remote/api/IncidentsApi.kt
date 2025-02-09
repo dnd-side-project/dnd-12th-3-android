@@ -11,6 +11,6 @@ interface IncidentsApi {
     suspend fun getIncidents(
         @Query("pointX") latitude: Double,
         @Query("pointY") longitude: Double,
-        @Query("radiusInKm") distance: Int
+        @Query("radiusInKm") distance: Int = 5
     ): ApiResponse<IncidentsResponse>
 }

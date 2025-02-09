@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class IncidentsResponse(
     val code: String = "",
-    val timestamp: String = "",
     val data: List<IncidentDto>
 ) {
 

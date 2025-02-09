@@ -16,6 +16,7 @@ import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.google.android.gms.maps.model.LatLng
+import com.skydoves.sandwich.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -65,16 +66,10 @@ class HomeViewModel @Inject constructor(
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
 
-    val incidentsState: StateFlow<IncidentsState> = boundingBoxState.map { boxState ->
-        when (boxState) {
-            BoundingBoxState.NotInitialized -> IncidentsState.Loading
-            is BoundingBoxState.Success -> {
-//                when (val incidents = incidentsRepository.getIncidents(boxState.boundingBox)) {
-//                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
-//                    else -> IncidentsState.Loading
-//                }
-                IncidentsState.Success(Incidents.sampleIncidents)
-            }
+    val incidentsState: StateFlow<IncidentsState> = locationState.map { location ->
+        when (val incidents = incidentsRepository.getIncidents(location)) {
+            is ApiResponse.Success -> IncidentsState.Success(incidents.data)
+            else -> IncidentsState.Loading
         }
     }.stateIn(
         scope = viewModelScope,

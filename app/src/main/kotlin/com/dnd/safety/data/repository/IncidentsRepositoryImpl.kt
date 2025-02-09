@@ -1,11 +1,12 @@
 package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.remote.api.IncidentsApi
-import com.dnd.safety.domain.model.BoundingBox
+import com.dnd.safety.domain.mapper.toIncidentsList
 import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.domain.repository.IncidentsRepository
+import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
-import retrofit2.Response
+import com.skydoves.sandwich.mapSuccess
 import javax.inject.Inject
 
 class IncidentsRepositoryImpl @Inject constructor(
@@ -13,8 +14,13 @@ class IncidentsRepositoryImpl @Inject constructor(
 ) : IncidentsRepository {
 
     override suspend fun getIncidents(
-        boundingBox: BoundingBox
+        location: LatLng
     ): ApiResponse<List<Incidents>> {
-        return ApiResponse.Success(Response.success(emptyList()))
+        return incidentsApi.getIncidents(
+            location.longitude,
+            location.latitude,
+        ).mapSuccess {
+            toIncidentsList()
+        }
     }
 }
