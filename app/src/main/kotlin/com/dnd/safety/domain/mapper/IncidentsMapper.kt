@@ -10,7 +10,7 @@ fun IncidentsResponse.toIncidentsList() = this.data.map { it.toIncidents() }
 
 fun IncidentsResponse.Data.toIncidents(): Incidents = Incidents(
     id = incident.id,
-    title = "title",
+    title = extractDong(incident.roadNameAddress) ?: "제목",
     description = incident.description,
     pointX = incident.pointX,
     pointY = incident.pointY,
@@ -28,3 +28,8 @@ fun IncidentsResponse.MediaFileDto.toMediaFile() = MediaFile(
     mediaType = mediaType,
     fileUrl = fileUrl
 )
+
+fun extractDong(address: String): String? {
+    val regex = """(\S+동)""".toRegex()
+    return regex.find(address)?.value
+}

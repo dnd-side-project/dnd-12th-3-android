@@ -1,6 +1,6 @@
 package com.dnd.safety.domain.model
 
-import com.dnd.safety.utils.daysAgo
+import java.time.Duration
 import java.time.LocalDateTime
 
 data class Incidents(
@@ -18,7 +18,17 @@ data class Incidents(
     val mediaFiles: List<MediaFile>,
 ) {
 
-    val daysAgo get() = "${createdDate.daysAgo()}일 전"
+    fun daysAgo(): String {
+        val now = LocalDateTime.now()
+        val duration = Duration.between(createdDate, now)
+
+        return when {
+            duration.toDays() > 0 -> "${duration.toDays()}일 전"
+            duration.toHours() > 0 -> "${duration.toHours()}시간 전"
+            duration.toMinutes() > 0 -> "${duration.toMinutes()}분 전"
+            else -> "방금 전"
+        }
+    }
 
     companion object {
         val sampleIncidents = listOf(

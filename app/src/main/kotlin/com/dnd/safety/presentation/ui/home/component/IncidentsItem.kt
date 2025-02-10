@@ -99,7 +99,7 @@ fun IncidentsItem(
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
                 Text(
-                    text = incidents.daysAgo,
+                    text = incidents.daysAgo(),
                     style = SafetyTheme.typography.label1,
                     color = Gray30
                 )
@@ -138,7 +138,7 @@ private fun IncidentsImages(
                 IncidentsImage(
                     url = imageUrls.first().fileUrl,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width(screenWidthDp.dp - 32.dp)
                 )
             }
         } else {
