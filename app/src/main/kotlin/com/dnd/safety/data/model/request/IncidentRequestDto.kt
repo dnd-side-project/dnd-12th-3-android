@@ -22,11 +22,11 @@ data class IncidentRequestDto(
 
         private fun mapCategoryToDisasterGroup(category: String): String {
             return when (category) {
-                "TRAFFIC" -> "교통사고"
+                "TRAFFIC" -> "교통"
                 "FIRE" -> "화재"
-                "COLLAPSE" -> "붕괴사고"
-                "EXPLOSION" -> "폭발사고"
-                "NATURAL" -> "자연재해"
+                "COLLAPSE" -> "붕괴"
+                "EXPLOSION" -> "폭발"
+                "NATURAL" -> "자연재난"
                 "DUST" -> "미세먼지"
                 "TERROR" -> "테러"
                 else -> throw IllegalArgumentException("Invalid category: $category")
