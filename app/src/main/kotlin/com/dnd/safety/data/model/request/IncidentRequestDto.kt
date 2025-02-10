@@ -16,8 +16,8 @@ data class IncidentRequestDto(
             writerId = domain.writerId,
             description = domain.description,
             disasterGroup = mapCategoryToDisasterGroup(domain.disasterGroup),
-            pointX = domain.location.latitude,
-            pointY = domain.location.longitude
+            pointX = domain.location.longitude,
+            pointY = domain.location.latitude
         )
 
         private fun mapCategoryToDisasterGroup(category: String): String {

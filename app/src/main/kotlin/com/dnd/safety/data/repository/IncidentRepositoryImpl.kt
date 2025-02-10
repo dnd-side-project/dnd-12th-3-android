@@ -23,15 +23,12 @@ class IncidentRepositoryImpl @Inject constructor(
             try {
                 val incidentDto = IncidentRequestDto.from(incidentReport)
 
-                val incidentJson = gson.toJson(incidentDto)
-                val incidentRequestBody = incidentJson.toRequestBody("application/json".toMediaTypeOrNull())
-
                 val imageParts = incidentReport.images.map { uri ->
                     fileManager.getMultipartBody(uri)
                 }
 
                 val response = incidentService.createIncident(
-                    incidentData = incidentRequestBody,
+                    incidentData = incidentDto,
                     files = imageParts
                 )
 

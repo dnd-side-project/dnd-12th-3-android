@@ -1,6 +1,5 @@
 package com.dnd.safety.presentation.ui.home
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
@@ -13,11 +12,11 @@ import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
+import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.message
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,25 +31,37 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val locationService: LocationService,
     incidentsRepository: IncidentsRepository,
-    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _locationState = MutableStateFlow(SEOUL_LAT_LNG)
-    val locationState: StateFlow<LatLng> get() = _locationState
+    val myLocation = locationService
+        .requestLocationUpdates()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = null
+        )
+
+    private val _cameraLocationState = MutableStateFlow(SEOUL_LAT_LNG)
+    val cameraLocationState: StateFlow<LatLng> get() = _cameraLocationState
 
     private val boundingBoxState = MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
 
-    val incidentsState: StateFlow<IncidentsState> = locationState.map { location ->
+    val incidentsState: StateFlow<IncidentsState> = cameraLocationState.map { location ->
         when (val incidents = incidentsRepository.getIncidents(location)) {
             is ApiResponse.Success -> IncidentsState.Success(incidents.data)
-            else -> IncidentsState.Loading
+            is ApiResponse.Failure.Error -> {
+                Logger.e(incidents.message())
+                IncidentsState.Loading }
+            is ApiResponse.Failure.Exception -> {
+                Logger.e("${incidents.message}")
+                IncidentsState.Loading  }
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(3000L),
+        started = SharingStarted.Lazily,
         initialValue = IncidentsState.Loading
     )
 
@@ -63,9 +74,9 @@ class HomeViewModel @Inject constructor(
 
     private fun updateLocationByCurrent() {
         viewModelScope.launch {
-            locationService.requestLocationUpdates().collectLatest { location ->
+            myLocation.collectLatest { location ->
                 if (homeUiState.value.isCurrentLocation) {
-                    _locationState.update { location ?: SEOUL_LAT_LNG }
+                    _cameraLocationState.update { location ?: SEOUL_LAT_LNG }
                 }
             }
         }
@@ -73,7 +84,7 @@ class HomeViewModel @Inject constructor(
 
     private fun updateLocationBySearch(location: LatLng) {
         viewModelScope.launch {
-            _locationState.update { location }
+            _cameraLocationState.update { location }
         }
     }
 

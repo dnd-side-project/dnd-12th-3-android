@@ -1,5 +1,6 @@
 package com.dnd.safety.data.remote.api
 
+import com.dnd.safety.data.model.request.IncidentRequestDto
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -12,7 +13,7 @@ interface IncidentService {
     @Multipart
     @POST("api/incidents")
     suspend fun createIncident(
-        @Part("incidentData") incidentData: RequestBody,
+        @Part("incidentData") incidentData: IncidentRequestDto,
         @Part files: List<MultipartBody.Part>
     ): Response<ApiResponse<Unit>>
 }

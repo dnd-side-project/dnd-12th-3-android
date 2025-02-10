@@ -8,18 +8,18 @@ import com.dnd.safety.utils.toLocalDateTime
 
 fun IncidentsResponse.toIncidentsList() = this.data.map { it.toIncidents() }
 
-fun IncidentsResponse.IncidentDto.toIncidents(): Incidents = Incidents(
-    id = id,
-    title = title,
-    description = description,
-    pointX = pointX,
-    pointY = pointY,
-    incidentCategory = IncidentCategory.fromString(disasterGroup),
-    userName = "userName",
-    distance = "distance",
-    address = "address",
-    createdDate = createdDate.toLocalDateTime(),
-    updatedDate = updatedDate.toLocalDateTime(),
+fun IncidentsResponse.Data.toIncidents(): Incidents = Incidents(
+    id = incident.id,
+    title = "title",
+    description = incident.description,
+    pointX = incident.pointX,
+    pointY = incident.pointY,
+    incidentCategory = IncidentCategory.fromString(incident.disasterGroup),
+    userName = writer.nickname,
+    distance = distance,
+    address = incident.roadNameAddress,
+    createdDate = incident.createdDate.toLocalDateTime(),
+    updatedDate = incident.updatedDate.toLocalDateTime(),
     mediaFiles = mediaFiles.map(IncidentsResponse.MediaFileDto::toMediaFile)
 )
 

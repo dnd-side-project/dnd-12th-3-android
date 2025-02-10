@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
@@ -16,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.R
 import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.utils.Logger
 import com.dnd.safety.utils.icon
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -29,14 +28,15 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun HomeMapView(
-    ratLng: LatLng,
+    myLocation: LatLng?,
+    cameraLocation: LatLng,
     incidents: List<Incidents>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
     onUpdateLocation: (LatLng) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(ratLng, 10f)
+        position = CameraPosition.fromLatLngZoom(cameraLocation, 15f)
     }
 
     Box(
@@ -52,21 +52,20 @@ fun HomeMapView(
                 mapToolbarEnabled = false
             )
         ) {
-            MyLocationMarker(
-                ratLng
-            )
+            MyLocationMarker(myLocation)
 
             incidents.forEach { incident ->
                 CustomMapMarker(
                     id = incident.incidentCategory.icon,
-                    location = LatLng(incident.pointX, incident.pointY),
+                    location = LatLng(incident.pointY, incident.pointX),
                 )
             }
         }
     }
 
-    LaunchedEffect(ratLng) {
-        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(ratLng, 15f))
+    LaunchedEffect(cameraLocation) {
+        val currentZoom = cameraPositionState.position.zoom.takeIf { it > 6f } ?: 15f
+        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(cameraLocation, currentZoom))
     }
 
     LaunchedEffect(cameraPositionState.isMoving) {
@@ -87,31 +86,30 @@ fun HomeMapView(
 
 @Composable
 fun MyLocationMarker(
-    ratLng: LatLng
+    myLocation: LatLng?
 ) {
-    val markerState = remember { MarkerState(position = ratLng) }
-
-    LaunchedEffect(ratLng) {
-        markerState.position = ratLng
-    }
+    if (myLocation == null) return
 
     CustomMapMarker(
         id = R.drawable.ic_location,
         fullName = "My Location",
-        location = ratLng,
-        markerState = markerState
+        location = myLocation,
     )
 }
-
 
 @Composable
 fun CustomMapMarker(
     id: Int,
     fullName: String = "",
     location: LatLng,
-    markerState: MarkerState = remember { MarkerState(position = location) },
     onClick: () -> Unit = {}
 ) {
+    val markerState = remember { MarkerState(position = location) }
+
+    LaunchedEffect(location) {
+        markerState.position = location
+    }
+
     MarkerComposable(
         keys = arrayOf(fullName, location),
         state = markerState,

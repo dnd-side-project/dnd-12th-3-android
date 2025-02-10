@@ -20,7 +20,7 @@ enum class IncidentCategory(val korTitle: String) {
         }
 
         fun fromString(value: String): IncidentCategory {
-            return entries.firstOrNull { it.name == value } ?: ALL
+            return entries.firstOrNull { it.korTitle == value } ?: ALL
         }
     }
 }

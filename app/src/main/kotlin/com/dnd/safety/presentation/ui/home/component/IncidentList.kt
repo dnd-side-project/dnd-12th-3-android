@@ -55,7 +55,6 @@ fun IncidentList(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
         ) {
             items(incidents) { incident ->
                 IncidentsItem(incidents = incident)

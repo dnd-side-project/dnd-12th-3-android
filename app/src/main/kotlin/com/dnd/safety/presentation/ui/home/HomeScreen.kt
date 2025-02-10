@@ -4,12 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationDisabled
@@ -27,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
@@ -45,7 +42,8 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val location by viewModel.locationState.collectAsStateWithLifecycle()
+    val cameraLocationState by viewModel.cameraLocationState.collectAsStateWithLifecycle()
+    val myLocation by viewModel.myLocation.collectAsStateWithLifecycle()
     val incidentsState by viewModel.incidentsState.collectAsStateWithLifecycle()
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val modalState by viewModel.homeModalState.collectAsStateWithLifecycle()
@@ -53,7 +51,8 @@ fun HomeRoute(
     HomeScreen(
         incidentsState = incidentsState,
         homeUiState = homeUiState,
-        location = location,
+        myLocation = myLocation,
+        cameraLocation = cameraLocationState,
         viewModel = viewModel,
     )
 
@@ -67,7 +66,8 @@ fun HomeRoute(
 private fun HomeScreen(
     incidentsState: IncidentsState,
     homeUiState: HomeUiState,
-    location: LatLng,
+    myLocation: LatLng?,
+    cameraLocation: LatLng,
     viewModel: HomeViewModel,
 ) {
     HomeBottomSheetScaffold(
@@ -83,7 +83,8 @@ private fun HomeScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             HomeMapView(
-                ratLng = location,
+                myLocation = myLocation,
+                cameraLocation = cameraLocation,
                 incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
                 onUpdateBoundingBox = viewModel::updateBoundingBoxState,
                 onUpdateLocation = viewModel::setSearchPlace,

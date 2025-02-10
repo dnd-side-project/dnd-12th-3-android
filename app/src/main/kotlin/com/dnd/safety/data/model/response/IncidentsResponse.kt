@@ -6,21 +6,27 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class IncidentsResponse(
     val code: String = "",
-    val data: List<IncidentDto>
+    val data: List<Data>
 ) {
+    @Serializable
+    data class Data(
+        val writer: WriterDto,
+        val incident: IncidentDto,
+        val distance: String,
+        val mediaFiles: List<MediaFileDto>
+    )
 
     @Serializable
     data class IncidentDto(
         val id: Long,
         val writerId: Long,
-        val title: String,
         val description: String,
+        val roadNameAddress: String,
         val disasterGroup: String,
         val pointX: Double,
         val pointY: Double,
         @SerializedName("createdAt") val createdDate: String,
         @SerializedName("updatedAt") val updatedDate: String,
-        val mediaFiles: List<MediaFileDto>
     )
 
     @Serializable
@@ -28,5 +34,10 @@ data class IncidentsResponse(
         val incidentId: Int,
         val mediaType: String,
         val fileUrl: String,
+    )
+
+    @Serializable
+    data class WriterDto(
+        val nickname: String,
     )
 }
