@@ -3,7 +3,6 @@ package com.dnd.safety.presentation.designsystem.theme
 import androidx.compose.ui.graphics.Color
 
 val Main = Color(0xFFEB4E1F)
-val Background = Color(0xFF202020)
 
 val Black = Color(0xFF030303)
 

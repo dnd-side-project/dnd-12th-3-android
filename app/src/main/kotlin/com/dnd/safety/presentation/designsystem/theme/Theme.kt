@@ -14,9 +14,9 @@ import androidx.compose.ui.platform.LocalView
 
 private val LightColorScheme = lightColorScheme(
     primary = Main,
-    surfaceDim = Background,
-    onSurface = White,
-    surface = Background,
+    surfaceDim = White,
+    onSurface = Black,
+    surface = White,
     background = Gray80, // 항상 Gray80 사용
 )
 

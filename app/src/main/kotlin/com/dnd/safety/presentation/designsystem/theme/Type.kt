@@ -39,7 +39,7 @@ val pretendard = FontFamily(
 private val pretendardStyle = TextStyle(
     fontFamily = pretendard,
     fontWeight = FontWeight.Normal,
-    color = White,
+    color = Black,
     letterSpacing = 0.sp,
     platformStyle = PlatformTextStyle(
         includeFontPadding = false
@@ -106,7 +106,16 @@ val Typography = SafetyTypography(
     ),
     label3 = pretendardStyle.copy(
         fontSize = 13.sp,
-        lineHeight = 19.sp,
+        lineHeight = 19.5.sp,
+    ),
+    label4 = pretendardStyle.copy(
+        fontSize = 15.sp,
+        lineHeight = 22.5.sp,
+        fontWeight = FontWeight.Medium,
+    ),
+    label5 = pretendardStyle.copy(
+        fontSize = 15.sp,
+        lineHeight = 22.5.sp,
     ),
     smallText = pretendardStyle.copy(
         fontSize = 12.sp,
@@ -130,6 +139,8 @@ data class SafetyTypography(
     val label1: TextStyle,
     val label2: TextStyle,
     val label3: TextStyle,
+    val label4: TextStyle,
+    val label5: TextStyle,
     val smallText: TextStyle,
 )
 
@@ -148,6 +159,8 @@ val LocalTypography = staticCompositionLocalOf {
         label1 = pretendardStyle,
         label2 = pretendardStyle,
         label3 = pretendardStyle,
+        label4 = pretendardStyle,
+        label5 = pretendardStyle,
         smallText = pretendardStyle,
     )
 }
