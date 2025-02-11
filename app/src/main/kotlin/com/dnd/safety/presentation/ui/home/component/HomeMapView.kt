@@ -6,13 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
 import com.dnd.safety.utils.icon
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.ComposeMapColorScheme
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
@@ -31,15 +29,9 @@ fun HomeMapView(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        GoogleMap(
+        MyGoogleMap(
             modifier = modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            mapColorScheme = ComposeMapColorScheme.DARK,
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled = false,
-                compassEnabled = false,
-                mapToolbarEnabled = false
-            )
+            cameraPositionState = cameraPositionState
         ) {
             MyLocationMarker(myLocation)
 
