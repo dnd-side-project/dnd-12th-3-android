@@ -46,6 +46,7 @@ fun HomeBottomSheetScaffold(
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val marginTop = 56
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val bottomSheetSt = rememberStandardBottomSheetState(
         skipHiddenState = true,
@@ -63,8 +64,8 @@ fun HomeBottomSheetScaffold(
                     scope.launch {
                         peekHeight = when (it) {
                             ExpandedType.COLLAPSED -> 56
-                            ExpandedType.FULL -> screenHeight
-                            ExpandedType.HALF -> screenHeight / 2
+                            ExpandedType.FULL -> screenHeight - marginTop
+                            ExpandedType.HALF -> screenHeight / 2 - marginTop
                         }
                         bottomSheetSt.partialExpand()
                     }
