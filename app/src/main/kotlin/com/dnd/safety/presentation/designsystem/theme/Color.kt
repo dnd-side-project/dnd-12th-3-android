@@ -2,7 +2,7 @@ package com.dnd.safety.presentation.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Main = Color(0xFFEB4E1F)
+val Main = Color(0xFFFF5E00)
 
 val Black = Color(0xFF030303)
 

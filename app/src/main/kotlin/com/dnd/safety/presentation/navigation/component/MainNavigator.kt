@@ -13,6 +13,7 @@ import com.dnd.safety.presentation.navigation.MainBottomNavItem
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
+import com.dnd.safety.presentation.ui.mytown.navigation.navigateToMyTown
 
 class MainNavigator(
     val navController: NavHostController
@@ -41,7 +42,7 @@ class MainNavigator(
         when (menuItem) {
             MainBottomNavItem.Home -> navController.navigateToHome(navOptions)
             MainBottomNavItem.PostReport -> navController.navigate(MainTabRoute.PostReport, navOptions)
-            MainBottomNavItem.MyPage -> {}
+            MainBottomNavItem.MyPage -> navController.navigateToMyTown()
         }
     }
 
