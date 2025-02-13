@@ -1,6 +1,5 @@
 package com.dnd.safety.presentation.designsystem.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -16,9 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.dnd.safety.presentation.designsystem.theme.Black
-import com.dnd.safety.presentation.designsystem.theme.Gray40
-import com.dnd.safety.presentation.designsystem.theme.Gray60
+import com.dnd.safety.presentation.designsystem.theme.Gray10
+import com.dnd.safety.presentation.designsystem.theme.Gray50
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
 @Composable
@@ -41,8 +39,7 @@ fun TextField(
     ) { innerTextField ->
         Surface(
             shape = RoundedCornerShape(8.dp),
-            color = Gray60,
-            border = BorderStroke(1.dp, Black)
+            color = Gray10,
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -55,7 +52,7 @@ fun TextField(
                         Text(
                             text = hint,
                             style = textStyle,
-                            color = Gray40
+                            color = Gray50
                         )
                     }
                     innerTextField()

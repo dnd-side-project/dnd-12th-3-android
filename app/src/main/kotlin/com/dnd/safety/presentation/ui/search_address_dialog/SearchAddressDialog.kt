@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,14 +30,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dnd.safety.domain.model.LawDistrict
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.presentation.designsystem.component.TextField
-import com.dnd.safety.presentation.designsystem.component.TopAppbar
+import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray50
-import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
-import com.dnd.safety.presentation.designsystem.theme.White
 
 @Composable
 fun SearchAddressDialog(
@@ -63,9 +60,9 @@ fun SearchAddressDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Gray80,
+                    tint = Gray50,
                     modifier = Modifier
                         .clickable(onClick = onDismissRequest)
                         .padding(16.dp)
@@ -80,19 +77,29 @@ fun SearchAddressDialog(
                 Spacer(modifier = Modifier.width(16.dp))
             }
             LazyColumn {
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
                 itemsIndexed(lawDistricts) { index, lawDistrict ->
-                    LawDistrictItem(
-                        lawDistrict = lawDistrict,
-                        index = index,
-                        lastIndex = lawDistricts.lastIndex,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                viewModel.getLatLngFromAddress(context, lawDistrict.address)
-                            }
-                            .padding(horizontal = 16.dp, vertical = 11.5.dp)
-                            .animateItem()
-                    )
+                    Column {
+                        Text(
+                            text = lawDistrict.address,
+                            style = SafetyTheme.typography.label2,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.getLatLngFromAddress(context, lawDistrict.address2)
+                                }
+                                .padding(vertical = 11.5.dp, horizontal = 32.dp)
+                                .animateItem()
+                        )
+                        if (index != lawDistricts.lastIndex) {
+                            HorizontalDivider(
+                                color = Gray10,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -102,30 +109,6 @@ fun SearchAddressDialog(
         viewModel.searchAddressCompleteEffect.collect {
             onAddressSelected(it)
             onDismissRequest()
-        }
-    }
-}
-
-@Composable
-private fun LawDistrictItem(
-    lawDistrict: LawDistrict,
-    index: Int,
-    lastIndex: Int,
-    modifier: Modifier
-) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
-    ) {
-        Text(
-            text = lawDistrict.address,
-            style = SafetyTheme.typography.body1,
-            modifier = modifier
-
-        )
-        if (index != lastIndex) {
-            HorizontalDivider(
-                color = Gray50,
-            )
         }
     }
 }

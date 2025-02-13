@@ -6,6 +6,7 @@ import com.dnd.safety.domain.model.LawDistrict
 fun LawDistrictResponse.toLawDistricts() = results.juso.map {
     LawDistrict(
         address = it.roadAddr,
+        address2 = it.roadAddrPart1,
         sido = listOf(
             it.siNm,
             it.sggNm,

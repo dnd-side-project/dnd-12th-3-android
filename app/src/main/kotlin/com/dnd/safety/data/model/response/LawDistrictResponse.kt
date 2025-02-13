@@ -26,5 +26,6 @@ data class LawDistrictResponse(
         val liNm: String,
 
         val roadAddr: String,
+        val roadAddrPart1: String,
     )
 }
