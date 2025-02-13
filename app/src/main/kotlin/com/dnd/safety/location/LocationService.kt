@@ -7,4 +7,6 @@ interface LocationService {
     fun requestLocationUpdates(
         intervalMillis: Long = 100000L
     ): Flow<LatLng?>
+
+    suspend fun getCurrentLocation(): LatLng?
 }

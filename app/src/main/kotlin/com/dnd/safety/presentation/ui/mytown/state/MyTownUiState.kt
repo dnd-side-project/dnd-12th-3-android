@@ -20,5 +20,7 @@ sealed interface MyTownUiState {
 
         val secondMyTown: MyTown?
             get() = myTowns.getOrNull(1)
+
+        val selectedLocation = myTowns.find { it.selected }?.latLng
     }
 }

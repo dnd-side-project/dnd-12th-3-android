@@ -15,12 +15,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.presentation.designsystem.component.FadeAnimatedVisibility
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
+import com.dnd.safety.presentation.designsystem.component.TopAppbar
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.MyLocationMarker
 import com.dnd.safety.presentation.ui.mytown.component.MyTownSheet
 import com.dnd.safety.presentation.ui.mytown.effect.MyTownModalState
 import com.dnd.safety.presentation.ui.mytown.state.MyTownUiState
-import com.dnd.safety.presentation.ui.search_dialog.SearchDialog
+import com.dnd.safety.presentation.ui.search_address_dialog.SearchAddressDialog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -57,12 +58,12 @@ fun MyTownContent(
     ) {
         if (myTownUiState is MyTownUiState.Success) {
             MyTownScreen(
-                myLocation = myLocation,
+                location = myTownUiState.selectedLocation ?: myLocation,
                 firstMyTown = myTownUiState.firstMyTown,
                 secondMyTown = myTownUiState.secondMyTown,
                 onAddClick = viewModel::showTownSearch,
                 onDeleteClick = viewModel::deleteMyTown,
-                onSelectClick = viewModel::selectMyTown
+                onSelectClick = viewModel::selectTown
             )
         }
     }
@@ -70,7 +71,7 @@ fun MyTownContent(
 
 @Composable
 private fun MyTownScreen(
-    myLocation: LatLng,
+    location: LatLng,
     firstMyTown: MyTown?,
     secondMyTown: MyTown?,
     onAddClick: () -> Unit,
@@ -78,10 +79,16 @@ private fun MyTownScreen(
     onSelectClick: (MyTown) -> Unit,
 ) {
     val cameraPositionState = rememberCameraPositionState {
-        CameraPosition.fromLatLngZoom(myLocation, 15f)
+        CameraPosition.fromLatLngZoom(location, 15f)
     }
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            TopAppbar(
+                title = "마이페이지",
+            )
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(innerPadding)
@@ -90,7 +97,7 @@ private fun MyTownScreen(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState
             ) {
-                MyLocationMarker(myLocation)
+                MyLocationMarker(location)
             }
 
             MyTownSheet(
@@ -104,9 +111,9 @@ private fun MyTownScreen(
         }
     }
 
-    LaunchedEffect(myLocation) {
+    LaunchedEffect(location) {
         val currentZoom = cameraPositionState.position.zoom.takeIf { it > 6f } ?: 15f
-        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(myLocation, currentZoom))
+        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(location, currentZoom))
     }
 }
 
@@ -118,10 +125,8 @@ fun MyTownModelContent(
     when (modalState) {
         MyTownModalState.Dismiss -> {}
         MyTownModalState.ShowSearchDialog -> {
-            SearchDialog(
-                onPlaceSelected = { latLng, placeName ->
-                    viewModel.selectMyTown(MyTown(1, placeName, true))
-                },
+            SearchAddressDialog(
+                onAddressSelected = viewModel::addressSelected,
                 onDismissRequest = viewModel::dismissModal,
             )
         }
@@ -133,12 +138,12 @@ fun MyTownModelContent(
 private fun MyTownScreenPreview() {
     SafetyTheme {
         MyTownScreen(
-            firstMyTown = MyTown(1, "My Town", true),
+            firstMyTown = MyTown(1, "My Town", LatLng(37.5665, 126.9780), true),
             secondMyTown = null,
             onAddClick = {},
-            onDeleteClick = {},
             onSelectClick = {},
-            myLocation = LatLng(37.5665, 126.9780)
+            onDeleteClick = {},
+            location = LatLng(37.5665, 126.9780)
         )
     }
 }

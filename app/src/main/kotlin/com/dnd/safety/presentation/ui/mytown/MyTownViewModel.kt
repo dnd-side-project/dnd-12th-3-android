@@ -3,26 +3,29 @@ package com.dnd.safety.presentation.ui.mytown
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.MyTown
+import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.location.LocationService
-import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.mytown.effect.MyTownModalState
 import com.dnd.safety.presentation.ui.mytown.state.MyTownUiState
 import com.dnd.safety.utils.Const.SEOUL_LAT_LNG
+import com.dnd.safety.utils.Logger
 import com.dnd.safety.utils.trigger.TriggerStateFlow
 import com.dnd.safety.utils.trigger.triggerStateIn
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyTownViewModel @Inject constructor(
-    locationService: LocationService
+    private val locationService: LocationService
 ) : ViewModel() {
 
     val myLocation = locationService
@@ -34,17 +37,10 @@ class MyTownViewModel @Inject constructor(
             initialValue = SEOUL_LAT_LNG
         )
 
-    val myTownUiState: TriggerStateFlow<MyTownUiState> = flowOf(
-        MyTownUiState.Success(
-            listOf(
-                MyTown(
-                    id = 1,
-                    title = "My Town",
-                    selected = true
-                )
-            )
-        )
-    ).triggerStateIn(
+    private val _myTownUiState = MutableStateFlow<MyTownUiState>(MyTownUiState.Loading)
+    val myTownUiState: TriggerStateFlow<MyTownUiState> = _myTownUiState.onStart {
+        fetchMyTowns()
+    }.triggerStateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3000L),
         initialValue = MyTownUiState.Loading
@@ -53,6 +49,22 @@ class MyTownViewModel @Inject constructor(
     private val _myTownModalState = MutableStateFlow<MyTownModalState>(MyTownModalState.Dismiss)
     val myTownModalState: StateFlow<MyTownModalState> get() = _myTownModalState
 
+    private fun fetchMyTowns() {
+        viewModelScope.launch {
+            _myTownUiState.update {
+                MyTownUiState.Success(
+                    myTowns = listOf(
+                        MyTown(
+                            id = 1,
+                            title = "My Town",
+                            latLng = LatLng(37.5665, 126.9780),
+                            selected = true
+                        )
+                    )
+                )
+            }
+        }
+    }
 
     fun showTownSearch() {
         _myTownModalState.update {
@@ -60,12 +72,30 @@ class MyTownViewModel @Inject constructor(
         }
     }
 
+    fun addressSelected(searchResult: SearchResult) {
+        Logger.d("addressSelected: $searchResult")
+    }
+
+    fun addMyTown(myTown: MyTown) {
+        // add my town
+    }
+
     fun deleteMyTown(myTown: MyTown) {
         // delete my town
     }
 
-    fun selectMyTown(myTown: MyTown) {
-        // select my town
+    fun selectTown(myTown: MyTown) {
+        val uiState = myTownUiState.value as? MyTownUiState.Success ?: return
+
+        viewModelScope.launch {
+            _myTownUiState.update {
+                MyTownUiState.Success(
+                    myTowns = uiState.myTowns.map {
+                        it.copy(selected = it.id == myTown.id)
+                    }
+                )
+            }
+        }
     }
 
     fun dismissModal() {

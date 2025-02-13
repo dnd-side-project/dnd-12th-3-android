@@ -63,6 +63,7 @@ fun MyTownSheet(
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 firstMyTown?.let {
                     MyTown(
@@ -140,13 +141,12 @@ private fun MyTownAddButton(
         shape = RoundedCornerShape(4.dp),
         color = Gray10,
         onClick = onAddClick,
-        modifier = modifier
-            .padding(vertical = 8.dp)
+        modifier = modifier.padding(vertical = 8.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(start = 16.dp, end = 4.dp),
         ) {
             Text(
                 text = "",

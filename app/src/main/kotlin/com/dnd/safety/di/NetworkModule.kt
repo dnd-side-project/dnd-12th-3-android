@@ -4,17 +4,20 @@ import com.dnd.safety.BuildConfig
 import com.dnd.safety.data.remote.api.GoogleAuthService
 import com.dnd.safety.data.remote.api.IncidentService
 import com.dnd.safety.data.remote.api.IncidentsApi
+import com.dnd.safety.data.remote.api.LawDistrictService
 import com.dnd.safety.data.remote.api.LocationService
-import com.google.gson.Gson
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -23,10 +26,26 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    private const val BASE_RETROFIT = "baseRetrofit"
+    private const val KAKAO_RETROFIT = "kakaoRetrofit"
+    private const val GOOGLE_RETROFIT = "googleRetrofit"
+    private const val LAW_RETROFIT = "lawRetrofit"
+
     @Provides
     @Singleton
-    @Named("baseOkHttpClient")
-    fun provideBaseOkHttpClient(): OkHttpClient {
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        encodeDefaults = true
+    }
+
+    @Provides
+    @Singleton
+    fun provideConverterFactory(json: Json): Converter.Factory = json.asConverterFactory("application/json".toMediaType())
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClientBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
             .addInterceptor(HttpNetworkLogger())
             .addInterceptor { chain ->
@@ -42,93 +61,96 @@ object NetworkModule {
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
-            .build()
     }
 
     @Provides
     @Singleton
-    fun provideGson(): Gson = Gson()
-
-    @Provides
-    @Singleton
-    fun provideGsonConverterFactory(gson: Gson): GsonConverterFactory =
-        GsonConverterFactory.create(gson)
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(
-        @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
-    ): Retrofit =
-        Retrofit.Builder()
-            .baseUrl("http://3.37.245.234:8080")
-            .client(okHttpClient)
-            .addConverterFactory(gsonConverterFactory)
-            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-            .build()
-
-    @Provides
-    @Singleton
-    @Named("kakaoOkHttpClient")
-    fun provideKakaoOkHttpClient(
-        @Named("baseOkHttpClient") okHttpClient: OkHttpClient
+    fun provideOkHttpClient(
+        builder: OkHttpClient.Builder
     ): OkHttpClient {
-        return okHttpClient.newBuilder()
+        return builder
             .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}")
-                    .build()
+                val token = runBlocking { "" }
+
+                val requestBuilder = chain.request().newBuilder()
+                    .header("Content-Type", "application/json; charset=utf-8")
+                    .header("token", token)
+                val request = requestBuilder.build()
                 chain.proceed(request)
             }
             .build()
     }
 
     @Provides
-    @Named("kakaoRetrofit")
+    @Singleton
+    @Named(BASE_RETROFIT)
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("http://3.37.245.234:8080")
+            .client(okHttpClient)
+            .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
+            .build()
+
+    @Provides
+    @Singleton
+    @Named(KAKAO_RETROFIT)
     fun provideKakaoRetrofit(
-        @Named("kakaoOkHttpClient") okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
+        builder: OkHttpClient.Builder,
+        converterFactory: Converter.Factory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://dapi.kakao.com/")
-            .addConverterFactory(gsonConverterFactory)
+            .addConverterFactory(converterFactory)
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-            .client(okHttpClient)
+            .client(builder
+                .addInterceptor { chain ->
+                    val request = chain.request().newBuilder()
+                        .addHeader("Authorization", "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}")
+                        .build()
+                    chain.proceed(request)
+                }
+                .build())
             .build()
     }
 
     @Provides
-    @Named("googleRetrofit")
+    @Singleton
+    @Named(GOOGLE_RETROFIT)
     fun provideGoogleRetrofit(
-        @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
+        builder: OkHttpClient.Builder,
+        converterFactory: Converter.Factory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080/")
-            .addConverterFactory(gsonConverterFactory)
+            .addConverterFactory(converterFactory)
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-            .client(okHttpClient)
+            .client(builder.build())
             .build()
     }
 
     @Provides
-    @Named("baseRetrofit")
-    fun provideBaseRetrofit(
-        @Named("baseOkHttpClient") okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
+    @Singleton
+    @Named(LAW_RETROFIT)
+    fun provideLawRetrofit(
+        builder: OkHttpClient.Builder,
+        converterFactory: Converter.Factory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://3.37.245.234:8080/")
-            .addConverterFactory(gsonConverterFactory)
+            .baseUrl("https://business.juso.go.kr/addrlink/")
+            .addConverterFactory(converterFactory)
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-            .client(okHttpClient)
+            .client(builder.build())
             .build()
     }
 
     @Provides
     @Singleton
     fun provideLocationService(
-        @Named("kakaoRetrofit") retrofit: Retrofit
+        @Named(KAKAO_RETROFIT) retrofit: Retrofit
     ): LocationService {
         return retrofit.create(LocationService::class.java)
     }
@@ -136,7 +158,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthService(
-        @Named("googleRetrofit") retrofit: Retrofit
+        @Named(GOOGLE_RETROFIT) retrofit: Retrofit
     ): GoogleAuthService {
         return retrofit.create(GoogleAuthService::class.java)
     }
@@ -144,7 +166,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideIncidentService(
-        @Named("baseRetrofit") retrofit: Retrofit
+        @Named(BASE_RETROFIT) retrofit: Retrofit
     ): IncidentService {
         return retrofit.create(IncidentService::class.java)
     }
@@ -152,7 +174,14 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideIncidentsApi(
-        @Named("baseRetrofit") retrofit: Retrofit
-    ): IncidentsApi =
-        retrofit.create(IncidentsApi::class.java)
+        @Named(BASE_RETROFIT) retrofit: Retrofit
+    ): IncidentsApi = retrofit.create(IncidentsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLawDistrictService(
+        @Named(LAW_RETROFIT) retrofit: Retrofit
+    ): LawDistrictService {
+        return retrofit.create(LawDistrictService::class.java)
+    }
 }

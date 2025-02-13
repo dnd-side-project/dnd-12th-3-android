@@ -53,6 +53,11 @@ android {
             "GOOGLE_CLIENT_ID",
             "\"${properties.getProperty("GOOGLE_CLIENT_ID")}\""
         )
+        buildConfigField(
+            "String",
+            "ADDRESS_SEARCH_KEY",
+            "\"${properties.getProperty("ADDRESS_SEARCH_KEY")}\""
+        )
     }
 
     buildTypes {
