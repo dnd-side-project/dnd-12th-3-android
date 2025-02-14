@@ -2,6 +2,7 @@ package com.dnd.safety.domain.mapper
 
 import com.dnd.safety.data.model.response.LawDistrictResponse
 import com.dnd.safety.domain.model.LawDistrict
+import com.dnd.safety.domain.model.PointDto
 
 fun LawDistrictResponse.toLawDistricts() = results.juso.map {
     LawDistrict(
@@ -13,10 +14,12 @@ fun LawDistrictResponse.toLawDistricts() = results.juso.map {
             it.emdNm,
             it.liNm,
         ).joinToString(" "),
-        admCd = it.admCd,
-        rnMgtSn = it.rnMgtSn,
-        udrtYn = it.udrtYn,
-        buldMnnm = it.buldMnnm,
-        buldSlno = it.buldSlno
+        pointDto = PointDto(
+            admCd = it.admCd,
+            rnMgtSn = it.rnMgtSn,
+            udrtYn = it.udrtYn,
+            buldMnnm = it.buldMnnm,
+            buldSlno = it.buldSlno
+        )
     )
 }

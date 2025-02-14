@@ -30,6 +30,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dnd.safety.domain.model.LawDistrict
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.presentation.designsystem.component.TextField
 import com.dnd.safety.presentation.designsystem.theme.Gray10
@@ -44,71 +45,87 @@ fun SearchAddressDialog(
 ) {
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val lawDistricts by viewModel.lawDistricts.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onDismissRequest,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceDim)
-        ) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Gray50,
-                    modifier = Modifier
-                        .clickable(onClick = onDismissRequest)
-                        .padding(16.dp)
-                        .size(25.dp)
-                )
-                TextField(
-                    value = searchText,
-                    onValueChange = viewModel::textChanged,
-                    hint = "장소 검색",
-                    modifier = Modifier.weight(1f),
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-            }
-            LazyColumn {
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                itemsIndexed(lawDistricts) { index, lawDistrict ->
-                    Column {
-                        Text(
-                            text = lawDistrict.address,
-                            style = SafetyTheme.typography.label2,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.getLatLngFromAddress(context, lawDistrict.address2)
-                                }
-                                .padding(vertical = 11.5.dp, horizontal = 32.dp)
-                                .animateItem()
-                        )
-                        if (index != lawDistricts.lastIndex) {
-                            HorizontalDivider(
-                                color = Gray10,
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        SearchAddressDialogContent(
+            searchText = searchText,
+            lawDistricts = lawDistricts,
+            onDismissRequest = onDismissRequest,
+            onTextChange = viewModel::textChanged,
+            onGetPoint = viewModel::getPoint,
+        )
     }
 
     LaunchedEffect(true) {
         viewModel.searchAddressCompleteEffect.collect {
             onAddressSelected(it)
             onDismissRequest()
+        }
+    }
+}
+
+@Composable
+private fun SearchAddressDialogContent(
+    searchText: String,
+    lawDistricts: List<LawDistrict>,
+    onDismissRequest: () -> Unit,
+    onTextChange: (String) -> Unit,
+    onGetPoint: (LawDistrict) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceDim)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = Gray50,
+                modifier = Modifier
+                    .clickable(onClick = onDismissRequest)
+                    .padding(16.dp)
+                    .size(25.dp)
+            )
+            TextField(
+                value = searchText,
+                onValueChange = onTextChange,
+                hint = "장소 검색",
+                modifier = Modifier.weight(1f),
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+        LazyColumn {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            itemsIndexed(lawDistricts) { index, lawDistrict ->
+                Column {
+                    Text(
+                        text = lawDistrict.address,
+                        style = SafetyTheme.typography.label2,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onGetPoint(lawDistrict)
+                            }
+                            .padding(vertical = 11.5.dp, horizontal = 32.dp)
+                            .animateItem()
+                    )
+                    if (index != lawDistricts.lastIndex) {
+                        HorizontalDivider(
+                            color = Gray10,
+                        )
+                    }
+                }
+            }
         }
     }
 }

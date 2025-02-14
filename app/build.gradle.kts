@@ -58,6 +58,11 @@ android {
             "ADDRESS_SEARCH_KEY",
             "\"${properties.getProperty("ADDRESS_SEARCH_KEY")}\""
         )
+        buildConfigField(
+            "String",
+            "POINT_SEARCH_KEY",
+            "\"${properties.getProperty("POINT_SEARCH_KEY")}\""
+        )
     }
 
     buildTypes {
@@ -184,4 +189,6 @@ dependencies {
 
     implementation(libs.landscapist.coil)
 
+    implementation(libs.proj4j)
+    implementation(libs.proj4j.epsg)
 }
