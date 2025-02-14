@@ -18,8 +18,8 @@ fun IncidentsResponse.Data.toIncidents(): Incidents = Incidents(
     userName = writer.nickname,
     distance = distance,
     address = incident.roadNameAddress,
-    createdDate = incident.createdDate.toLocalDateTime(),
-    updatedDate = incident.updatedDate.toLocalDateTime(),
+    createdDate = incident.createdAt.toLocalDateTime(),
+    updatedDate = incident.updatedAt.toLocalDateTime(),
     mediaFiles = mediaFiles.map(IncidentsResponse.MediaFileDto::toMediaFile)
 )
 

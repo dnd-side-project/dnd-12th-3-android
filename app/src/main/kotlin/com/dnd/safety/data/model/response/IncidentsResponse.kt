@@ -1,6 +1,5 @@
 package com.dnd.safety.data.model.response
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,8 +24,8 @@ data class IncidentsResponse(
         val disasterGroup: String,
         val pointX: Double,
         val pointY: Double,
-        @SerializedName("createdAt") val createdDate: String,
-        @SerializedName("updatedAt") val updatedDate: String,
+        val createdAt: String,
+        val updatedAt: String,
     )
 
     @Serializable
