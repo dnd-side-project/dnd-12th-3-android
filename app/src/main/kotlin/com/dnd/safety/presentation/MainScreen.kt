@@ -79,8 +79,8 @@ internal fun MainNavHost(
         ) {
             splashNavGraph(
                 onPermissionAllowed = {
-                    navigator.navigateTo(MainBottomNavItem.Home) // TODO: 임시로 일단 홈으로 이동
-                },
+                    navigator.navigateTo(MainBottomNavItem.Home)
+                }, // TODO: 임시로 일단 홈으로 이동
             )
             homeNavGraph(
 

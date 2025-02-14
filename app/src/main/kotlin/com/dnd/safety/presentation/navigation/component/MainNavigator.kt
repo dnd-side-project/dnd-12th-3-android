@@ -34,13 +34,12 @@ class MainNavigator(
         }
 
     fun navigateTo(menuItem: MainBottomNavItem) {
-        if (currentItem == menuItem) return
-
         val navOptions = navOptions {
             popUpTo(0) {
                 inclusive = true
             }
-            restoreState = true
+            launchSingleTop = true
+            restoreState = false
         }
 
         when (menuItem) {
