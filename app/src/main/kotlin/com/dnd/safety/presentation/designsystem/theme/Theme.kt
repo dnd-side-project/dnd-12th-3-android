@@ -14,10 +14,12 @@ import androidx.compose.ui.platform.LocalView
 
 private val LightColorScheme = lightColorScheme(
     primary = Main,
+    onPrimary = Gray10,
     surfaceDim = White,
     onSurface = Black,
+    inverseOnSurface = White,
     surface = White,
-    background = Gray80, // 항상 Gray80 사용
+    background = White,
 )
 
 @Composable

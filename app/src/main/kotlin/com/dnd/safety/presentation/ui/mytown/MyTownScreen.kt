@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.presentation.designsystem.component.FadeAnimatedVisibility
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
+import com.dnd.safety.presentation.designsystem.component.NormalDialog
 import com.dnd.safety.presentation.designsystem.component.TopAppbar
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.MyLocationMarker
@@ -62,7 +63,7 @@ fun MyTownContent(
                 firstMyTown = myTownUiState.firstMyTown,
                 secondMyTown = myTownUiState.secondMyTown,
                 onAddClick = viewModel::showTownSearch,
-                onDeleteClick = viewModel::deleteMyTown,
+                onDeleteClick = viewModel::showDeleteCheck,
                 onSelectClick = viewModel::selectTown
             )
         }
@@ -128,6 +129,14 @@ fun MyTownModelContent(
             SearchAddressDialog(
                 onAddressSelected = viewModel::addressSelected,
                 onDismissRequest = viewModel::dismissModal,
+            )
+        }
+        is MyTownModalState.ShowDeleteCheckDialog -> {
+            NormalDialog(
+                title = "",
+                description = "${modalState.myTown.title}을 삭제하시겠습니까?",
+                onDismissRequest = viewModel::dismissModal,
+                onPositiveClick = { viewModel.deleteMyTown(modalState.myTown.id) }
             )
         }
     }

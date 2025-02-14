@@ -66,12 +66,6 @@ class MyTownViewModel @Inject constructor(
         }
     }
 
-    fun showTownSearch() {
-        _myTownModalState.update {
-            MyTownModalState.ShowSearchDialog
-        }
-    }
-
     fun addressSelected(searchResult: SearchResult) {
         Logger.d("addressSelected: $searchResult")
     }
@@ -80,7 +74,7 @@ class MyTownViewModel @Inject constructor(
         // add my town
     }
 
-    fun deleteMyTown(myTown: MyTown) {
+    fun deleteMyTown(myTownId: Long) {
         // delete my town
     }
 
@@ -95,6 +89,18 @@ class MyTownViewModel @Inject constructor(
                     }
                 )
             }
+        }
+    }
+
+    fun showTownSearch() {
+        _myTownModalState.update {
+            MyTownModalState.ShowSearchDialog
+        }
+    }
+
+    fun showDeleteCheck(myTown: MyTown) {
+        _myTownModalState.update {
+            MyTownModalState.ShowDeleteCheckDialog(myTown)
         }
     }
 

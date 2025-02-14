@@ -2,6 +2,7 @@ package com.dnd.safety.presentation.ui.search_address_dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -50,13 +51,32 @@ fun SearchAddressDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onDismissRequest,
     ) {
-        SearchAddressDialogContent(
-            searchText = searchText,
-            lawDistricts = lawDistricts,
-            onDismissRequest = onDismissRequest,
-            onTextChange = viewModel::textChanged,
-            onGetPoint = viewModel::getPoint,
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceDim)
+        ) {
+            SearchAddressDialogContent(
+                searchText = searchText,
+                lawDistricts = lawDistricts,
+                onDismissRequest = onDismissRequest,
+                onTextChange = viewModel::textChanged,
+                onGetPoint = viewModel::getPoint,
+            )
+
+            if (lawDistricts.isEmpty()) {
+                Text(
+                    text = "검색 결과가 없습니다.",
+                    style = SafetyTheme.typography.label2,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                        .align(Alignment.Center)
+                )
+            }
+        }
     }
 
     LaunchedEffect(true) {
@@ -78,7 +98,6 @@ private fun SearchAddressDialogContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
         Spacer(modifier = Modifier.height(10.dp))
         Row(
