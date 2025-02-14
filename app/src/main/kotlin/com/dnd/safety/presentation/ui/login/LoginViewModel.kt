@@ -2,9 +2,9 @@ package com.dnd.safety.presentation.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dnd.safety.domain.usecase.GoogleSignInUseCase
-import com.dnd.safety.domain.usecase.KakaoLoginUseCase
-import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
+import com.dnd.safety.domain.repository.AuthRepository
+import com.skydoves.sandwich.suspendOnFailure
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,14 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val kakaoLoginUseCase: KakaoLoginUseCase,
-    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
 
@@ -29,17 +28,16 @@ class LoginViewModel @Inject constructor(
     fun loginWithKakao() = viewModelScope.launch {
         _state.update { it.copy(isLoading = true) }
 
-        kakaoLoginUseCase().fold(
-            onSuccess = {
-                _state.update { it.copy(isLoading = false) }
+        authRepository.loginWithKakao()
+            .suspendOnSuccess {
+                _state.update { it.copy(isLoading = false, token = data) }
                 _effect.send(LoginEffect.NavigateToNickName)
-            },
-            onFailure = { throwable ->
+            }.suspendOnFailure {
                 _state.update { it.copy(isLoading = false) }
-                _effect.send(LoginEffect.ShowToast(throwable.message ?: "로그인 실패"))
+                _effect.send(LoginEffect.ShowSnackBar("로그인 실패"))
             }
-        )
     }
+
     fun onLoginEvent(event: LoginEvent) = viewModelScope.launch {
         when (event) {
             is LoginEvent.GoogleSignInSuccess -> loginWithGoogle(event.idToken)
@@ -50,30 +48,20 @@ class LoginViewModel @Inject constructor(
     private suspend fun loginWithGoogle(idToken: String) {
         _state.update { it.copy(isLoading = true) }
 
-        googleSignInUseCase(idToken).fold(
-            onSuccess = { token ->
-                _state.update { it.copy(isLoading = false, token = token) }
+        authRepository.signInWithGoogle(idToken)
+            .suspendOnSuccess {
+                _state.update { it.copy(isLoading = false, token = data) }
                 _effect.send(LoginEffect.NavigateToNickName)
-            },
-            onFailure = { throwable ->
+            }.suspendOnFailure {
                 _state.update { it.copy(isLoading = false) }
-                when(throwable) {
-                    is SocketTimeoutException -> {
-                        _effect.send(LoginEffect.ShowToast("네트워크 연결이 불안정합니다"))
-                    }
-                    else -> {
-                        _effect.send(LoginEffect.ShowToast("일시적인 오류가 발생했습니다"))
-                    }
-                }
+                _effect.send(LoginEffect.ShowSnackBar("로그인 실패"))
             }
-        )
     }
 
     private suspend fun handleError(throwable: Throwable) {
         _state.update { it.copy(isLoading = false) }
-        _effect.send(LoginEffect.ShowToast(throwable.message ?: "로그인 실패"))
+        _effect.send(LoginEffect.ShowSnackBar(throwable.message ?: "로그인 실패"))
     }
-
 }
 
 sealed class LoginEvent {

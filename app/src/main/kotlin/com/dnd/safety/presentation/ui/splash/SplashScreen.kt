@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.utils.Permissions
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -39,7 +40,7 @@ fun SplashRoute(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Gray80),
+            .background(White),
         contentAlignment = Alignment.Center,
     ) {
         SplashImage()

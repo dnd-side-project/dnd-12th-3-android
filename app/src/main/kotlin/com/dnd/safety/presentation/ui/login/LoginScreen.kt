@@ -33,13 +33,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
-import com.dnd.safety.presentation.navigation.Route
-import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
 
 @Composable
 fun LoginScreen(
     onShowNickName: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -65,15 +64,12 @@ fun LoginScreen(
             }
         }
     }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is LoginEffect.ShowToast -> {
-                }
-
-                is LoginEffect.NavigateToNickName -> {
-                    onShowNickName()
-                }
+                is LoginEffect.ShowSnackBar -> onShowSnackBar(effect.message)
+                is LoginEffect.NavigateToNickName -> onShowNickName()
             }
         }
     }

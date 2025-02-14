@@ -84,7 +84,8 @@ internal fun MainNavHost(
 
             )
             loginNavGraph(
-                onShowNickName = navigator::navigateToNickNameForm
+                onShowNickName = navigator::navigateToNickNameForm,
+                onShowSnackBar = onShowSnackBar
             )
             nickNameNavGraph(
                 onShowSearchLocation = navigator::navigateToSearchLocation

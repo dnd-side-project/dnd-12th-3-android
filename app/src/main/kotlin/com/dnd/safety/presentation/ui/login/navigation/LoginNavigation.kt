@@ -19,10 +19,12 @@ fun NavController.navigateToLogin() {
 
 fun NavGraphBuilder.loginNavGraph(
     onShowNickName: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
 ) {
     composable<Route.Login> {
         LoginScreen(
-            onShowNickName = onShowNickName
+            onShowNickName = onShowNickName,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 }
