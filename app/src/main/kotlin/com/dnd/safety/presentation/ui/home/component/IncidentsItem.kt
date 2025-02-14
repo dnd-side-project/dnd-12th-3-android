@@ -28,7 +28,11 @@ import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.domain.model.MediaFile
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray30
+import com.dnd.safety.presentation.designsystem.theme.Gray40
+import com.dnd.safety.presentation.designsystem.theme.Gray60
+import com.dnd.safety.presentation.designsystem.theme.Orange60
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.White
 import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
@@ -58,13 +62,14 @@ fun IncidentsItem(
                     modifier = Modifier
                         .clip(SafetyTheme.shapes.r100)
                         .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                            Orange60,
                             SafetyTheme.shapes.r100
                         )
                 ) {
                     Text(
-                        text = incidents.incidentCategory.name,
-                        style = SafetyTheme.typography.smallText,
+                        text = incidents.incidentCategory.korTitle,
+                        style = SafetyTheme.typography.label2,
+                        color = White,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                 }
@@ -74,14 +79,14 @@ fun IncidentsItem(
             ) {
                 Text(
                     text = incidents.distance,
-                    style = SafetyTheme.typography.label1,
-                    color = Gray10
+                    style = SafetyTheme.typography.label2,
+                    color = Gray60
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = incidents.address,
-                    style = SafetyTheme.typography.label1,
-                    color = Gray30
+                    style = SafetyTheme.typography.label2,
+                    color = Gray40
                 )
             }
             Row(
@@ -89,18 +94,18 @@ fun IncidentsItem(
             ) {
                 Text(
                     text = incidents.userName,
-                    style = SafetyTheme.typography.label1,
+                    style = SafetyTheme.typography.label2,
                     color = Gray30
                 )
                 Text(
                     text = "·",
-                    style = SafetyTheme.typography.label1,
+                    style = SafetyTheme.typography.label2,
                     color = Gray30,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
                 Text(
                     text = incidents.daysAgo(),
-                    style = SafetyTheme.typography.label1,
+                    style = SafetyTheme.typography.label2,
                     color = Gray30
                 )
             }

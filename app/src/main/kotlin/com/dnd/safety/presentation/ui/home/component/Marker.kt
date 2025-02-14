@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -33,7 +35,7 @@ fun MyLocationMarker(
         location = myLocation,
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_location),
+            painter = painterResource(R.drawable.ic_my_location),
             contentDescription = "Profile Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier.size(38.71.dp, 47.dp)
@@ -50,7 +52,12 @@ fun IncidentsMarker(
         fullName = "My Location",
         location = location,
     ) {
-        Box {
+        Box(
+            modifier = Modifier.shadow(
+                elevation = 24.dp,
+                shape = CircleShape
+            )
+        ) {
             Image(
                 painter = painterResource(R.drawable.ic_location),
                 contentDescription = "Profile Image",

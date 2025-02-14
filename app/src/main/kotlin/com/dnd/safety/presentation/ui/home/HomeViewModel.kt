@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Point
-import com.dnd.safety.domain.model.SortFilter
 import com.dnd.safety.domain.repository.IncidentsRepository
 import com.dnd.safety.location.LocationService
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
@@ -18,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.message
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val locationService: LocationService,
+    locationService: LocationService,
     incidentsRepository: IncidentsRepository,
 ) : ViewModel() {
 
@@ -38,9 +38,12 @@ class HomeViewModel @Inject constructor(
         .requestLocationUpdates()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Lazily,
+            started = SharingStarted.Eagerly,
             initialValue = null
         )
+
+    var keyword = MutableStateFlow("")
+        private set
 
     private val _cameraLocationState = MutableStateFlow(SEOUL_LAT_LNG)
     val cameraLocationState: StateFlow<LatLng> get() = _cameraLocationState
@@ -52,13 +55,17 @@ class HomeViewModel @Inject constructor(
 
     val incidentsState: StateFlow<IncidentsState> = cameraLocationState.map { location ->
         when (val incidents = incidentsRepository.getIncidents(location)) {
-            is ApiResponse.Success -> IncidentsState.Success(incidents.data)
+            is ApiResponse.Success -> {
+                IncidentsState.Success(incidents.data)
+            }
             is ApiResponse.Failure.Error -> {
                 Logger.e(incidents.message())
-                IncidentsState.Loading }
+                IncidentsState.Loading
+            }
             is ApiResponse.Failure.Exception -> {
                 Logger.e("${incidents.message}")
-                IncidentsState.Loading  }
+                IncidentsState.Loading
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -70,14 +77,15 @@ class HomeViewModel @Inject constructor(
     val homeModalState: StateFlow<HomeModalState> get() = _homeModalState
 
     init {
-        updateLocationByCurrent()
+        initLocation()
     }
 
-    private fun updateLocationByCurrent() {
+    private fun initLocation() {
         viewModelScope.launch {
             myLocation.collectLatest { location ->
-                if (homeUiState.value.isCurrentLocation) {
-                    _cameraLocationState.update { location ?: SEOUL_LAT_LNG }
+                if (location != null) {
+                    _cameraLocationState.update { location }
+                    cancel()
                 }
             }
         }
@@ -113,37 +121,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun setSortFilter(sort: SortFilter) {
-        _homeUiState.update {
-            it.copy(
-                sortFilters = it.sortFilters.map { filter ->
-                    filter.copy(isSelected = filter == sort)
-                }
-            )
-        }
-    }
-
     fun setSearchPlace(latLng: LatLng, placeName: String = "") {
         updateLocationBySearch(latLng)
 
-        _homeUiState.update {
-            it.copy(
-                keyword = placeName,
-                isCurrentLocation = false
-            )
-        }
+        keyword.update { placeName }
     }
 
-    fun setIsCurrentLocation() {
-        _homeUiState.update {
-            it.copy(isCurrentLocation = !it.isCurrentLocation)
-        }
-    }
-
-    fun showSortModal() {
-        _homeModalState.update {
-            HomeModalState.ShowSortSheet(homeUiState.value.sortFilters)
-        }
+    fun setLocationCurrent() {
+        _cameraLocationState.update { myLocation.value ?: SEOUL_LAT_LNG }
     }
 
     fun showSearchModal() {

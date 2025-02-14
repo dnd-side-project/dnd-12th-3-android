@@ -16,3 +16,7 @@ val Gray20 = Color(0xFFDCDCDC)
 val Gray10 = Color(0xFFEFEFEF)
 
 val White = Color(0xFFFFFFFF)
+
+val Orange60 = Color(0xFFFF7B2E)
+
+val Blue = Color(0xFF007AFF)

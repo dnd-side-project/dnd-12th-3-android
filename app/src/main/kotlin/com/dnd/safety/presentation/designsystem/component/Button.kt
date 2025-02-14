@@ -1,6 +1,7 @@
 package com.dnd.safety.presentation.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,9 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray20
+import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
@@ -66,9 +67,10 @@ fun SmallButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    style: TextStyle = SafetyTheme.typography.label3,
+    style: TextStyle = SafetyTheme.typography.label4,
     containerColor: Color = Gray70,
     contentColor: Color = Gray20,
+    borderColor: Color = Gray60,
     icon: (@Composable () -> Unit)? = null
 ) {
     Box(
@@ -77,6 +79,11 @@ fun SmallButton(
             .background(
                 containerColor,
                 SafetyTheme.shapes.r100
+            )
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = SafetyTheme.shapes.r100
             )
             .clickable(
                 onClick = onClick

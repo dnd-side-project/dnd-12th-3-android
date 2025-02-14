@@ -19,7 +19,6 @@ fun HomeMapView(
     cameraLocation: LatLng,
     incidents: List<Incidents>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
-    onUpdateLocation: (LatLng) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val cameraPositionState = rememberCameraPositionState {
@@ -57,9 +56,6 @@ fun HomeMapView(
                 val northeastLatLng = bounds.northeast
                 val southwestLatLng = bounds.southwest
                 onUpdateBoundingBox(northeastLatLng, southwestLatLng)
-
-                val center = cameraPositionState.position.target
-                onUpdateLocation(center) // 카메라 중심 업데이트
             }
         }
     }

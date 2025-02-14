@@ -20,6 +20,7 @@ private val LightColorScheme = lightColorScheme(
     inverseOnSurface = White,
     surface = White,
     background = White,
+    outlineVariant = Gray10
 )
 
 @Composable

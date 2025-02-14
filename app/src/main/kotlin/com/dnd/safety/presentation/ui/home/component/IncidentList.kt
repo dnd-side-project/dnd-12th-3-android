@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,16 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.presentation.designsystem.component.IconButton
+import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
 @Composable
 fun IncidentList(
     incidents: List<Incidents>,
-    sort: String,
     typeFilters: List<IncidentTypeFilter>,
-    onSortClick: () -> Unit,
     onFilterClick: (IncidentTypeFilter) -> Unit,
-    onSearchClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -42,14 +41,7 @@ fun IncidentList(
             typeFilters = typeFilters,
             onFilterClick = onFilterClick,
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        ListButtons(
-            sort = sort,
-            onSortClick = onSortClick,
-            onSearchClick = onSearchClick,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-        )
+        HorizontalDivider(color = Gray10)
         Spacer(modifier = Modifier.height(8.dp))
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -63,42 +55,14 @@ fun IncidentList(
     }
 }
 
-@Composable
-private fun ListButtons(
-    sort: String,
-    onSortClick: () -> Unit,
-    onSearchClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        IconButton(
-            text = sort,
-            icon = Icons.Default.KeyboardArrowDown,
-            onClick = onSortClick,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            text = "내용 검색",
-            icon = Icons.Default.Search,
-            onClick = onSearchClick,
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun IncidentListPreview() {
     SafetyTheme {
         IncidentList(
             incidents = Incidents.sampleIncidents,
-            sort = "최신순",
             typeFilters = IncidentTypeFilter.entries,
             onFilterClick = {},
-            onSortClick = {},
-            onSearchClick = {},
         )
     }
 }

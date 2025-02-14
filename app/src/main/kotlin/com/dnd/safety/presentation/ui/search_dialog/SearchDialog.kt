@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,14 +23,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.presentation.designsystem.component.TextField
-import com.dnd.safety.presentation.designsystem.theme.Gray50
-import com.dnd.safety.presentation.designsystem.theme.Gray80
+import com.dnd.safety.presentation.designsystem.theme.Blue
+import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.google.android.gms.maps.model.LatLng
@@ -50,75 +54,123 @@ fun SearchDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onDismissRequest,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Gray80)
-        ) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Back",
-                    tint = White,
-                    modifier = Modifier
-                        .clickable(onClick = onDismissRequest)
-                        .padding(16.dp)
-                        .size(25.dp)
-                )
-                TextField(
-                    value = searchText,
-                    onValueChange = viewModel::textChanged,
-                    hint = "장소 검색",
-                    modifier = Modifier.weight(1f),
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-            }
-            LazyColumn {
-                itemsIndexed(predictions) { index, prediction ->
-                    PredictionItem(
-                        prediction = prediction,
-                        index = index,
-                        lastIndex = predictions.lastIndex,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                viewModel.getPlaceLatLng(context, prediction.placeId) { latLng ->
-                                    onPlaceSelected(latLng, prediction.getPrimaryText(null).toString())
-                                }
-                                onDismissRequest()
-                            }
-                            .padding(horizontal = 16.dp, vertical = 11.5.dp)
-                            .animateItem()
-                    )
+        SearchDialogContent(
+            searchText = searchText,
+            predictions = predictions,
+            onTextChange = viewModel::textChanged,
+            onPredictionClick = {
+                viewModel.getPlaceLatLng(context, it.placeId) { latLng ->
+                    onPlaceSelected(latLng, it.getPrimaryText(null).toString())
                 }
-            }
-        }
+                onDismissRequest()
+                viewModel.textChanged("")
+            },
+            onDismissRequest = onDismissRequest,
+        )
     }
 }
 
 @Composable
+fun SearchDialogContent(
+    searchText: String,
+    onTextChange: (String) -> Unit,
+    predictions: List<AutocompletePrediction>,
+    onPredictionClick: (AutocompletePrediction) -> Unit,
+    onDismissRequest: () -> Unit,
+
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(White)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = Gray40,
+                modifier = Modifier
+                    .clickable(onClick = onDismissRequest)
+                    .padding(16.dp)
+                    .size(25.dp)
+            )
+            TextField(
+                value = searchText,
+                onValueChange = onTextChange,
+                hint = "주소 장소 검색",
+                modifier = Modifier.weight(1f),
+            )
+            Spacer(modifier = Modifier.width(24.dp))
+        }
+        LazyColumn {
+            itemsIndexed(predictions) { index, prediction ->
+                PredictionItem(
+                    searchText = searchText,
+                    prediction = prediction,
+                    index = index,
+                    lastIndex = predictions.lastIndex,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onPredictionClick(prediction)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .animateItem()
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
 private fun PredictionItem(
+    searchText: String,
     prediction: AutocompletePrediction,
     index: Int,
     lastIndex: Int,
     modifier: Modifier
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
-    ) {
+    val primaryText = prediction.getPrimaryText(null).toString()
+    val annotatedText = buildAnnotatedString {
+        val startIndex = primaryText.indexOf(searchText, ignoreCase = true)
+        if (startIndex != -1) {
+            append(primaryText.substring(0, startIndex))
+            withStyle(style = SpanStyle(color = Blue)) {
+                append(primaryText.substring(startIndex, startIndex + searchText.length))
+            }
+            append(primaryText.substring(startIndex + searchText.length))
+        } else {
+            append(primaryText)
+        }
+    }
+
+    Column {
         Text(
-            text = prediction.getPrimaryText(null).toString(),
+            text = annotatedText,
             style = SafetyTheme.typography.body1,
             modifier = modifier
-
         )
         if (index != lastIndex) {
-            HorizontalDivider(
-                color = Gray50,
-            )
+            HorizontalDivider()
         }
+    }
+}
+
+
+@Preview
+@Composable
+private fun SearchDialogPreview() {
+    SafetyTheme {
+        SearchDialogContent(
+            searchText = "서울",
+            onTextChange = {},
+            predictions = emptyList(),
+            onPredictionClick = {},
+            onDismissRequest = {},
+        )
     }
 }
