@@ -1,10 +1,9 @@
-package com.dnd.safety.presentation.ui.home
+package com.dnd.safety.presentation.ui.search_dialog
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -28,7 +27,6 @@ class SearchDialogViewModel @Inject constructor(
 
     var searchText = MutableStateFlow("")
         private set
-
 
     private val _predictions = MutableStateFlow<List<AutocompletePrediction>>(emptyList())
     val predictions: StateFlow<List<AutocompletePrediction>> = _predictions

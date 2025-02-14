@@ -3,11 +3,13 @@ package com.dnd.safety.di
 import com.dnd.safety.data.repository.AuthRepositoryImpl
 import com.dnd.safety.data.repository.IncidentRepositoryImpl
 import com.dnd.safety.data.repository.IncidentsRepositoryImpl
+import com.dnd.safety.data.repository.LawDistrictRepositoryImpl
 import com.dnd.safety.data.repository.LocationRepositoryImpl
 import com.dnd.safety.data.repository.MediaRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.domain.repository.IncidentsRepository
+import com.dnd.safety.domain.repository.LawDistrictRepository
 import com.dnd.safety.domain.repository.LocationRepository
 import com.dnd.safety.domain.repository.MediaRepository
 import com.dnd.safety.utils.AndroidFileManager
@@ -54,4 +56,10 @@ abstract class RepositoryModule {
     abstract fun provideIncidentsRepository(
         repositoryImpl: IncidentsRepositoryImpl
     ): IncidentsRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideLawDistrictRepository(
+        repositoryImpl: LawDistrictRepositoryImpl
+    ): LawDistrictRepository
 }

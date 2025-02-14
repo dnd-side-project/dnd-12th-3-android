@@ -7,7 +7,7 @@ import okio.Buffer
 
 class HttpNetworkLogger : Interceptor {
     companion object {
-        private const val MAX_LOG_LENGTH = 500 // 최대 500자까지만 로깅
+        private const val MAX_LOG_LENGTH = 3000 // 최대 500자까지만 로깅
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {

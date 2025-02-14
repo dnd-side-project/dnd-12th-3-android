@@ -27,6 +27,7 @@ import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
 import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
 import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
 import com.dnd.safety.presentation.ui.login.LoginScreen
+import com.dnd.safety.presentation.ui.mytown.navigation.myTownNavGraph
 import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
 import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionScreen
 import com.dnd.safety.presentation.ui.postreport.PostReportScreen
@@ -126,6 +127,7 @@ internal fun MainNavHost(
             ) {
                 PhotoSelectionScreen(navigator = navigator)
             }
+            myTownNavGraph()
         }
     }
 }

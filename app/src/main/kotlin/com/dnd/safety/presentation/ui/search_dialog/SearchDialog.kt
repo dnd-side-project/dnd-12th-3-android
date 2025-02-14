@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.home
+package com.dnd.safety.presentation.ui.search_dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

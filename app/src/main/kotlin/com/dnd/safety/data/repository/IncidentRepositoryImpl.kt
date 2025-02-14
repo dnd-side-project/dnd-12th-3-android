@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 class IncidentRepositoryImpl @Inject constructor(
     private val incidentService: IncidentService,
-    private val fileManager: FileManager,
-    private val gson: Gson
+    private val fileManager: FileManager
 ) : IncidentRepository {
 
     override suspend fun createIncident(incidentReport: IncidentReport): Result<Unit> =

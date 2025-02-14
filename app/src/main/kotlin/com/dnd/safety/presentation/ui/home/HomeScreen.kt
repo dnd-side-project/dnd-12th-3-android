@@ -36,6 +36,7 @@ import com.dnd.safety.presentation.ui.home.component.SortSheet
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
+import com.dnd.safety.presentation.ui.search_dialog.SearchDialog
 import com.google.android.gms.maps.model.LatLng
 
 @Composable

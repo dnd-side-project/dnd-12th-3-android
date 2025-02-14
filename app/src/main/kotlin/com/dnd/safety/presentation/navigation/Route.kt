@@ -53,6 +53,11 @@ sealed interface Route {
     data object PhotoSelection : Route {
         override val route: String = "photo_selection"
     }
+
+    @Serializable
+    data object MyTown : Route {
+        override val route: String = "temp"
+    }
 }
 
 sealed interface MainTabRoute: Route {

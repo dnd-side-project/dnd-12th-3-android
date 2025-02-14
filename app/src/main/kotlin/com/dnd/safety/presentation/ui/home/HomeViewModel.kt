@@ -12,6 +12,7 @@ import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
+import com.dnd.safety.utils.Const.SEOUL_LAT_LNG
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
@@ -155,8 +156,5 @@ class HomeViewModel @Inject constructor(
         _homeModalState.update { HomeModalState.Dismiss }
     }
 
-    companion object {
-        private val SEOUL_LAT_LNG = LatLng(37.5665, 126.9780)
-    }
 }
 

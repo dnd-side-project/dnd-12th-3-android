@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class LocationServiceImpl @Inject constructor(
@@ -61,5 +62,24 @@ class LocationServiceImpl @Inject constructor(
     }.catch {
         Logger.e("$it")
         emit(null)
+    }
+
+    @SuppressLint("MissingPermission")
+    override suspend fun getCurrentLocation(): LatLng? {
+        if (!context.hasLocationPermission()) return null
+
+        return try {
+            val location = locationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY, null
+            ).await()
+
+            location?.let {
+                Logger.d("Current Location: ${it.latitude}, ${it.longitude}")
+                LatLng(it.latitude, it.longitude)
+            }
+        } catch (e: Exception) {
+            Logger.e("Failed to get location: $e")
+            null
+        }
     }
 }
