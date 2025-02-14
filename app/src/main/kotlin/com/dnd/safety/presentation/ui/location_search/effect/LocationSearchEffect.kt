@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.locationsearch
+package com.dnd.safety.presentation.ui.location_search.effect
 
 import com.dnd.safety.data.model.Location
 

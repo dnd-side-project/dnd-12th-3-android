@@ -14,23 +14,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.dnd.safety.presentation.navigation.MainBottomNavItem
-import com.dnd.safety.presentation.navigation.MainTabRoute
-import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainBottomBar
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
-import com.dnd.safety.presentation.ui.locationconfirm.LocationConfirmScreen
-import com.dnd.safety.presentation.ui.locationsearch.LocationSearchScreen
-import com.dnd.safety.presentation.ui.login.LoginScreen
+import com.dnd.safety.presentation.ui.location_search.navigation.locationNavGraph
+import com.dnd.safety.presentation.ui.login.navigation.loginNavGraph
 import com.dnd.safety.presentation.ui.mytown.navigation.myTownNavGraph
-import com.dnd.safety.presentation.ui.nicknameform.NicknameFormScreen
-import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionScreen
-import com.dnd.safety.presentation.ui.postreport.PostReportScreen
+import com.dnd.safety.presentation.ui.nicknameform.navigation.nickNameNavGraph
+import com.dnd.safety.presentation.ui.postreport.navigation.postReportNavGraph
 import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
 
 @Composable
@@ -85,49 +78,26 @@ internal fun MainNavHost(
             startDestination = navigator.startDestination,
         ) {
             splashNavGraph(
-                navigator = navigator,
-                onPermissionAllowed = { navigator.navigateTo(MainBottomNavItem.Home) },
+                onPermissionAllowed = navigator::navigateToLogin,
             )
             homeNavGraph(
 
             )
-            composable(Route.Login.route) {
-                LoginScreen(navigator = navigator)
-            }
+            loginNavGraph(
+                onShowNickName = navigator::navigateToNickNameForm
+            )
+            nickNameNavGraph(
+                onShowSearchLocation = navigator::navigateToSearchLocation
+            )
+            locationNavGraph(
+                onShowNavigationConfirm = navigator::navigateToLocationConfirm
+            )
+            postReportNavGraph(
+                onGoBack = navigator::popBackStackIfNotHome
+            )
+            myTownNavGraph(
 
-            composable(Route.NicknameForm.route) {
-                NicknameFormScreen(navigator = navigator)
-            }
-
-            composable(
-                route = Route.SearchLocation.route,
-                arguments = listOf(
-                    navArgument(Route.SearchLocation.argNickname) { type = NavType.StringType }
-                )
-            ) {
-                LocationSearchScreen(navigator = navigator)
-            }
-
-            composable(
-                route = Route.LocationConfirm.route,
-                arguments = listOf(
-                    navArgument(Route.LocationConfirm.argNickname) { type = NavType.StringType },
-                    navArgument(Route.LocationConfirm.argLocation) { type = NavType.StringType }
-                )
-            ) {
-                LocationConfirmScreen(navigator = navigator)
-            }
-
-            composable<MainTabRoute.PostReport> {
-                PostReportScreen(navigator = navigator)
-            }
-
-            composable(
-                route = Route.PhotoSelection.route,
-            ) {
-                PhotoSelectionScreen(navigator = navigator)
-            }
-            myTownNavGraph()
+            )
         }
     }
 }

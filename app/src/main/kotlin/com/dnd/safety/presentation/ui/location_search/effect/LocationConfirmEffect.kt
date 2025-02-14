@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.locationconfirm
+package com.dnd.safety.presentation.ui.location_search.effect
 
 sealed class LocationConfirmEffect {
     object ShowPermissionDeniedMessage : LocationConfirmEffect()

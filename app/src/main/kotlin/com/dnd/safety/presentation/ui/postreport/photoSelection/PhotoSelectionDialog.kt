@@ -1,9 +1,10 @@
-package com.dnd.safety.presentation.ui.photoselection
+package com.dnd.safety.presentation.ui.postreport.photoSelection
 
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -49,6 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,19 +72,16 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
-import com.dnd.safety.presentation.navigation.MainTabRoute
-import com.dnd.safety.presentation.navigation.Route
-import com.dnd.safety.presentation.navigation.component.MainNavigator
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun PhotoSelectionScreen(
-    modifier: Modifier = Modifier,
+fun PhotoSelectionDialog(
+    onPhotoSelected: (List<Uri>) -> Unit,
+    onDismissRequest: () -> Unit,
     viewModel: PhotoSelectionViewModel = hiltViewModel(),
-    navigator: MainNavigator
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -132,11 +132,7 @@ fun PhotoSelectionScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is PhotoSelectionEffect.NavigateBack -> {
-                    navigator.navController.previousBackStackEntry?.savedStateHandle?.set(
-                        MainTabRoute.PostReport.selectedMedia,
-                        state.selectedMedia.map { it.uri }
-                    )
-                    navigator.popBackStackIfNotHome()
+                    onPhotoSelected(state.selectedMedia.map { it.uri })
                 }
                 is PhotoSelectionEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
@@ -148,27 +144,31 @@ fun PhotoSelectionScreen(
         }
     }
 
-    PhotoSelectionContent(
-        state = state,
-        onNavigateBack = { navigator.popBackStackIfNotHome() },
-        onConfirmClick = viewModel::onConfirmClick,
-        onMediaSelected = viewModel::onMediaSelected,
-        onCameraClick = {
-            val intent = Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA).apply {
-                val photoFile = createImageFile(context)
-                val photoUri = FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.provider",
-                    photoFile
-                )
-                viewModel.setTempPhotoUri(photoUri)
-                putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-            }
-            cameraLauncher.launch(intent)
-        },
-        onRequestPermission = { launcher.launch(requiredPermissions) },
-        modifier = modifier
-    )
+    Dialog(
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        onDismissRequest = onDismissRequest,
+    ) {
+        PhotoSelectionContent(
+            state = state,
+            onNavigateBack = onDismissRequest,
+            onConfirmClick = viewModel::onConfirmClick,
+            onMediaSelected = viewModel::onMediaSelected,
+            onCameraClick = {
+                val intent = Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA).apply {
+                    val photoFile = createImageFile(context)
+                    val photoUri = FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.provider",
+                        photoFile
+                    )
+                    viewModel.setTempPhotoUri(photoUri)
+                    putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                }
+                cameraLauncher.launch(intent)
+            },
+            onRequestPermission = { launcher.launch(requiredPermissions) },
+        )
+    }
 }
 
 private fun createImageFile(context: Context): File {

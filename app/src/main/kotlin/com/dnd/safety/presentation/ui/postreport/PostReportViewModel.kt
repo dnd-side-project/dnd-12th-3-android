@@ -2,17 +2,18 @@ package com.dnd.safety.presentation.ui.postreport
 
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.domain.model.IncidentReport
 import com.dnd.safety.domain.usecase.CreateIncidentReportUseCase
 import com.dnd.safety.domain.usecase.GetCurrentLocationUseCase
-import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionViewModel
+import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
+import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -21,18 +22,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostReportViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val createIncidentReportUseCase: CreateIncidentReportUseCase,
 ) : ViewModel() {
-    private val selectedMediaItems =
-        savedStateHandle.getStateFlow<List<Uri>>("selectedMedia", emptyList())
 
     private val _state = MutableStateFlow(PostReportState())
     val state = _state.asStateFlow()
 
     private val _effect = Channel<PostReportEffect>()
     val effect = _effect.receiveAsFlow()
+
+    private val _modalEffect = MutableStateFlow<PostReportModalEffect>(PostReportModalEffect.Dismiss)
+    val modalEffect: StateFlow<PostReportModalEffect> get() = _modalEffect
 
     fun fetchCurrentLocation() = viewModelScope.launch {
         getCurrentLocationUseCase()
@@ -44,17 +45,12 @@ class PostReportViewModel @Inject constructor(
             }
     }
 
-
     fun updateContent(content: String) {
         _state.update { it.copy(content = content) }
     }
 
     fun updateCategory(category: IncidentCategory) {
         _state.update { it.copy(selectedCategory = category) }
-    }
-
-    fun navigateToPhotoSelection() = viewModelScope.launch {
-        _effect.send(PostReportEffect.NavigateToPhotoSelection)
     }
 
     fun updateSelectedMedia(uris: List<Uri>) {
@@ -100,5 +96,13 @@ class PostReportViewModel @Inject constructor(
         return state.content.isNotBlank() &&
                 state.selectedCategory != null &&
                 state.location.address.isNotBlank()
+    }
+
+    fun showPhotoPicker() {
+        _modalEffect.update { PostReportModalEffect.ShowPhotoPickerDialog }
+    }
+
+    fun dismissModal() {
+        _modalEffect.update { PostReportModalEffect.Dismiss }
     }
 }

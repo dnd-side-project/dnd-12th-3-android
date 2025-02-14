@@ -1,12 +1,13 @@
-package com.dnd.safety.presentation.ui.locationconfirm
+package com.dnd.safety.presentation.ui.location_search
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.utils.toRouteType
+import com.dnd.safety.presentation.ui.location_search.effect.LocationConfirmEffect
+import com.dnd.safety.presentation.ui.location_search.state.LocationConfirmState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,9 +22,10 @@ import javax.inject.Inject
 class LocationConfirmViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val nickname = savedStateHandle.get<String>(Route.LocationConfirm.argNickname) ?: ""
-    val locationString = savedStateHandle.get<String>(Route.LocationConfirm.argLocation) ?: ""
-    val location = Json.decodeFromString<Location>(locationString)
+
+    val locationConfirm = savedStateHandle.toRouteType<Route.LocationConfirm, Location>()
+    val nickname = locationConfirm.nickname
+    val location = locationConfirm.location
 
     init {
         println("LocationConfirmViewModel - nickname: $nickname")

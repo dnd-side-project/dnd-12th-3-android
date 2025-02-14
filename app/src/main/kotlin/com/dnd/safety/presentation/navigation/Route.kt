@@ -2,83 +2,52 @@ package com.dnd.safety.presentation.navigation
 
 import com.dnd.safety.data.model.Location
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 sealed interface Route {
-    val route: String
 
     @Serializable
-    data object Splash : Route {
-        override val route: String = "splash"
-    }
+    data object Splash : Route
 
     @Serializable
-    data object Login : Route {
-        override val route: String = "login"
-    }
+    data object Login : Route
 
     @Serializable
-    data object NicknameForm : Route {
-        override val route: String = "nicknameform"
-    }
+    data object NicknameForm : Route
 
     @Serializable
     data class SearchLocation(
         val nickname: String
-    ) : Route {
-        override val route: String = "search_location/$nickname"
-
-        companion object {
-            const val route = "search_location/{nickname}"
-            const val argNickname = "nickname"
-        }
-    }
+    ) : Route
 
     @Serializable
     data class LocationConfirm(
         val nickname: String,
         val location: Location
-    ) : Route {
-        override val route: String =
-            "location_confirm/$nickname/${Json.encodeToString(Location.serializer(), location)}"
-
-        companion object {
-            const val route = "location_confirm/{nickname}/{location}"
-            const val argNickname = "nickname"
-            const val argLocation = "location"
-        }
-    }
+    ) : Route
 
     @Serializable
-    data object PhotoSelection : Route {
-        override val route: String = "photo_selection"
-    }
+    data object PhotoSelection : Route
 
     @Serializable
-    data object MyTown : Route {
-        override val route: String = "temp"
-    }
+    data object MyTown : Route
 }
 
-sealed interface MainTabRoute: Route {
+sealed interface MainTabRoute : Route {
 
     @Serializable
-    data object Home : MainTabRoute {
-        override val route: String
-            get() = "temp"
+    data object Home : MainTabRoute
+
+    @Serializable
+    sealed interface PostReport : MainTabRoute {
+
+        @Serializable
+        data object Camera : PostReport
+
+        @Serializable
+        data object Gallery : PostReport
     }
 
     @Serializable
-    data object PostReport : MainTabRoute {
-        override val route: String = "post_report"
-        const val selectedMedia = "selected_media"
-    }
-
-    @Serializable
-    data object MyPage : MainTabRoute {
-        override val route: String
-            get() = "temp"
-    }
-
+    data object MyPage : MainTabRoute
 }
 

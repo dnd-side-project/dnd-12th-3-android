@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.photoselection
+package com.dnd.safety.presentation.ui.postreport.photoSelection
 
 import androidx.paging.PagingData
 import com.dnd.safety.domain.model.Media

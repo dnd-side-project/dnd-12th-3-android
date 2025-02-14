@@ -5,15 +5,19 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.navigation.MainBottomNavItem
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
+import com.dnd.safety.presentation.ui.location_search.navigation.navigateToLocationSearch
+import com.dnd.safety.presentation.ui.location_search.navigation.navigationToLocationConfirm
+import com.dnd.safety.presentation.ui.login.navigation.navigateToLogin
 import com.dnd.safety.presentation.ui.mytown.navigation.navigateToMyTown
+import com.dnd.safety.presentation.ui.nicknameform.navigation.navigateToNickName
 
 class MainNavigator(
     val navController: NavHostController
@@ -46,11 +50,20 @@ class MainNavigator(
         }
     }
 
-    fun <T : Route> navigateTo(
-        route: T,
-        navOptions: NavOptions? = null
-    ) {
-        navController.navigate(route.route, navOptions)
+    fun navigateToLogin() {
+        navController.navigateToLogin()
+    }
+
+    fun navigateToNickNameForm() {
+        navController.navigateToNickName()
+    }
+
+    fun navigateToSearchLocation(nickname: String) {
+        navController.navigateToLocationSearch(nickname)
+    }
+
+    fun navigateToLocationConfirm(nickname: String, location: Location) {
+        navController.navigationToLocationConfirm(nickname, location)
     }
 
     fun popBackStackIfNotHome(): Boolean {

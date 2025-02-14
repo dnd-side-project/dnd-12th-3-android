@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.locationsearch
+package com.dnd.safety.presentation.ui.location_search
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -8,6 +8,8 @@ import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.usecase.FetchLocationUseCase
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.utils.toRouteType
+import com.dnd.safety.presentation.ui.location_search.effect.LocationSearchEffect
+import com.dnd.safety.presentation.ui.location_search.state.LocationSearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

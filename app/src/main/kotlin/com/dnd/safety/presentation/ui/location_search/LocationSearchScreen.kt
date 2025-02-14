@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.locationsearch
+package com.dnd.safety.presentation.ui.location_search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -47,13 +47,13 @@ import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.location_search.effect.LocationSearchEffect
 import kotlinx.coroutines.delay
 
 @Composable
 fun LocationSearchScreen(
-    modifier: Modifier = Modifier,
+    onShowNavigationConfirm: (String, Location) -> Unit,
     viewModel: LocationSearchViewModel = hiltViewModel(),
-    navigator: MainNavigator
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
@@ -68,12 +68,7 @@ fun LocationSearchScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is LocationSearchEffect.NavigateToLocationConfirm -> {
-                    navigator.navigateTo(
-                        Route.LocationConfirm(
-                            nickname = viewModel.nickname,
-                            location = effect.location
-                        )
-                    )
+                    onShowNavigationConfirm(effect.location.placeName, effect.location)
                 }
                 is LocationSearchEffect.ShowToast -> {}
             }
@@ -81,7 +76,7 @@ fun LocationSearchScreen(
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = Gray80,
     ) { paddingValues ->
         Surface(
@@ -200,7 +195,7 @@ private fun LocationSearchItem(
 fun PreviewLocationSearchScreen() {
     MaterialTheme {
         LocationSearchScreen(
-            navigator = MainNavigator(rememberNavController())
+            onShowNavigationConfirm = { _, _ -> }
         )
     }
 }

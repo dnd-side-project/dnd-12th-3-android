@@ -39,15 +39,13 @@ import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
 
 @Composable
 fun LoginScreen(
-    navigator: MainNavigator,
-    modifier: Modifier = Modifier,
+    onShowNickName: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val signInHelper = remember { GoogleSignInHelper(context) }
-
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
@@ -74,9 +72,8 @@ fun LoginScreen(
                 }
 
                 is LoginEffect.NavigateToNickName -> {
-                    navigator.navigateTo(Route.NicknameForm)
+                    onShowNickName()
                 }
-
             }
         }
     }
@@ -109,7 +106,6 @@ fun LoginContent(
     onKakaoLoginClick: () -> Unit,
     onGoogleLoginClick: () -> Unit,
 ) {
-
     Scaffold(
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->

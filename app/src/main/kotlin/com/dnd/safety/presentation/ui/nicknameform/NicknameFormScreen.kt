@@ -22,21 +22,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navOptions
 import com.dnd.safety.presentation.designsystem.component.WatchOutButton
 import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.designsystem.component.WatchOutTextField
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
-import com.dnd.safety.presentation.navigation.Route
-import com.dnd.safety.presentation.navigation.component.MainNavigator
 
 @Composable
 fun NicknameFormScreen(
-    navigator: MainNavigator,
-    modifier: Modifier = Modifier,
+    onShowSearchLocation: (String) -> Unit,
     viewModel: NicknameFormViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,19 +40,14 @@ fun NicknameFormScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is NicknameFormEffect.NavigationToMain -> {
-                    navigator.navigateTo(
-                        Route.SearchLocation(state.text),
-                        navOptions {
-                            popUpTo(Route.Splash.route) { inclusive = true }
-                        }
-                    )
+                    onShowSearchLocation(state.text)
                 }
             }
         }
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -145,7 +135,7 @@ private fun NicknameTextField(
 private fun NicknameFormScreenPreview() {
     SafetyTheme {
         NicknameFormScreen(
-            navigator = MainNavigator(navController = rememberNavController())
+            onShowSearchLocation = {},
         )
     }
 }

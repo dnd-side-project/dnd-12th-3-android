@@ -3,7 +3,6 @@ package com.dnd.safety.presentation.ui.postreport
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -61,19 +60,18 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
-import com.dnd.safety.presentation.navigation.Route
-import com.dnd.safety.presentation.navigation.component.MainNavigator
-import com.dnd.safety.presentation.ui.photoselection.PhotoSelectionViewModel
+import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
+import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
+import com.dnd.safety.presentation.ui.postreport.photoSelection.PhotoSelectionDialog
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun PostReportScreen(
-    modifier: Modifier = Modifier,
+    onGoBack: () -> Unit,
     viewModel: PostReportViewModel = hiltViewModel(),
-    navigator: MainNavigator,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val currentBackStackEntry = navigator.navController.currentBackStackEntry
+    val modalEffect by viewModel.modalEffect.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -84,7 +82,6 @@ fun PostReportScreen(
             viewModel.fetchCurrentLocation()
         }
     }
-
 
     LaunchedEffect(Unit) {
         if (hasLocationPermissions(context)) {
@@ -99,34 +96,27 @@ fun PostReportScreen(
         }
     }
 
-    LaunchedEffect(currentBackStackEntry) {
-        currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Uri>?>(
-            PhotoSelectionViewModel.KEY_SELECTED_MEDIA,
-            null
-        )?.collect { uris ->
-            uris?.let { viewModel.updateSelectedMedia(it) }
-        }
-    }
-
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is PostReportEffect.NavigateBack -> navigator.popBackStackIfNotHome()
+                is PostReportEffect.NavigateBack -> onGoBack()
                 is PostReportEffect.ShowToast -> {}
-                is PostReportEffect.NavigateToPhotoSelection -> {
-                    navigator.navigateTo(Route.PhotoSelection)
-                }
             }
         }
     }
 
     PostReportContent(
         state = state,
-        onImageAdd = viewModel::navigateToPhotoSelection,
+        onImageAdd = viewModel::showPhotoPicker,
         onContentChange = viewModel::updateContent,
         onCategorySelect = viewModel::updateCategory,
         onLocationClick = viewModel::onLocationClick,
         onCompleteClick = viewModel::onCompleteClick
+    )
+
+    PostReportModalContent(
+        modalEffect = modalEffect,
+        viewModel = viewModel
     )
 }
 
@@ -378,6 +368,22 @@ private fun PostReportContent(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 27.dp),
         )
+    }
+}
+
+@Composable
+fun PostReportModalContent(
+    modalEffect: PostReportModalEffect,
+    viewModel: PostReportViewModel
+) {
+    when (modalEffect) {
+        PostReportModalEffect.Dismiss -> {}
+        is PostReportModalEffect.ShowPhotoPickerDialog -> {
+            PhotoSelectionDialog(
+                onPhotoSelected = viewModel::updateSelectedMedia,
+                onDismissRequest = viewModel::dismissModal
+            )
+        }
     }
 }
 

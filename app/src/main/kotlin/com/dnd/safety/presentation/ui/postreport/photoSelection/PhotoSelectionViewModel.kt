@@ -1,7 +1,6 @@
-package com.dnd.safety.presentation.ui.photoselection
+package com.dnd.safety.presentation.ui.postreport.photoSelection
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,6 @@ import androidx.paging.cachedIn
 import com.dnd.safety.domain.model.Media
 import com.dnd.safety.domain.usecase.GetMediaFromGalleryUseCase
 import com.dnd.safety.presentation.navigation.MainTabRoute
-import com.dnd.safety.presentation.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,8 +64,6 @@ class PhotoSelectionViewModel @Inject constructor(
     }
 
     fun onConfirmClick() = viewModelScope.launch {
-        val selectedUris = state.value.selectedMedia.map { it.uri }
-        savedStateHandle[MainTabRoute.PostReport.selectedMedia] = selectedUris
         _effect.send(PhotoSelectionEffect.NavigateBack)
     }
 

@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.locationconfirm
+package com.dnd.safety.presentation.ui.location_search
 
 import android.Manifest
 import android.app.NotificationManager
@@ -34,6 +34,7 @@ import com.dnd.safety.presentation.designsystem.component.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.location_search.effect.LocationConfirmEffect
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -45,9 +46,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun LocationConfirmScreen(
-    modifier: Modifier = Modifier,
     viewModel: LocationConfirmViewModel = hiltViewModel(),
-    navigator: MainNavigator
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current

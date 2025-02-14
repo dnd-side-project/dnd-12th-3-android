@@ -7,12 +7,10 @@ import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.splash.SplashRoute
 
 fun NavGraphBuilder.splashNavGraph(
-    navigator: MainNavigator,
     onPermissionAllowed: () -> Unit,
 ) {
     composable<Route.Splash> {
         SplashRoute(
-            navigator = navigator,
             onPermissionAllowed = onPermissionAllowed
         )
     }
