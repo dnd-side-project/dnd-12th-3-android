@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "751673400845",
+    "project_id": "watchout-eb3bd",
+    "storage_bucket": "watchout-eb3bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751673400845:android:478f9a7f63470783443f44",
+        "android_client_info": {
+          "package_name": "com.dnd.safety"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "751673400845-em3g162oi3bmhro82mkkhueikr99o5kp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dnd.safety",
+            "certificate_hash": "3f0c03e79490b225a6e3016afefbb6f5950159cc"
+          }
+        },
+        {
+          "client_id": "751673400845-vq7eom2uqii4362fv5vkh6vio005qucr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9qQ1BMK6qeCl_G5-LrmMUvwy-wdBb710"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "751673400845-vq7eom2uqii4362fv5vkh6vio005qucr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
