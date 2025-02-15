@@ -21,21 +21,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val navigator: MainNavigator = rememberMainNavigator()
-            val coroutineScope = rememberCoroutineScope()
-            val snackBarHostState = remember { SnackbarHostState() }
-            val onShowSnackBar: (String) -> Unit = { message ->
-                coroutineScope.launch {
-                    snackBarHostState.showSnackbar(message)
-                }
-            }
-
             SafetyTheme {
-                MainScreen(
-                    navigator = navigator,
-                    snackBarHostState = snackBarHostState,
-                    onShowSnackBar = onShowSnackBar,
-                )
+                MainScreen()
             }
         }
     }

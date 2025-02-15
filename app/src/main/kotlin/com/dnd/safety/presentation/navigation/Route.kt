@@ -44,7 +44,7 @@ sealed interface MainTabRoute : Route {
         data object Camera : PostReport
 
         @Serializable
-        data object Gallery : PostReport
+        data class Report(val url: String) : PostReport
     }
 
     @Serializable

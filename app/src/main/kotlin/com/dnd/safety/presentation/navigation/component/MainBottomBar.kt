@@ -5,51 +5,76 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
-import com.dnd.safety.presentation.navigation.MainBottomNavItem
+import com.dnd.safety.presentation.navigation.MainTab
+import com.dnd.safety.utils.Logger
 
 @Composable
 internal fun MainBottomBar(
-    visible: Boolean,
-    bottomItems: List<MainBottomNavItem>,
-    currentItem: MainBottomNavItem?,
-    onBottomItemClicked: (MainBottomNavItem) -> Unit
+    navigator: MainNavigator,
+    bottomItems: List<MainTab>,
+    onBottomItemClicked: (MainTab) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) }
-    ) {
-        Column {
-            HorizontalDivider()
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surfaceDim,
-                modifier = Modifier.height(65.dp)
+    val currentDestination by navigator.navController.currentBackStackEntryAsState()
+    val currentItem = remember(currentDestination) {
+        MainTab.entries.find {
+            currentDestination?.destination?.route?.contains(it.name) == true
+        }
+    }
+
+    if (currentItem == null) {
+        Logger.d("currentItem is null")
+    } else {
+        Column(modifier) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = RoundedCornerShape(size = 28.dp),
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(28.dp),
+                    )
+                    .padding(horizontal = 28.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                bottomItems.forEach { item ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        },
-                        onClick = { onBottomItemClicked(item) },
-                        selected = item == currentItem
+                bottomItems.forEach { tab ->
+                    MainBottomBarItem(
+                        tab = tab,
+                        selected = tab == currentItem,
+                        onClick = { onBottomItemClicked(tab) },
                     )
                 }
             }
@@ -57,15 +82,38 @@ internal fun MainBottomBar(
     }
 }
 
+@Composable
+private fun RowScope.MainBottomBarItem(
+    modifier: Modifier = Modifier,
+    tab: MainTab,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .selectable(
+                selected = selected,
+                indication = null,
+                role = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onClick,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = tab.icon,
+            contentDescription = tab.name,
+            modifier = Modifier.size(34.dp),
+        )
+    }
+}
+
+
 @Preview
 @Composable
 private fun MainBottomBarPreview() {
     SafetyTheme {
-        MainBottomBar(
-            visible = true,
-            bottomItems = MainBottomNavItem.entries,
-            currentItem = MainBottomNavItem.Home,
-            onBottomItemClicked = { }
-        )
     }
 }

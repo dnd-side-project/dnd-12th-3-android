@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class MainBottomNavItem(
+enum class MainTab(
     val icon: ImageVector,
     val route: MainTabRoute,
 ) {
@@ -26,7 +26,7 @@ enum class MainBottomNavItem(
     ;
 
     companion object {
-        fun find(predicate: (MainTabRoute) -> Boolean): MainBottomNavItem? {
+        fun find(predicate: (MainTabRoute) -> Boolean): MainTab? {
             return entries.find { predicate(it.route) }
         }
 

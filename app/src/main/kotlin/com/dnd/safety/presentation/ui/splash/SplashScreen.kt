@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +46,16 @@ fun SplashRoute(
         SplashImage()
     }
 
-    if (multiplePermission.allPermissionsGranted) {
-        onPermissionAllowed()
-        return
+    LaunchedEffect(Unit) {
+        if (multiplePermission.allPermissionsGranted) {
+            onPermissionAllowed()
+        }
     }
 
-    LaunchedEffect(true) {
-        multiplePermission.launchMultiplePermissionRequest()
+    if (!multiplePermission.allPermissionsGranted){
+        SideEffect {
+            multiplePermission.launchMultiplePermissionRequest()
+        }
     }
 }
 

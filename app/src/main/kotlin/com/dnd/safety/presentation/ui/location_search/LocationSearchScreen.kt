@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
@@ -45,8 +44,6 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
-import com.dnd.safety.presentation.navigation.Route
-import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.location_search.effect.LocationSearchEffect
 import kotlinx.coroutines.delay
 
