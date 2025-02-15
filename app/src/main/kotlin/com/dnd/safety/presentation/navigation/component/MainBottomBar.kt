@@ -21,15 +21,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray30
+import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.navigation.MainTab
 
@@ -44,31 +52,35 @@ internal fun MainBottomBar(
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) }
+        exit = fadeOut() + slideOut { IntOffset(0, it.height) },
+        modifier = modifier
     ) {
-        Surface(
-            shadowElevation = 8.dp,
-            modifier = modifier
-        ) {
-            Column {
-                HorizontalDivider()
-                Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(46.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(28.dp),
+        Column {
+            HorizontalDivider()
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surfaceDim,
+                modifier = Modifier.height(65.dp)
+            ) {
+                bottomItems.forEach { item ->
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = "",
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            indicatorColor = Color.Transparent,
+                            unselectedIconColor = Gray40,
+                            unselectedTextColor = Gray,
                         ),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    bottomItems.forEach { tab ->
-                        MainBottomBarItem(
-                            tab = tab,
-                            selected = tab == currentItem,
-                            onClick = { onBottomItemClicked(tab) },
-                        )
-                    }
+                        label = {
+                        },
+                        onClick = { onBottomItemClicked(item) },
+                        selected = item == currentItem
+                    )
                 }
             }
         }

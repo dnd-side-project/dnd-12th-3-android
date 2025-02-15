@@ -56,7 +56,7 @@ private fun MainScreenContent(
         },
         bottomBar = {
             MainBottomBar(
-                visible = true,
+                visible = navigator.shouldShowBottomBar(),
                 bottomItems = MainTab.entries.toPersistentList(),
                 currentItem = navigator.currentItem,
                 onBottomItemClicked = navigator::navigateTo

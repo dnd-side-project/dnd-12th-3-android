@@ -47,14 +47,9 @@ fun SplashRoute(
         SplashImage()
     }
 
-    LaunchedEffect(Unit) {
-        if (multiplePermission.allPermissionsGranted) {
-            delay(300)
-            onPermissionAllowed()
-        }
-    }
-
-    if (!multiplePermission.allPermissionsGranted){
+    if (multiplePermission.allPermissionsGranted) {
+        onPermissionAllowed()
+    } else {
         SideEffect {
             multiplePermission.launchMultiplePermissionRequest()
         }

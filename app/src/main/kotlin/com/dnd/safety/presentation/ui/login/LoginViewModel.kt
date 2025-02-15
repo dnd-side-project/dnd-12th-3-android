@@ -2,22 +2,29 @@ package com.dnd.safety.presentation.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dnd.safety.data.model.DataProvider
+import com.dnd.safety.data.model.Response
 import com.dnd.safety.domain.repository.AuthRepository
-import com.skydoves.sandwich.suspendOnFailure
-import com.skydoves.sandwich.suspendOnSuccess
+import com.dnd.safety.utils.Logger
+import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.auth.api.identity.SignInCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    val oneTapClient: SignInClient
 ) : ViewModel() {
+
+    val currentUser = getAuthState()
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -25,42 +32,50 @@ class LoginViewModel @Inject constructor(
     private val _effect = Channel<LoginEffect>()
     val effect = _effect.receiveAsFlow()
 
-    fun loginWithKakao() = viewModelScope.launch {
-        _state.update { it.copy(isLoading = true) }
+    private fun getAuthState() = authRepository.getAuthState(viewModelScope)
 
-        authRepository.loginWithKakao()
-            .suspendOnSuccess {
-                _state.update { it.copy(isLoading = false, token = data) }
-                _effect.send(LoginEffect.NavigateToNickName)
-            }.suspendOnFailure {
-                _state.update { it.copy(isLoading = false) }
-                _effect.send(LoginEffect.ShowSnackBar("로그인 실패"))
-            }
+    fun signInAnonymously() = CoroutineScope(Dispatchers.IO).launch {
+        DataProvider.anonymousSignInResponse = Response.Loading
+        DataProvider.anonymousSignInResponse = authRepository.signInAnonymously()
     }
 
-    fun onLoginEvent(event: LoginEvent) = viewModelScope.launch {
-        when (event) {
-            is LoginEvent.GoogleSignInSuccess -> loginWithGoogle(event.idToken)
-            is LoginEvent.GoogleSignInError -> handleError(event.error)
+    fun oneTapSignIn() = CoroutineScope(Dispatchers.IO).launch {
+        DataProvider.oneTapSignInResponse = Response.Loading
+        DataProvider.oneTapSignInResponse = authRepository.onTapSignIn()
+    }
+
+    fun signInWithGoogle(credentials: SignInCredential) = CoroutineScope(Dispatchers.IO).launch {
+        DataProvider.googleSignInResponse = Response.Loading
+        DataProvider.googleSignInResponse = authRepository.signInWithGoogle(credentials)
+    }
+
+    fun signOut() = CoroutineScope(Dispatchers.IO).launch {
+        DataProvider.signOutResponse = Response.Loading
+        DataProvider.signOutResponse = authRepository.signOut()
+    }
+
+    fun checkNeedsReAuth() = CoroutineScope(Dispatchers.IO).launch {
+        if (authRepository.checkNeedsReAuth()) {
+            // Authorize google sign in
+            val idToken = authRepository.authorizeGoogleSignIn()
+            if (idToken != null) {
+                deleteAccount(idToken)
+            }
+            else {
+                // If failed initiate oneTap sign in flow
+                // deleteAccount(googleIdToken:) will be called from oneTap result callback
+                oneTapSignIn()
+                Logger.i("OneTapSignIn")
+            }
+        } else {
+            deleteAccount(null)
         }
     }
 
-    private suspend fun loginWithGoogle(idToken: String) {
-        _state.update { it.copy(isLoading = true) }
-
-        authRepository.signInWithGoogle(idToken)
-            .suspendOnSuccess {
-                _state.update { it.copy(isLoading = false, token = data) }
-                _effect.send(LoginEffect.NavigateToNickName)
-            }.suspendOnFailure {
-                _state.update { it.copy(isLoading = false) }
-                _effect.send(LoginEffect.ShowSnackBar("로그인 실패"))
-            }
-    }
-
-    private suspend fun handleError(throwable: Throwable) {
-        _state.update { it.copy(isLoading = false) }
-        _effect.send(LoginEffect.ShowSnackBar(throwable.message ?: "로그인 실패"))
+    fun deleteAccount(googleIdToken: String?) = CoroutineScope(Dispatchers.IO).launch {
+        Logger.i("Deleting Account...")
+        DataProvider.deleteAccountResponse = Response.Loading
+        DataProvider.deleteAccountResponse = authRepository.deleteUserAccount(googleIdToken)
     }
 }
 

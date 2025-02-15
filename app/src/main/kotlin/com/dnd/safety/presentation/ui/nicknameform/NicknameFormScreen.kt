@@ -40,7 +40,7 @@ fun NicknameFormScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is NicknameFormEffect.NavigationToMain -> {
-                    onShowSearchLocation(state.text)
+//                    onShowSearchLocation(state.text)
                 }
             }
         }

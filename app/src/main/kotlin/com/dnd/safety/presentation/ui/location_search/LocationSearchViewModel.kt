@@ -24,6 +24,7 @@ class LocationSearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val fetchLocationUseCase: FetchLocationUseCase,
 ) : ViewModel() {
+
     private val searchLocation = savedStateHandle.toRouteType<Route.SearchLocation, Location>()
     val nickname = searchLocation.nickname
 

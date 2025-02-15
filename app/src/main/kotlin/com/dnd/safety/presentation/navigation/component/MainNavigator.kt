@@ -32,13 +32,11 @@ class MainNavigator(
             .currentBackStackEntryAsState().value?.destination
 
     val currentItem: MainTab?
-        get() = MainTab.find { tab ->
+        @Composable get() = MainTab.find { tab ->
             navController.currentDestination?.hasRoute(tab::class) == true
         }
 
     fun navigateTo(menuItem: MainTab) {
-        if (currentItem == menuItem) return
-
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true

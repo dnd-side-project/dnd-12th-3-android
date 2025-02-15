@@ -55,7 +55,7 @@ fun MainNavHost(
                 onShowSnackBar = onShowSnackBar
             )
             nickNameNavGraph(
-                onShowSearchLocation = navigator::navigateToSearchLocation
+                onShowSearchLocation = {  }
             )
             locationNavGraph(
                 onShowNavigationConfirm = navigator::navigateToLocationConfirm
@@ -64,9 +64,7 @@ fun MainNavHost(
 
             )
             splashNavGraph(
-                onPermissionAllowed = {
-                    navigator.navigateTo(MainTab.Home)
-                }, // TODO: 임시로 일단 홈으로 이동
+                onPermissionAllowed = navigator::navigateToLogin
             )
         }
     }

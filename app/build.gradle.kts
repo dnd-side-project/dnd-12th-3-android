@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.secrets)
+    alias(libs.plugins.google.services)
 }
 
 val properties = Properties().apply {
@@ -106,6 +107,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.core)
     implementation(libs.hilt.android)
+    implementation(libs.firebase.crashlytics.buildtools)
     ksp(libs.hilt.compiler)
     kspAndroidTest(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -144,7 +146,7 @@ dependencies {
     // Google Auth
     implementation(libs.play.services.auth)
 
-    // Google Maps
+    // Google Mapsx
     implementation (libs.maps.compose)
     implementation (libs.play.services.maps)
 
@@ -194,10 +196,13 @@ dependencies {
 
     implementation(libs.kotlinx.immutable)
 
-
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.extensions)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth.ktx)
 }

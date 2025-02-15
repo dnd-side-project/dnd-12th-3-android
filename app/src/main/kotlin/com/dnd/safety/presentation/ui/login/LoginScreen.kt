@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,9 +33,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
+import com.dnd.safety.data.model.AuthState
+import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
-import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
+import com.dnd.safety.presentation.ui.login.component.AnonymousSignIn
+import com.dnd.safety.presentation.ui.login.component.GoogleSignIn
+import com.dnd.safety.presentation.ui.login.component.OneTapSignIn
+import com.dnd.safety.utils.Logger
+import com.google.android.gms.auth.api.identity.BeginSignInResult
+import com.google.android.gms.common.api.ApiException
 
 @Composable
 fun LoginScreen(
@@ -43,26 +52,34 @@ fun LoginScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-    val signInHelper = remember { GoogleSignInHelper(context) }
+    val currentUser = viewModel.currentUser.collectAsStateWithLifecycle().value
+    DataProvider.updateAuthState(currentUser)
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
+    if (DataProvider.authState != AuthState.SignedOut) {
+        onShowNickName()
+        return
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.let { intent ->
-                val signInResult = signInHelper.getSignInResult(intent)
-                signInResult.data?.let { data ->
-                    viewModel.onLoginEvent(LoginEvent.GoogleSignInSuccess(data.idToken))
-                } ?: run {
-                    viewModel.onLoginEvent(
-                        LoginEvent.GoogleSignInError(
-                            Exception(signInResult.errorMessage ?: "로그인 실패")
-                        )
-                    )
-                }
+            try {
+                Logger.d("Login")
+                val credentials = viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
+                viewModel.signInWithGoogle(credentials)
+                onShowNickName()
+            }
+            catch (e: ApiException) {
+                Logger.e("Login One-tap $e")
             }
         }
+        else if (result.resultCode == Activity.RESULT_CANCELED){
+            Logger.e("OneTapClient Canceled")
+        }
+    }
+
+    fun launch(signInResult: BeginSignInResult) {
+        val intent = IntentSenderRequest.Builder(signInResult.pendingIntent.intentSender).build()
+        launcher.launch(intent)
     }
 
     LaunchedEffect(Unit) {
@@ -76,21 +93,34 @@ fun LoginScreen(
 
     LoginContent(
         state = state,
-        onKakaoLoginClick = viewModel::loginWithKakao,
+        onKakaoLoginClick = { },
         onGoogleLoginClick = {
-            try {
-                signInHelper.getSignInIntent()
-                    .addOnSuccessListener { result ->
-                        launcher.launch(
-                            IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
-                        )
-                    }
-                    .addOnFailureListener { e ->
-                        viewModel.onLoginEvent(LoginEvent.GoogleSignInError(e))
-                    }
-            } catch (e: Exception) {
-                viewModel.onLoginEvent(LoginEvent.GoogleSignInError(e))
-            }
+            viewModel.oneTapSignIn()
+        }
+    )
+
+    if (DataProvider.authState == AuthState.SignedOut) {
+        Button(
+            onClick = {
+                viewModel.signInAnonymously()
+            },
+            modifier = Modifier
+                .size(width = 200.dp, height = 50.dp)
+                .padding(horizontal = 16.dp),
+        ) {
+            Text(
+                text = "Skip",
+                modifier = Modifier.padding(6.dp),
+                color = MaterialTheme.colorScheme.tertiary
+            )
+        }
+    }
+
+    AnonymousSignIn()
+
+    OneTapSignIn (
+        launch = {
+            launch(it)
         }
     )
 }
