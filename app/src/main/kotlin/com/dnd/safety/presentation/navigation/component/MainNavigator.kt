@@ -1,10 +1,13 @@
 package com.dnd.safety.presentation.navigation.component
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.dnd.safety.data.model.Location
@@ -24,9 +27,18 @@ import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReport
 class MainNavigator(
     val navController: NavHostController
 ) {
-    val startDestination = Route.Splash
+    private val currentDestination: NavDestination?
+        @Composable get() = navController
+            .currentBackStackEntryAsState().value?.destination
+
+    val currentItem: MainTab?
+        get() = MainTab.find { tab ->
+            navController.currentDestination?.hasRoute(tab::class) == true
+        }
 
     fun navigateTo(menuItem: MainTab) {
+        if (currentItem == menuItem) return
+
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
@@ -78,6 +90,12 @@ class MainNavigator(
 
     private inline fun <reified T : Route> isSameCurrentDestination(): Boolean {
         return navController.currentDestination?.hasRoute<T>() == true
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Composable
+    fun shouldShowBottomBar() = MainTab.contains {
+        currentDestination?.hasRoute(it::class) == true
     }
 }
 

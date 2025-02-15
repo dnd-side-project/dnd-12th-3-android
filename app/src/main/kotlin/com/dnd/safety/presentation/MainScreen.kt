@@ -43,7 +43,6 @@ private fun MainScreenContent(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -58,8 +57,9 @@ private fun MainScreenContent(
         },
         bottomBar = {
             MainBottomBar(
-                navigator = navigator,
+                visible = navigator.shouldShowBottomBar(),
                 bottomItems = MainTab.entries.toPersistentList(),
+                currentItem = navigator.currentItem,
                 onBottomItemClicked = navigator::navigateTo
             )
         },

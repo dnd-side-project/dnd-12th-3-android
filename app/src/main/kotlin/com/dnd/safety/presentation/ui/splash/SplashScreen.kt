@@ -23,6 +23,7 @@ import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.utils.Permissions
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -48,6 +49,7 @@ fun SplashRoute(
 
     LaunchedEffect(Unit) {
         if (multiplePermission.allPermissionsGranted) {
+            delay(300)
             onPermissionAllowed()
         }
     }

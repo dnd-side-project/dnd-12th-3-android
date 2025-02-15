@@ -23,37 +23,31 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.navigation.MainTab
-import com.dnd.safety.utils.Logger
 
 @Composable
 internal fun MainBottomBar(
-    navigator: MainNavigator,
+    visible: Boolean,
     bottomItems: List<MainTab>,
+    currentItem: MainTab?,
     onBottomItemClicked: (MainTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentDestination by navigator.navController.currentBackStackEntryAsState()
-    val currentItem = remember(currentDestination) {
-        MainTab.entries.find {
-            currentDestination?.destination?.route?.contains(it.name) == true
-        }
-    }
-
-    if (currentItem == null) {
-        Logger.d("currentItem is null")
-    } else {
-        Column(modifier) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + slideIn { IntOffset(0, it.height) },
+        exit = fadeOut() + slideOut { IntOffset(0, it.height) }
+    ) {
+        Column(
+            modifier
+        ) {
             Row(
                 modifier = modifier
                     .fillMaxWidth()
@@ -81,6 +75,7 @@ internal fun MainBottomBar(
         }
     }
 }
+
 
 @Composable
 private fun RowScope.MainBottomBarItem(
@@ -115,5 +110,11 @@ private fun RowScope.MainBottomBarItem(
 @Composable
 private fun MainBottomBarPreview() {
     SafetyTheme {
+        MainBottomBar(
+            visible = true,
+            bottomItems = MainTab.entries,
+            currentItem = MainTab.Home,
+            onBottomItemClicked = { }
+        )
     }
 }
