@@ -1,14 +1,20 @@
 package com.dnd.safety.data.model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class KakaoLocationResponse(
     val documents: List<Document>,
     val meta: Meta
 ) {
+
+    @Serializable
     data class Document(
         val address: Address?,
         val road_address: RoadAddress?
     )
 
+    @Serializable
     data class Address(
         val address_name: String,
         val region_1depth_name: String,
@@ -19,6 +25,7 @@ data class KakaoLocationResponse(
         val sub_address_no: String
     )
 
+    @Serializable
     data class RoadAddress(
         val address_name: String,
         val region_1depth_name: String,
@@ -32,6 +39,7 @@ data class KakaoLocationResponse(
         val zone_no: String
     )
 
+    @Serializable
     data class Meta(
         val total_count: Int
     )

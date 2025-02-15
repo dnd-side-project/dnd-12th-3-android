@@ -14,6 +14,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
 import androidx.navigation.compose.NavHost
 import com.dnd.safety.presentation.navigation.MainBottomNavItem
 import com.dnd.safety.presentation.navigation.component.MainBottomBar
@@ -25,6 +26,7 @@ import com.dnd.safety.presentation.ui.mytown.navigation.myTownNavGraph
 import com.dnd.safety.presentation.ui.nicknameform.navigation.nickNameNavGraph
 import com.dnd.safety.presentation.ui.postreport.navigation.postReportNavGraph
 import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun MainScreen(
@@ -40,7 +42,7 @@ fun MainScreen(
         bottomBar = {
             MainBottomBar(
                 visible = navigator.shouldShowBottomBar(),
-                bottomItems = MainBottomNavItem.entries,
+                bottomItems = MainBottomNavItem.entries.toPersistentList(),
                 currentItem = navigator.currentItem,
                 onBottomItemClicked = navigator::navigateTo
             )
@@ -79,6 +81,7 @@ internal fun MainNavHost(
         ) {
             splashNavGraph(
                 onPermissionAllowed = {
+                    navigator.setStartDestinationToHome()
                     navigator.navigateTo(MainBottomNavItem.Home)
                 }, // TODO: 임시로 일단 홈으로 이동
             )

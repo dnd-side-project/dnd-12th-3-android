@@ -18,6 +18,7 @@ import com.dnd.safety.presentation.ui.location_search.navigation.navigationToLoc
 import com.dnd.safety.presentation.ui.login.navigation.navigateToLogin
 import com.dnd.safety.presentation.ui.mytown.navigation.navigateToMyTown
 import com.dnd.safety.presentation.ui.nicknameform.navigation.navigateToNickName
+import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReport
 
 class MainNavigator(
     val navController: NavHostController
@@ -26,7 +27,8 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Route.Splash
+    var startDestination: Route = Route.Splash
+        private set
 
     val currentItem: MainBottomNavItem?
         get() = MainBottomNavItem.find { tab ->
@@ -44,13 +46,21 @@ class MainNavigator(
 
         when (menuItem) {
             MainBottomNavItem.Home -> navController.navigateToHome(navOptions)
-            MainBottomNavItem.PostReport -> navController.navigate(MainTabRoute.PostReport, navOptions)
-            MainBottomNavItem.MyPage -> navController.navigateToMyTown()
+            MainBottomNavItem.PostReport -> navController.navigateToPostReport()
+            MainBottomNavItem.MyPage -> navigateToMyTown()
         }
+    }
+
+    fun setStartDestinationToHome() {
+        startDestination = MainTabRoute.Home
     }
 
     fun navigateToLogin() {
         navController.navigateToLogin()
+    }
+
+    fun navigateToMyTown() {
+        navController.navigateToMyTown()
     }
 
     fun navigateToNickNameForm() {

@@ -191,4 +191,6 @@ dependencies {
 
     implementation(libs.proj4j)
     implementation(libs.proj4j.epsg)
+
+    implementation(libs.kotlinx.immutable)
 }

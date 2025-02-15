@@ -10,14 +10,7 @@ import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.home.HomeRoute
 
 fun NavController.navigateToHome(navOptions: NavOptions) {
-
-    val a = navOptions {
-        popUpTo(Route.Splash) {
-            inclusive = true
-        }
-    }
-
-    navigate(MainTabRoute.Home, a)
+    navigate(MainTabRoute.Home, navOptions)
 }
 
 fun NavGraphBuilder.homeNavGraph(
