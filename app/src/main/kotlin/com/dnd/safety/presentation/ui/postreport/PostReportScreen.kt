@@ -3,31 +3,28 @@ package com.dnd.safety.presentation.ui.postreport
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,23 +48,25 @@ import coil.request.ImageRequest
 import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.IncidentCategory
+import com.dnd.safety.presentation.designsystem.component.FilterButton
+import com.dnd.safety.presentation.designsystem.component.TextField
+import com.dnd.safety.presentation.designsystem.component.TextFieldBox
 import com.dnd.safety.presentation.designsystem.component.WatchOutButton
-import com.dnd.safety.presentation.designsystem.theme.Gray20
-import com.dnd.safety.presentation.designsystem.theme.Gray40
+import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray50
-import com.dnd.safety.presentation.designsystem.theme.Gray70
-import com.dnd.safety.presentation.designsystem.theme.Gray80
+import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
-import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
 import com.dnd.safety.presentation.ui.postreport.photoSelection.PhotoSelectionDialog
+import com.dnd.safety.presentation.ui.search_address_dialog.SearchAddressDialog
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun PostReportScreen(
-    onGoBack: () -> Unit,
+    onGoBackToHome: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
     viewModel: PostReportViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -99,8 +98,8 @@ fun PostReportScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is PostReportEffect.NavigateBack -> onGoBack()
-                is PostReportEffect.ShowToast -> {}
+                is PostReportEffect.NavigateBack -> onGoBackToHome()
+                is PostReportEffect.ShowToast -> onShowSnackBar(effect.message)
             }
         }
     }
@@ -110,7 +109,7 @@ fun PostReportScreen(
         onImageAdd = viewModel::showPhotoPicker,
         onContentChange = viewModel::updateContent,
         onCategorySelect = viewModel::updateCategory,
-        onLocationClick = viewModel::onLocationClick,
+        onLocationClick = viewModel::showSearchDialog,
         onCompleteClick = viewModel::onCompleteClick
     )
 
@@ -141,233 +140,166 @@ private fun PostReportContent(
     onCompleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Gray80)
+    Scaffold(
+        containerColor = White,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "사건 사진",
-            style = Typography.label1.copy(
-                color = Gray20
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(it)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Spacer(modifier = Modifier.height(4.dp))
+            ReportTitle(
+                title = "사건 사진"
+            )
+            ReportPicture(
+                imageUris = state.imageUris,
+                onImageAdd = onImageAdd,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+            )
+            ReportTitle(
+                title = "내용"
+            )
+            TextField(
+                value = state.content,
+                onValueChange = onContentChange,
+                hint = "어떤 사건을 목격하셨나요?",
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .defaultMinSize(minHeight = 150.dp),
+            )
+            ReportTitle(
+                title = "위치정보"
+            )
+            TextFieldBox(
+                text = state.location.placeName,
+                shape = RoundedCornerShape(8.dp),
+                onClick =  onLocationClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+            ) {
+                Text(
+                    text = "변경",
+                    style = TextStyle(textDecoration = TextDecoration.Underline),
+                    color = Gray50,
+                    modifier = Modifier
+                )
+            }
+            ReportTitle(
+                title = "사건의 종류"
+            )
+            FlowRow(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(top = 8.dp),
+                mainAxisSpacing = 8.dp,
+                crossAxisSpacing = 8.dp,
+            ) {
+                IncidentCategory.getAllExceptAll().forEach { category ->
+                    FilterButton(
+                        isSelected = state.selectedCategory == category,
+                        onClick = { onCategorySelect(category) },
+                        title = category.korTitle,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            WatchOutButton(
+                text = "완료",
+                onClick = onCompleteClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 27.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReportPicture(
+    imageUris: List<Uri>,
+    onImageAdd: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        item {
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+        item {
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Gray10)
+                    .clickable(onClick = onImageAdd),
+                contentAlignment = Alignment.Center
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Gray70)
-                            .border(
-                                width = 1.dp,
-                                color = Gray50,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .clickable { onImageAdd() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_camera),
-                                contentDescription = "Add photo",
-                                tint = White,
-                            )
-                            Text(
-                                text = "(${state.imageUris.size}/3)",
-                                color = White,
-                                fontSize = 12.sp,
-                            )
-                        }
-                    }
-                }
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(state.imageUris) { uri ->
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(uri)
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(
-                                    width = 1.dp,
-                                    color = Gray50,
-                                    shape = RoundedCornerShape(8.dp)
-                                ),
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.ic_camera),
+                        contentDescription = "Add photo",
+                        tint = Gray60,
+                    )
+                    Text(
+                        text = "(${imageUris.size}/3)",
+                        color = Gray60,
+                        fontSize = 12.sp,
+                    )
                 }
             }
+
         }
+        items(imageUris) { uri ->
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(uri)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Gray50,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                contentScale = ContentScale.Crop,
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+    }
+}
 
-        Spacer(modifier = Modifier.height(32.dp))
-
+@Composable
+private fun ReportTitle(
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "내용",
-            style = Typography.label1.copy(
-                color = Gray20
-            ),
+            text = title,
+            style = SafetyTheme.typography.label1,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-
-        BasicTextField(
-            value = state.content,
-            onValueChange = onContentChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .padding(horizontal = 16.dp)
-                .background(
-                    color = Gray70,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .border(
-                    width = 1.dp,
-                    color = Gray50,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(16.dp),
-            textStyle = LocalTextStyle.current.copy(
-                color = White
-            ),
-            decorationBox = { innerTextField ->
-                Box {
-                    if (state.content.isEmpty()) {
-                        Text(
-                            text = "어떤 사건을 목격하셨나요?",
-                            color = Gray40
-                        )
-                    }
-                    innerTextField()
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = "위치 정보",
-            style = Typography.label1.copy(
-                color = Gray20
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .border(
-                    width = 1.dp,
-                    color = Gray50,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .background(
-                    color = Gray70,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(vertical = 8.dp, horizontal = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = state.location.address.ifEmpty { "위치를 선택해주세요" },
-                style = MaterialTheme.typography.bodyLarge,
-                color = White
-            )
-            Text(
-                text = "변경",
-                modifier = Modifier
-                    .clickable(onClick = onLocationClick)
-                    .padding(8.dp),
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                color = White
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = "사건의 종류",
-            style = Typography.label1.copy(
-                color = Gray20
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-
-        FlowRow(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            mainAxisSpacing = 8.dp,
-            crossAxisSpacing = 8.dp,
-        ) {
-            IncidentCategory.getAllExceptAll().forEach { category ->
-                FilterChip(
-                    selected = state.selectedCategory == category,
-                    onClick = { onCategorySelect(category) },
-                    label = {
-                        Text(
-                            text = category.korTitle,
-                            style = Typography.label2.copy(
-                                color = Gray20,
-                            ),
-                            modifier = Modifier
-                                .padding(
-                                    top = 4.dp,
-                                    bottom = 4.dp
-                                )
-                        )
-                    },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Gray70,
-                        containerColor = Gray70,
-                    ),
-                    shape = RoundedCornerShape(100.dp),
-                    border = if (state.selectedCategory == category) {
-                        BorderStroke(1.dp, Gray50)
-                    } else {
-                        null
-                    }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        WatchOutButton(
-            text = "완료",
-            onClick = onCompleteClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 27.dp),
-        )
     }
 }
 
@@ -384,8 +316,16 @@ fun PostReportModalContent(
                 onDismissRequest = viewModel::dismissModal
             )
         }
+        PostReportModalEffect.ShowSearchDialog -> {
+            SearchAddressDialog(
+                onAddressSelected = viewModel::addressSelected,
+                onDismissRequest = viewModel::dismissModal,
+            )
+        }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

@@ -44,6 +44,7 @@ fun MainNavHost(
             postReportNavGraph(
                 onShowSnackBar = onShowSnackBar,
                 onGoBack = navigator::popBackStackIfNotHome,
+                onGoBackToHome = { navigator.navigateTo(MainTab.Home) },
                 onShowPostReport = navigator::navigateToReport
             )
             myPageNavGraph(

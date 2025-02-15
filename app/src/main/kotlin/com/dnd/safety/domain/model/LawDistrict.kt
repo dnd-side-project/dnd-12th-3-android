@@ -4,6 +4,7 @@ data class LawDistrict(
     val address: String,
     val address2: String,
     val sido: String,
+    val name: String,
     val pointDto: PointDto
 )
 

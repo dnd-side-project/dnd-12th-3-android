@@ -21,8 +21,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            val navigator: MainNavigator = rememberMainNavigator()
+
             SafetyTheme {
-                MainScreen()
+                MainScreen(
+                    navigator = navigator
+                )
             }
         }
     }

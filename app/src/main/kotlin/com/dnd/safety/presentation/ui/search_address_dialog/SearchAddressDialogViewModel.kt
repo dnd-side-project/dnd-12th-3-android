@@ -70,16 +70,16 @@ class SearchAddressDialogViewModel @Inject constructor(
             lawDistrictRepository.getPoint(
                 lawDistrict.pointDto
             ).onSuccess {
-                searchAddressComplete(data, lawDistrict.address)
+                searchAddressComplete(data, lawDistrict.address, lawDistrict.name)
             }.onFailure {
                 searchError()
             }
         }
     }
 
-    private fun searchAddressComplete(point: Point, address: String) {
+    private fun searchAddressComplete(point: Point, address: String, name: String) {
         viewModelScope.launch {
-            _searchAddressCompleteEffect.emit(SearchResult(address, point))
+            _searchAddressCompleteEffect.emit(SearchResult(address, name, point))
         }
     }
 

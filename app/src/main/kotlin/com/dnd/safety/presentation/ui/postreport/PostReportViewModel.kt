@@ -2,12 +2,17 @@ package com.dnd.safety.presentation.ui.postreport
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.domain.model.IncidentReport
+import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.domain.usecase.CreateIncidentReportUseCase
 import com.dnd.safety.domain.usecase.GetCurrentLocationUseCase
+import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,9 +29,16 @@ import javax.inject.Inject
 class PostReportViewModel @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val createIncidentReportUseCase: CreateIncidentReportUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(PostReportState())
+    private val uri = savedStateHandle.toRoute<MainTabRoute.PostReport.Report>().url
+
+    private val _state = MutableStateFlow(
+        PostReportState(
+            imageUris = listOf(Uri.parse(uri))
+        )
+    )
     val state = _state.asStateFlow()
 
     private val _effect = Channel<PostReportEffect>()
@@ -57,15 +69,11 @@ class PostReportViewModel @Inject constructor(
         _state.update { it.copy(imageUris = uris) }
     }
 
-    fun onLocationClick() {
-        // TODO: 위치 선택 화면으로 이동
-    }
-
     fun onCompleteClick() = viewModelScope.launch {
         val currentState = _state.value
 
         if (!validateInput(currentState)) {
-            _effect.send(PostReportEffect.ShowToast("모든 필드를 입력해주세요"))
+            _effect.send(PostReportEffect.ShowToast("모든 정보를 입력해주세요"))
             return@launch
         }
 
@@ -82,6 +90,7 @@ class PostReportViewModel @Inject constructor(
         createIncidentReportUseCase(incidentReport)
             .onSuccess {
                 _effect.send(PostReportEffect.NavigateBack)
+                _effect.send(PostReportEffect.ShowToast("사고 등록에 성공했습니다"))
             }
             .onFailure { throwable ->
                 _effect.send(PostReportEffect.ShowToast("사고 등록에 실패했습니다"))
@@ -98,8 +107,25 @@ class PostReportViewModel @Inject constructor(
                 state.location.address.isNotBlank()
     }
 
+    fun addressSelected(searchResult: SearchResult) {
+        _state.update {
+            it.copy(
+                location = Location(
+                    latitude = searchResult.point.y,
+                    longitude = searchResult.point.x,
+                    address = searchResult.address,
+                    placeName = searchResult.name
+                ),
+            )
+        }
+    }
+
     fun showPhotoPicker() {
         _modalEffect.update { PostReportModalEffect.ShowPhotoPickerDialog }
+    }
+
+    fun showSearchDialog() {
+        _modalEffect.update { PostReportModalEffect.ShowSearchDialog }
     }
 
     fun dismissModal() {

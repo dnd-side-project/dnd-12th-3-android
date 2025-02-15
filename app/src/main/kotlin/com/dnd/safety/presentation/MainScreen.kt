@@ -14,13 +14,12 @@ import androidx.compose.ui.Modifier
 import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.component.MainBottomBar
 import com.dnd.safety.presentation.navigation.component.MainNavigator
-import com.dnd.safety.presentation.navigation.component.rememberMainNavigator
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
-    navigator: MainNavigator = rememberMainNavigator()
+    navigator: MainNavigator
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -57,7 +56,7 @@ private fun MainScreenContent(
         },
         bottomBar = {
             MainBottomBar(
-                visible = navigator.shouldShowBottomBar(),
+                visible = true,
                 bottomItems = MainTab.entries.toPersistentList(),
                 currentItem = navigator.currentItem,
                 onBottomItemClicked = navigator::navigateTo

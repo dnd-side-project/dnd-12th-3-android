@@ -18,6 +18,7 @@ fun NavController.navigateToPostReport(uri: String) {
 
 fun NavGraphBuilder.postReportNavGraph(
     onGoBack: () -> Unit,
+    onGoBackToHome: () -> Unit,
     onShowSnackBar: (String) -> Unit,
     onShowPostReport: (String) -> Unit,
 ) {
@@ -29,7 +30,8 @@ fun NavGraphBuilder.postReportNavGraph(
     }
     composable<MainTabRoute.PostReport.Report> {
         PostReportScreen(
-            onGoBack = onGoBack,
+            onGoBackToHome = onGoBackToHome,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 }

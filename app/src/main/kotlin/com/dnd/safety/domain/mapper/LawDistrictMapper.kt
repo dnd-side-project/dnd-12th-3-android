@@ -14,6 +14,7 @@ fun LawDistrictResponse.toLawDistricts() = results.juso.map {
             it.emdNm,
             it.liNm,
         ).joinToString(" "),
+        name = it.bdNm,
         pointDto = PointDto(
             admCd = it.admCd,
             rnMgtSn = it.rnMgtSn,

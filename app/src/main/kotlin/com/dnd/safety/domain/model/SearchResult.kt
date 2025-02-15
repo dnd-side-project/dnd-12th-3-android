@@ -1,6 +1,7 @@
 package com.dnd.safety.domain.model
 
 data class SearchResult(
-    val title: String,
+    val address: String,
+    val name: String,
     val point: Point
 )

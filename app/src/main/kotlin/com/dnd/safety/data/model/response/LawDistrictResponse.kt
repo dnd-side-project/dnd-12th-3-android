@@ -17,6 +17,7 @@ data class LawDistrictResponse(
         val admCd: String,
         val rnMgtSn: String,
         val udrtYn: String,
+        val bdNm: String,
         val buldMnnm: Long,
         val buldSlno: Long,
 
