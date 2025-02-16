@@ -15,18 +15,9 @@ import com.google.maps.android.compose.MapUiSettings
 fun MyGoogleMap(
     cameraPositionState: CameraPositionState,
     modifier: Modifier = Modifier,
+    mapProperties: MapProperties = getMapDefaultProperties(),
     content: @Composable @GoogleMapComposable () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val mapStyle = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
-    val mapProperties = MapProperties(
-        mapStyleOptions = mapStyle,
-        isBuildingEnabled = false,
-        isIndoorEnabled = false,
-        isMyLocationEnabled = false,
-        isTrafficEnabled = false
-    )
-
     GoogleMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
@@ -39,3 +30,12 @@ fun MyGoogleMap(
         content = content
     )
 }
+
+@Composable
+fun getMapDefaultProperties() = MapProperties(
+    mapStyleOptions = MapStyleOptions.loadRawResourceStyle(LocalContext.current, R.raw.map_style),
+    isBuildingEnabled = false,
+    isIndoorEnabled = false,
+    isMyLocationEnabled = false,
+    isTrafficEnabled = false
+)

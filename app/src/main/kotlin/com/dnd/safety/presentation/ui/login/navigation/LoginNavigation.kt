@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.login.LoginScreen
-import com.dnd.safety.presentation.ui.mytown.MyTownRoute
 
 fun NavController.navigateToLogin() {
     val navOptions = navOptions {
@@ -18,12 +17,14 @@ fun NavController.navigateToLogin() {
 }
 
 fun NavGraphBuilder.loginNavGraph(
-    onShowNickName: () -> Unit,
+    onShowHome: () -> Unit,
+    onShowLocationSearch: () -> Unit,
     onShowSnackBar: (String) -> Unit,
 ) {
     composable<Route.Login> {
         LoginScreen(
-            onShowNickName = onShowNickName,
+            onShowHome = onShowHome,
+            onShowLocationSearch = onShowLocationSearch,
             onShowSnackBar = onShowSnackBar,
         )
     }

@@ -1,6 +1,5 @@
 package com.dnd.safety.presentation.navigation
 
-import com.dnd.safety.data.model.Location
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -12,17 +11,14 @@ sealed interface Route {
     data object Login : Route
 
     @Serializable
-    data object NicknameForm : Route
-
-    @Serializable
-    data class SearchLocation(
-        val nickname: String
-    ) : Route
+    data object SearchLocation : Route
 
     @Serializable
     data class LocationConfirm(
-        val nickname: String,
-        val location: Location
+        val title: String,
+        val address: String,
+        val pointX: String,
+        val pointY: String
     ) : Route
 
     @Serializable

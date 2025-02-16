@@ -32,6 +32,16 @@ class LoginViewModel @Inject constructor(
     private val _effect = Channel<LoginEffect>()
     val effect = _effect.receiveAsFlow()
 
+    fun checkIsNeedToEnterLocation() {
+        viewModelScope.launch {
+            if (true) {
+                _effect.send(LoginEffect.NavigateToHome)
+            } else {
+                _effect.send(LoginEffect.NavigateToLocation)
+            }
+        }
+    }
+
     private fun getAuthState() = authRepository.getAuthState(viewModelScope)
 
     fun signInAnonymously() = CoroutineScope(Dispatchers.IO).launch {

@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray30
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
 
 @Composable
@@ -61,8 +62,7 @@ fun WatchOutButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            style = SafetyTheme.typography.body1,
         )
     }
 }

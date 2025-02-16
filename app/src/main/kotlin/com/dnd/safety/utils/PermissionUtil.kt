@@ -20,7 +20,7 @@ data class Permissions(
             Permissions("비디오 파일 접근 권한", Manifest.permission.READ_MEDIA_VIDEO),
             Permissions("이미지 파일 접근 권한", Manifest.permission.READ_MEDIA_IMAGES),
             Permissions("외부 저장소 읽기 권한", Manifest.permission.READ_EXTERNAL_STORAGE),
-//            Permissions("알림 권한", Manifest.permission.POST_NOTIFICATIONS),
+            Permissions("알림 권한", Manifest.permission.POST_NOTIFICATIONS),
 //            Permissions("통화 기록 읽기 권한", Manifest.permission.READ_CALL_LOG)
         ).filter {
             when (it.manifest) {

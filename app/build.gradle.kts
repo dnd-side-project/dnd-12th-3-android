@@ -178,6 +178,7 @@ dependencies {
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.compose.material.icon)
+    implementation(libs.androidx.animation)
 
     //Google Services & Maps
     implementation(libs.maps.compose)

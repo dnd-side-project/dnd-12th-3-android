@@ -3,6 +3,7 @@ package com.dnd.safety.presentation.ui.mytown
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.MyTown
+import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.location.LocationService
 import com.dnd.safety.presentation.ui.mytown.effect.MyTownModalState
@@ -11,7 +12,6 @@ import com.dnd.safety.utils.Const.SEOUL_LAT_LNG
 import com.dnd.safety.utils.Logger
 import com.dnd.safety.utils.trigger.TriggerStateFlow
 import com.dnd.safety.utils.trigger.triggerStateIn
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -57,7 +57,8 @@ class MyTownViewModel @Inject constructor(
                         MyTown(
                             id = 1,
                             title = "My Town",
-                            latLng = LatLng(37.5665, 126.9780),
+                            address = "Seoul",
+                            point = Point(37.5665, 126.9780),
                             selected = true
                         )
                     )

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,6 +34,7 @@ fun TextField(
     shape: Shape = SafetyTheme.shapes.r100,
     textStyle: TextStyle = SafetyTheme.typography.paragraph2,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     readOnly: Boolean = false,
     button: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -40,6 +42,7 @@ fun TextField(
         value = value,
         textStyle = textStyle.copy(color = MaterialTheme.colorScheme.onSurface),
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         onValueChange = onValueChange,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
         singleLine = true,

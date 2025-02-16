@@ -1,79 +1,102 @@
 package com.dnd.safety.presentation.ui.location_search
 
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dnd.safety.data.model.Location
+import com.dnd.safety.domain.model.LawDistrict
+import com.dnd.safety.domain.model.MyTown
+import com.dnd.safety.domain.model.Point
+import com.dnd.safety.domain.repository.LawDistrictRepository
 import com.dnd.safety.domain.usecase.FetchLocationUseCase
-import com.dnd.safety.presentation.navigation.Route
-import com.dnd.safety.presentation.navigation.utils.toRouteType
 import com.dnd.safety.presentation.ui.location_search.effect.LocationSearchEffect
-import com.dnd.safety.presentation.ui.location_search.state.LocationSearchState
+import com.dnd.safety.utils.Logger
+import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onFailure
+import com.skydoves.sandwich.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LocationSearchViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val lawDistrictRepository: LawDistrictRepository,
     private val fetchLocationUseCase: FetchLocationUseCase,
 ) : ViewModel() {
 
-    private val searchLocation = savedStateHandle.toRouteType<Route.SearchLocation, Location>()
-    val nickname = searchLocation.nickname
+    var searchText = MutableStateFlow("")
+        private set
 
-    private val _state = MutableStateFlow(LocationSearchState())
-    val state = _state.asStateFlow()
+    @OptIn(FlowPreview::class)
+    val lawDistricts: StateFlow<List<LawDistrict>> = searchText
+        .debounce(300)
+        .filterNot(String::isEmpty)
+        .map {
+            when (val data = lawDistrictRepository.getLawDistricts(it)) {
+                is ApiResponse.Success -> data.data
+                is ApiResponse.Failure.Error -> {
+                    Logger.e(data.message())
+                    emptyList()
+                }
+
+                is ApiResponse.Failure.Exception -> {
+                    Logger.e(data.message())
+                    emptyList()
+                }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = emptyList()
+        )
+
 
     private val _effect = Channel<LocationSearchEffect>()
     val effect = _effect.receiveAsFlow()
 
-    init {
-        Log.d("LocationSearchViewModel", "nickname: $nickname")
+    fun textChanged(text: String) {
+        searchText.update { text }
     }
 
-    fun updateSearchQuery(query: String) {
-        _state.update { it.copy(searchQuery = query) }
-    }
-
-    fun onLocationSelect(location: Location) {
+    fun getPoint(lawDistrict: LawDistrict) {
         viewModelScope.launch {
-            _effect.send(LocationSearchEffect.NavigateToLocationConfirm(location))
+            lawDistrictRepository.getPoint(
+                lawDistrict.pointDto
+            ).onSuccess {
+                searchAddressComplete(data, lawDistrict.name, lawDistrict.address)
+            }.onFailure {
+                searchError()
+            }
         }
     }
 
-    fun searchLocation() = viewModelScope.launch {
-        _state.update { it.copy(isLoading = true) }
-
-        fetchLocationUseCase(state.value.searchQuery)
-            .onSuccess { locations ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        locations = locations,
-                        hasSearched = true,
-                    )
-                }
-            }
-            .onFailure { error ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        locations = emptyList(),
-                        hasSearched = true,
-                    )
-                }
-                _effect.send(
-                    LocationSearchEffect.ShowToast(
-                        error.message ?: "검색 중 오류가 발생했습니다"
+    private fun searchAddressComplete(point: Point, name: String, address: String) {
+        viewModelScope.launch {
+            _effect.send(
+                LocationSearchEffect.NavigateToLocationConfirm(
+                    MyTown(
+                        id = 0,
+                        title = name,
+                        address = address,
+                        point = point,
+                        selected = false
                     )
                 )
-            }
+            )
+        }
+    }
+
+    private fun searchError() {
+        textChanged(searchText.value)
     }
 }

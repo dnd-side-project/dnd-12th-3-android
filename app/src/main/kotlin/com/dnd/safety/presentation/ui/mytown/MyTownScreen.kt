@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.domain.model.MyTown
+import com.dnd.safety.domain.model.Point
 import com.dnd.safety.presentation.designsystem.component.FadeAnimatedVisibility
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
 import com.dnd.safety.presentation.designsystem.component.NormalDialog
@@ -147,7 +148,7 @@ fun MyTownModelContent(
 private fun MyTownScreenPreview() {
     SafetyTheme {
         MyTownScreen(
-            firstMyTown = MyTown(1, "My Town", LatLng(37.5665, 126.9780), true),
+            firstMyTown = MyTown(1, "My Town", "address", Point( 126.9780, 37.5665), true),
             secondMyTown = null,
             onAddClick = {},
             onSelectClick = {},

@@ -17,7 +17,6 @@ import com.dnd.safety.presentation.ui.location_search.navigation.locationNavGrap
 import com.dnd.safety.presentation.ui.login.navigation.loginNavGraph
 import com.dnd.safety.presentation.ui.my_page.navigation.myPageNavGraph
 import com.dnd.safety.presentation.ui.mytown.navigation.myTownNavGraph
-import com.dnd.safety.presentation.ui.nicknameform.navigation.nickNameNavGraph
 import com.dnd.safety.presentation.ui.postreport.navigation.postReportNavGraph
 import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
 
@@ -51,13 +50,13 @@ fun MainNavHost(
 
             )
             loginNavGraph(
-                onShowNickName = navigator::navigateToNickNameForm,
+                onShowHome = { navigator.navigateTo(MainTab.Home) },
+                onShowLocationSearch = navigator::navigateToSearchLocation,
                 onShowSnackBar = onShowSnackBar
             )
-            nickNameNavGraph(
-                onShowSearchLocation = {  }
-            )
             locationNavGraph(
+                onGoBack = navigator::popBackStackIfNotHome,
+                onComplete = { navigator.navigateTo(MainTab.Home) },
                 onShowNavigationConfirm = navigator::navigateToLocationConfirm
             )
             myTownNavGraph(

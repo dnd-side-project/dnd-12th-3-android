@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,10 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.data.model.AuthState
 import com.dnd.safety.data.model.DataProvider
-import com.dnd.safety.presentation.designsystem.component.WatchOutLoadingIndicator
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.login.component.AnonymousSignIn
-import com.dnd.safety.presentation.ui.login.component.GoogleSignIn
 import com.dnd.safety.presentation.ui.login.component.OneTapSignIn
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.BeginSignInResult
@@ -46,7 +43,8 @@ import com.google.android.gms.common.api.ApiException
 
 @Composable
 fun LoginScreen(
-    onShowNickName: () -> Unit,
+    onShowLocationSearch: () -> Unit,
+    onShowHome: () -> Unit,
     onShowSnackBar: (String) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -56,8 +54,7 @@ fun LoginScreen(
     DataProvider.updateAuthState(currentUser)
 
     if (DataProvider.authState != AuthState.SignedOut) {
-        onShowNickName()
-        return
+        viewModel.checkIsNeedToEnterLocation()
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
@@ -66,7 +63,7 @@ fun LoginScreen(
                 Logger.d("Login")
                 val credentials = viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
                 viewModel.signInWithGoogle(credentials)
-                onShowNickName()
+                viewModel.checkIsNeedToEnterLocation()
             }
             catch (e: ApiException) {
                 Logger.e("Login One-tap $e")
@@ -86,7 +83,8 @@ fun LoginScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is LoginEffect.ShowSnackBar -> onShowSnackBar(effect.message)
-                is LoginEffect.NavigateToNickName -> onShowNickName()
+                LoginEffect.NavigateToHome -> onShowHome()
+                LoginEffect.NavigateToLocation -> onShowLocationSearch()
             }
         }
     }
@@ -172,7 +170,6 @@ fun LoginContent(
 
                     Spacer(modifier = Modifier.height(48.dp))
                 }
-                WatchOutLoadingIndicator(state.isLoading)
             }
 
         }

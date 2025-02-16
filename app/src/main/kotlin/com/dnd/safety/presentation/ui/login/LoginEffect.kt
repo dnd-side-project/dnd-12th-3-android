@@ -1,6 +1,11 @@
 package com.dnd.safety.presentation.ui.login
 
-sealed class LoginEffect  {
-    data class ShowSnackBar(val message: String): LoginEffect()
-    object NavigateToNickName: LoginEffect()
+sealed interface LoginEffect  {
+
+    data class ShowSnackBar(val message: String): LoginEffect
+
+    data object NavigateToLocation: LoginEffect
+
+    data object NavigateToHome: LoginEffect
+
 }

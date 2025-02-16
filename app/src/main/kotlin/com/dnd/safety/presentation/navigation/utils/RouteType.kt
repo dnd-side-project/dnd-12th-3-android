@@ -1,8 +1,6 @@
 package com.dnd.safety.presentation.navigation.utils
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 
 /**
@@ -16,7 +14,7 @@ import androidx.navigation.toRoute
  *
  *   private val idData: IdData = savedStateHandle.toRouteType<Route.Home, IdData>()
  *
-*   }
+ *   }
  * ```
  */
 inline fun <reified T : Any, reified Type : Any> SavedStateHandle.toRouteType(

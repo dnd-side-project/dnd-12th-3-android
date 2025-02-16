@@ -1,13 +1,5 @@
 package com.dnd.safety.presentation.ui.location_search
 
-import android.Manifest
-import android.app.NotificationManager
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,169 +9,110 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dnd.safety.R
+import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
+import com.dnd.safety.presentation.designsystem.component.TopAppbar
 import com.dnd.safety.presentation.designsystem.component.WatchOutButton
-import com.dnd.safety.presentation.designsystem.theme.Typography
-import com.dnd.safety.presentation.designsystem.theme.White
-import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.designsystem.component.getMapDefaultProperties
+import com.dnd.safety.presentation.designsystem.theme.Gray60
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.ui.home.component.MyLocationMarker
 import com.dnd.safety.presentation.ui.location_search.effect.LocationConfirmEffect
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LocationConfirmScreen(
+    address: String,
+    location: LatLng,
+    onGoBack: () -> Unit,
+    onComplete: () -> Unit,
     viewModel: LocationConfirmViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-
-    val mapStyle = remember {
-        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_dark_style)
+    val cameraPositionState = rememberCameraPositionState {
+        CameraPosition.fromLatLngZoom(location, 15f)
     }
 
-    // 위치 권한 요청
-    val locationPermissionState = rememberUpdatedState(Manifest.permission.ACCESS_FINE_LOCATION)
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            viewModel.requestLocationPermission(isGranted)
-        }
-    )
-    LaunchedEffect(Unit) {
-        locationPermissionLauncher.launch(locationPermissionState.value)
-    }
-
-    // 알림 권한 요청을 위한 런처 설정
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = {
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val areNotificationsEnabled = notificationManager.areNotificationsEnabled()
-            viewModel.requestNotificationPermission(areNotificationsEnabled)
-        }
-    )
-
-    // 알림 권한 요청 함수
-    fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val areNotificationsEnabled = notificationManager.areNotificationsEnabled()
-
-            if (!areNotificationsEnabled) {
-                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                notificationPermissionLauncher.launch(intent)
-            } else {
-                viewModel.requestNotificationPermission(true)
-            }
-        } else {
-            viewModel.requestNotificationPermission(true)
-        }
-    }
-
-    // 알림 권한 요청
-    LaunchedEffect(Unit) {
-        requestNotificationPermission()
-    }
-
-    // 화면 전환 효과 처리
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is LocationConfirmEffect.NavigateToMainScreen -> {
-                    // TODO: 홈 화면 이동 구현
-                }
-                is LocationConfirmEffect.ShowPermissionDeniedMessage -> {
-                    // Toast 메시지 표시 등의 처리
-                }
-            }
-        }
-    }
-
-    // 위치 권한이 승인되었을 때
-    if (state.isPermissionGranted && state.isNotificationPermissionGranted) {
-        val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(
-                LatLng(viewModel.location.latitude, viewModel.location.longitude),
-                15f
+    Scaffold(
+        topBar = {
+            TopAppbar(
+                onBackEvent = onGoBack,
             )
-        }
-
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.background
-        ) { paddingValues ->
-            Column(
+        },
+        bottomBar = {
+            WatchOutButton(
+                text = "확인",
+                onClick = viewModel::onNextButtonClicked,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp, vertical = 20.dp)
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(100.dp))
+            Text(
+                text = "해당 주소로 알림을\n보내드릴까요?",
+                style = SafetyTheme.typography.title1,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Surface(
+                shape = RoundedCornerShape(15.dp),
+                modifier = Modifier
             ) {
-                Spacer(modifier = Modifier.height(100.dp))
-
-                Text(
-                    text = "해당 주소로 알림을\n보내드릴까요?",
-                    style = Typography.title1,
-                    color = White,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                GoogleMap(
+                MyGoogleMap(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(320.dp)
-                        .clip(RoundedCornerShape(16.dp)),
+                        .height(300.dp),
                     cameraPositionState = cameraPositionState,
-                    properties = MapProperties(
-                        mapStyleOptions = mapStyle
+                    mapProperties = getMapDefaultProperties().copy(
+                        minZoomPreference = 15f,
+                        maxZoomPreference = 15f,
+                        latLngBoundsForCameraTarget = LatLngBounds(
+                            location, location
+                        )
                     )
                 ) {
-                    Marker(
-                        state = MarkerState(
-                            position = LatLng(
-                                viewModel.location.latitude,
-                                viewModel.location.longitude
-                            )
-                        ),
-                        title = viewModel.location.placeName,
-                        snippet = viewModel.location.address
-                    )
+                    MyLocationMarker(location)
                 }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = address,
+                style = SafetyTheme.typography.paragraph2,
+                color = Gray60,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+        }
+    }
 
-                Spacer(modifier = Modifier.weight(1f))
+    LaunchedEffect(location) {
+        val currentZoom = cameraPositionState.position.zoom.takeIf { it > 6f } ?: 15f
+        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(location, currentZoom))
+    }
 
-                WatchOutButton(
-                    text = "다음",
-                    enabled = state.isPermissionGranted && state.isNotificationPermissionGranted,
-                    onClick = viewModel::onNextButtonClicked,
-                )
-
-                Spacer(modifier = Modifier.height(68.dp))
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest {
+            when (it) {
+                is LocationConfirmEffect.NavigateToMainScreen -> onComplete()
             }
         }
-    } else {
-        Text("위치 권한 또는 알림 권한이 필요합니다.")
     }
 }
