@@ -45,8 +45,8 @@ class HomeViewModel @Inject constructor(
     var keyword = MutableStateFlow("")
         private set
 
-    private val _cameraLocationState = MutableStateFlow(SEOUL_LAT_LNG)
-    val cameraLocationState: StateFlow<LatLng> get() = _cameraLocationState
+    private val _cameraLocationState = MutableStateFlow<LatLng?>(null)
+    val cameraLocationState: StateFlow<LatLng?> get() = _cameraLocationState
 
     private val boundingBoxState = MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
 
@@ -54,18 +54,22 @@ class HomeViewModel @Inject constructor(
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
 
     val incidentsState: StateFlow<IncidentsState> = cameraLocationState.map { location ->
-        when (val incidents = incidentsRepository.getIncidents(location)) {
-            is ApiResponse.Success -> {
-                IncidentsState.Success(incidents.data)
-            }
-            is ApiResponse.Failure.Error -> {
-                Logger.e(incidents.message())
-                IncidentsState.Loading
-            }
-            is ApiResponse.Failure.Exception -> {
-                Logger.e("${incidents.message}")
-                IncidentsState.Loading
-            }
+        if (location != null) {
+                when (val incidents = incidentsRepository.getIncidents(location)) {
+                    is ApiResponse.Success -> {
+                        IncidentsState.Success(incidents.data)
+                    }
+                    is ApiResponse.Failure.Error -> {
+                        Logger.e(incidents.message())
+                        IncidentsState.Loading
+                    }
+                    is ApiResponse.Failure.Exception -> {
+                        Logger.e("${incidents.message}")
+                        IncidentsState.Loading
+                    }
+                }
+        } else {
+            IncidentsState.Loading
         }
     }.stateIn(
         scope = viewModelScope,

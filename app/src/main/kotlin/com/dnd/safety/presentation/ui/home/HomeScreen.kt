@@ -59,7 +59,7 @@ private fun HomeScreen(
     incidentsState: IncidentsState,
     homeUiState: HomeUiState,
     myLocation: LatLng?,
-    cameraLocation: LatLng,
+    cameraLocation: LatLng?,
     keyword: String,
     viewModel: HomeViewModel,
 ) {

@@ -2,8 +2,12 @@ package com.dnd.safety.presentation.ui.home.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
@@ -16,6 +20,32 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun HomeMapView(
     myLocation: LatLng?,
+    cameraLocation: LatLng?,
+    incidents: List<Incidents>,
+    onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (cameraLocation == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        HomeMapViewContent(
+            myLocation = myLocation,
+            cameraLocation = cameraLocation,
+            incidents = incidents,
+            onUpdateBoundingBox = onUpdateBoundingBox,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun HomeMapViewContent(
+    myLocation: LatLng?,
     cameraLocation: LatLng,
     incidents: List<Incidents>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
@@ -24,6 +54,7 @@ fun HomeMapView(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(cameraLocation, 15f)
     }
+    val markerList = remember { mutableStateListOf<Incidents>() }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -34,30 +65,30 @@ fun HomeMapView(
         ) {
             MyLocationMarker(myLocation)
 
-            incidents.forEach { incident ->
+            markerList.forEach { data ->
                 IncidentsMarker(
-                    iconId = incident.incidentCategory.icon,
-                    location = LatLng(incident.pointY, incident.pointX),
+                    iconId = data.incidentCategory.icon,
+                    location = LatLng(data.pointY, data.pointX),
                 )
             }
         }
     }
 
     LaunchedEffect(cameraLocation) {
-        val currentZoom = cameraPositionState.position.zoom.takeIf { it > 6f } ?: 15f
-        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(cameraLocation, currentZoom))
+        val targetZoom = cameraPositionState.position.zoom.coerceAtMost(15f) // 최대 15로 제한
+        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(cameraLocation, targetZoom))
     }
 
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
-            val projection = cameraPositionState.projection
-            if (projection != null) {
-                val bounds = projection.visibleRegion.latLngBounds
-                val northeastLatLng = bounds.northeast
-                val southwestLatLng = bounds.southwest
-                onUpdateBoundingBox(northeastLatLng, southwestLatLng)
+            cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { bounds ->
+                onUpdateBoundingBox(bounds.northeast, bounds.southwest)
             }
         }
     }
-}
 
+    LaunchedEffect(incidents) {
+        markerList.clear()
+        markerList.addAll(incidents)
+    }
+}
