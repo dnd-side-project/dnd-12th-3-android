@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
+import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.home.HomeRoute
@@ -14,8 +15,11 @@ fun NavController.navigateToHome(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.homeNavGraph(
+    onBottomNavClicked: (MainTab) -> Unit
 ) {
     composable<MainTabRoute.Home> {
-        HomeRoute()
+        HomeRoute(
+            onBottomNavClicked = onBottomNavClicked
+        )
     }
 }

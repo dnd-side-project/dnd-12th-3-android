@@ -43,6 +43,7 @@ enum class ExpandedType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeBottomSheetScaffold(
+    modifier: Modifier = Modifier,
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -81,7 +82,7 @@ fun HomeBottomSheetScaffold(
             }
         },
         sheetPeekHeight = peekHeight.dp,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         sheetShadowElevation = 2.dp,
         sheetContainerColor = Gray80,
         sheetDragHandle = null,

@@ -38,7 +38,7 @@ fun MainNavHost(
             startDestination = Route.Splash,
         ) {
             homeNavGraph(
-
+                onBottomNavClicked = navigator::navigateTo
             )
             postReportNavGraph(
                 onShowSnackBar = onShowSnackBar,
@@ -47,7 +47,7 @@ fun MainNavHost(
                 onShowPostReport = navigator::navigateToReport
             )
             myPageNavGraph(
-
+                onGoBack = navigator::popBackStackIfNotHome
             )
             loginNavGraph(
                 onShowHome = { navigator.navigateTo(MainTab.Home) },

@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.MyTown
+import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
@@ -88,9 +89,7 @@ class MainNavigator(
 
     @SuppressLint("RestrictedApi")
     @Composable
-    fun shouldShowBottomBar() = MainTab.contains {
-        currentDestination?.hasRoute(it::class) == true
-    }
+    fun shouldShowBottomBar() = currentItem == MainTab.Home
 }
 
 @Composable

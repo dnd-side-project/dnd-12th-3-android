@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +19,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.presentation.designsystem.component.circleBackground
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.presentation.navigation.MainTab
+import com.dnd.safety.presentation.ui.home.component.HomeBottomBar
 import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
 import com.dnd.safety.presentation.ui.home.component.HomeSearchBar
@@ -27,9 +30,11 @@ import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.dnd.safety.presentation.ui.search_dialog.SearchDialog
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun HomeRoute(
+    onBottomNavClicked: (MainTab) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val cameraLocationState by viewModel.cameraLocationState.collectAsStateWithLifecycle()
@@ -46,6 +51,7 @@ fun HomeRoute(
         cameraLocation = cameraLocationState,
         keyword = keyword,
         viewModel = viewModel,
+        onBottomNavClicked = onBottomNavClicked
     )
 
     ModalContent(
@@ -62,53 +68,64 @@ private fun HomeScreen(
     cameraLocation: LatLng?,
     keyword: String,
     viewModel: HomeViewModel,
+    onBottomNavClicked: (MainTab) -> Unit,
 ) {
-    HomeBottomSheetScaffold(
-        sheetContent = {
-            IncidentContent(
-                incidentsState = incidentsState,
-                homeUiState = homeUiState,
-                viewModel = viewModel
+    Scaffold(
+        bottomBar = {
+            HomeBottomBar(
+                bottomItems = MainTab.entries.toPersistentList(),
+                onBottomItemClicked = onBottomNavClicked
             )
         }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            HomeMapView(
-                myLocation = myLocation,
-                cameraLocation = cameraLocation,
-                incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
-                onUpdateBoundingBox = viewModel::updateBoundingBoxState,
-            )
-            HomeSearchBar(
-                keyword = keyword,
-                onShowSearchDialog = viewModel::showSearchModal,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(16.dp)
-            )
-            Surface(
-                onClick = viewModel::setLocationCurrent,
-                shape = CircleShape,
-                modifier = Modifier
-                    .padding(it)
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MyLocation,
-                    contentDescription = "내 위치로 이동",
-                    tint = Gray70,
-                    modifier = Modifier
-                        .padding(9.dp)
-                        .circleBackground(White)
+    ) { paddingValues ->
+        HomeBottomSheetScaffold(
+            sheetContent = {
+                IncidentContent(
+                    incidentsState = incidentsState,
+                    homeUiState = homeUiState,
+                    viewModel = viewModel
                 )
+            },
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                HomeMapView(
+                    myLocation = myLocation,
+                    cameraLocation = cameraLocation,
+                    incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
+                    onUpdateBoundingBox = viewModel::updateBoundingBoxState,
+                )
+                HomeSearchBar(
+                    keyword = keyword,
+                    onShowSearchDialog = viewModel::showSearchModal,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(16.dp)
+                )
+                Surface(
+                    onClick = viewModel::setLocationCurrent,
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .padding(it)
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MyLocation,
+                        contentDescription = "내 위치로 이동",
+                        tint = Gray70,
+                        modifier = Modifier
+                            .padding(9.dp)
+                            .circleBackground(White)
+                    )
+                }
             }
         }
     }
 }
+
 
 
 @Composable

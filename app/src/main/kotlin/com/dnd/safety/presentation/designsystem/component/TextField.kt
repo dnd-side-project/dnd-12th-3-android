@@ -1,7 +1,10 @@
 package com.dnd.safety.presentation.designsystem.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray50
+import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
 @Composable
@@ -81,26 +85,26 @@ fun TextField(
 fun TextFieldBox(
     text: String,
     shape: Shape,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     textStyle: TextStyle = SafetyTheme.typography.paragraph2,
-    content: @Composable () -> Unit
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+    content: @Composable () -> Unit = {}
 ) {
-    Surface(
-        shape = shape,
-        color = Gray10,
-        onClick = onClick,
+    Box(
         modifier = modifier
+            .background(color = Gray10, shape = shape)
+            .clickable(enabled = onClick != null) { onClick?.invoke() }
+            .padding(paddingValues)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .wrapContentSize(Alignment.TopStart)
+            modifier = Modifier.wrapContentSize(Alignment.TopStart)
         ) {
             Text(
                 text = text,
-                style = textStyle
+                style = textStyle,
+                color = Gray80
             )
             Spacer(modifier = Modifier.weight(1f))
             content()
