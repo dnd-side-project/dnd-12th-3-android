@@ -15,16 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.domain.model.IncidentTypeFilter
-import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.designsystem.component.IncidentsFilter
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
 @Composable
 fun IncidentList(
-    incidents: List<Incidents>,
+    incidents: List<Incident>,
     typeFilters: List<IncidentTypeFilter>,
     onFilterClick: (IncidentTypeFilter) -> Unit,
+    onShowDetail: (Incident) -> Unit,
+    onLike: (Incident) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -43,7 +45,15 @@ fun IncidentList(
                 .fillMaxWidth()
         ) {
             items(incidents) { incident ->
-                IncidentsItem(incidents = incident)
+                IncidentsItem(
+                    incident = incident,
+                    onShowComment = {
+                        onShowDetail(incident)
+                    },
+                    onLike = {
+                        onLike(incident)
+                    }
+                )
             }
         }
     }
@@ -54,9 +64,11 @@ fun IncidentList(
 private fun IncidentListPreview() {
     SafetyTheme {
         IncidentList(
-            incidents = Incidents.sampleIncidents,
+            incidents = Incident.sampleIncidents,
             typeFilters = IncidentTypeFilter.entries,
             onFilterClick = {},
+            onShowDetail = {},
+            onLike = {}
         )
     }
 }

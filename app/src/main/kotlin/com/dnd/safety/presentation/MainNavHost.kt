@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
+import com.dnd.safety.presentation.ui.detail.navigation.detailNavGraph
 import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
 import com.dnd.safety.presentation.ui.location_search.navigation.locationNavGraph
 import com.dnd.safety.presentation.ui.login.navigation.loginNavGraph
@@ -30,13 +31,13 @@ fun MainNavHost(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceDim)
-            .padding(paddingValues)
     ) {
         NavHost(
             navController = navigator.navController,
             startDestination = Route.Splash,
         ) {
             homeNavGraph(
+                onShowDetail = navigator::navigateToDetail,
                 onBottomNavClicked = navigator::navigateTo
             )
             postReportNavGraph(
@@ -63,6 +64,9 @@ fun MainNavHost(
             )
             splashNavGraph(
                 onPermissionAllowed = navigator::navigateToLogin
+            )
+            detailNavGraph(
+                onGoBack = navigator::popBackStackIfNotHome
             )
         }
     }

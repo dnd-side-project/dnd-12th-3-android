@@ -2,7 +2,7 @@ package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.remote.api.IncidentsApi
 import com.dnd.safety.domain.mapper.toIncidentsList
-import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.model.LatLng
@@ -18,7 +18,7 @@ class IncidentListRepositoryImpl @Inject constructor(
 
     override suspend fun getIncidents(
         location: LatLng
-    ): ApiResponse<List<Incidents>> {
+    ): ApiResponse<List<Incident>> {
         return incidentsApi.getIncidents(
             location.longitude,
             location.latitude,
@@ -29,7 +29,7 @@ class IncidentListRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMyIncidents(): ApiResponse<List<Incidents>> {
+    override suspend fun getMyIncidents(): ApiResponse<List<Incident>> {
         TODO("Not yet implemented")
     }
 }

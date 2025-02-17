@@ -5,7 +5,9 @@ package com.dnd.safety.presentation.ui.home
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
@@ -13,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +23,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.designsystem.component.circleBackground
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.White
@@ -29,15 +33,18 @@ import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
 import com.dnd.safety.presentation.ui.home.component.HomeSearchBar
 import com.dnd.safety.presentation.ui.home.component.IncidentList
+import com.dnd.safety.presentation.ui.home.effect.HomeUiEffect
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.dnd.safety.presentation.ui.search_dialog.SearchDialog
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeRoute(
+    onIncidentDetail: (Incident) -> Unit,
     onBottomNavClicked: (MainTab) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -62,6 +69,14 @@ fun HomeRoute(
         modalState = modalState,
         viewModel = viewModel
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.homeUiEffect.collectLatest {
+            when (it) {
+                is HomeUiEffect.ShowIncidentDetail -> onIncidentDetail(it.incident)
+            }
+        }
+    }
 }
 
 @Composable
@@ -80,7 +95,10 @@ private fun HomeScreen(
                 bottomItems = MainTab.entries.toPersistentList(),
                 onBottomItemClicked = onBottomNavClicked
             )
-        }
+        },
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) { paddingValues ->
         HomeBottomSheetScaffold(
             sheetContent = {
@@ -160,6 +178,8 @@ private fun IncidentContent(
                 incidents = incidentsState.incidents,
                 typeFilters = homeUiState.typeFilters,
                 onFilterClick = viewModel::setIncidentTypeFilter,
+                onShowDetail = viewModel::showIncidentDetail,
+                onLike = viewModel::likeIncident,
             )
         }
     }

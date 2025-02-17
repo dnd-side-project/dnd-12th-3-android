@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -96,6 +97,27 @@ fun TopAppbarIcon(
     ) {
         Icon(
             imageVector = icon,
+            contentDescription = "menu Icon",
+            tint = tint,
+            modifier = Modifier.align(Alignment.Center),
+        )
+    }
+}
+
+@Composable
+fun TopAppbarIcon(
+    tint: Color,
+    icon: Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(10.dp)
+    ) {
+        Icon(
+            painter = icon,
             contentDescription = "menu Icon",
             tint = tint,
             modifier = Modifier.align(Alignment.Center),

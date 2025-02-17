@@ -2,13 +2,13 @@ package com.dnd.safety.domain.mapper
 
 import com.dnd.safety.data.model.response.IncidentsResponse
 import com.dnd.safety.domain.model.IncidentCategory
-import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.MediaFile
 import com.dnd.safety.utils.toLocalDateTime
 
 fun IncidentsResponse.toIncidentsList() = this.data.map { it.toIncidents() }
 
-fun IncidentsResponse.Data.toIncidents(): Incidents = Incidents(
+fun IncidentsResponse.Data.toIncidents(): Incident = Incident(
     id = incident.id,
     title = extractDong(incident.roadNameAddress) ?: "제목",
     description = incident.description,

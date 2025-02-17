@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.IncidentTypeFilter
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.location.LocationService
+import com.dnd.safety.presentation.ui.home.effect.HomeUiEffect
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
@@ -18,7 +20,9 @@ import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -80,6 +84,9 @@ class HomeViewModel @Inject constructor(
     private val _homeModalState = MutableStateFlow<HomeModalState>(HomeModalState.Dismiss)
     val homeModalState: StateFlow<HomeModalState> get() = _homeModalState
 
+    private val _homeUiEffect = MutableSharedFlow<HomeUiEffect>()
+    val homeUiEffect: SharedFlow<HomeUiEffect> get() = _homeUiEffect
+
     init {
         initLocation()
     }
@@ -135,9 +142,20 @@ class HomeViewModel @Inject constructor(
         _cameraLocationState.update { myLocation.value ?: SEOUL_LAT_LNG }
     }
 
+    fun likeIncident(incident: Incident) {
+        viewModelScope.launch {
+        }
+    }
+
     fun showSearchModal() {
         _homeModalState.update {
             HomeModalState.ShowSearchDialog
+        }
+    }
+
+    fun showIncidentDetail(incident: Incident) {
+        viewModelScope.launch {
+            _homeUiEffect.emit(HomeUiEffect.ShowIncidentDetail(incident))
         }
     }
 

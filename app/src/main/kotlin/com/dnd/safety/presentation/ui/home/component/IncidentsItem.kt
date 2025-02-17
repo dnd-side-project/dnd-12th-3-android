@@ -1,6 +1,7 @@
 package com.dnd.safety.presentation.ui.home.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,23 +23,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.R
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.MediaFile
-import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray30
 import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.Orange60
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.utils.daysAgo
 import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
 fun IncidentsItem(
-    incidents: Incidents,
-    modifier: Modifier = Modifier
+    incident: Incident,
+    onLike: () -> Unit,
+    modifier: Modifier = Modifier,
+    onShowComment: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -54,7 +59,7 @@ fun IncidentsItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = incidents.title,
+                    text = incident.title,
                     style = SafetyTheme.typography.title3
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -67,7 +72,7 @@ fun IncidentsItem(
                         )
                 ) {
                     Text(
-                        text = incidents.incidentCategory.korTitle,
+                        text = incident.incidentCategory.korTitle,
                         style = SafetyTheme.typography.label2,
                         color = White,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -78,13 +83,13 @@ fun IncidentsItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = incidents.distance,
+                    text = incident.distance,
                     style = SafetyTheme.typography.label2,
                     color = Gray60
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = incidents.address,
+                    text = incident.address,
                     style = SafetyTheme.typography.label2,
                     color = Gray40
                 )
@@ -93,7 +98,7 @@ fun IncidentsItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = incidents.userName,
+                    text = incident.userName,
                     style = SafetyTheme.typography.label2,
                     color = Gray30
                 )
@@ -104,21 +109,62 @@ fun IncidentsItem(
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
                 Text(
-                    text = incidents.daysAgo(),
+                    text = incident.createdDate.daysAgo(),
                     style = SafetyTheme.typography.label2,
                     color = Gray30
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = incidents.description,
+                text = incident.description,
                 style = SafetyTheme.typography.paragraph2
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
         IncidentsImages(
-            imageUrls = incidents.mediaFiles
+            imageUrls = incident.mediaFiles
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Row {
+                IconWithCount(
+                    icon = R.drawable.ic_message,
+                    count = 1,
+                    modifier = Modifier
+                        .clickable(
+                            enabled = onShowComment != null,
+                            onClick = onShowComment ?: {}
+                        )
+                        .padding(vertical = 4.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                IconWithCount(
+                    icon = R.drawable.ic_like,
+                    count = 1,
+                    modifier = Modifier
+                        .clickable(
+                            onClick = onLike
+                        )
+                        .padding(vertical = 4.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            onShowComment?.let {
+                Text(
+                    text = "댓글 쓰기",
+                    style = SafetyTheme.typography.paragraph2,
+                    color = Gray30,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onShowComment)
+                        .padding(8.dp)
+                )
+            }
+        }
     }
 }
 
@@ -136,7 +182,7 @@ private fun IncidentsImages(
             .height(150.dp)
     ) {
         item {
-             Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
         }
         if (imageUrls.size == 1) {
             item {
@@ -182,13 +228,40 @@ private fun IncidentsImage(
     )
 }
 
+@Composable
+private fun IconWithCount(
+    icon: Int,
+    count: Int,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            tint = Gray40,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = count.toString(),
+            style = SafetyTheme.typography.label5,
+            color = Gray40
+        )
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
 private fun IncidentsSheetPreview() {
     SafetyTheme {
         IncidentsItem(
-            incidents = Incidents.sampleIncidents.first()
+            incident = Incident.sampleIncidents.first(),
+            onShowComment = { },
+            onLike = { }
         )
     }
 }

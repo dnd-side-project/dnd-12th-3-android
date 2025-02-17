@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.dnd.safety.domain.model.Incidents
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.utils.icon
@@ -20,7 +20,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun HomeMapView(
     myLocation: LatLng?,
     cameraLocation: LatLng?,
-    incidents: List<Incidents>,
+    incidents: List<Incident>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,14 +41,14 @@ fun HomeMapView(
 fun HomeMapViewContent(
     myLocation: LatLng?,
     cameraLocation: LatLng,
-    incidents: List<Incidents>,
+    incidents: List<Incident>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(cameraLocation, 15f)
     }
-    val markerList = remember { mutableStateListOf<Incidents>() }
+    val markerList = remember { mutableStateListOf<Incident>() }
 
     Box(
         modifier = Modifier.fillMaxSize()

@@ -10,10 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
+import com.dnd.safety.presentation.ui.detail.navigation.navigateToDetail
 import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
 import com.dnd.safety.presentation.ui.location_search.navigation.navigateToLocationSearch
 import com.dnd.safety.presentation.ui.location_search.navigation.navigationToLocationConfirm
@@ -79,6 +81,10 @@ class MainNavigator(
 
     fun navigateToLocationConfirm(myTown: MyTown) {
         navController.navigationToLocationConfirm(myTown)
+    }
+
+    fun navigateToDetail(incident: Incident) {
+        navController.navigateToDetail(incident)
     }
 
     fun popBackStackIfNotHome() {

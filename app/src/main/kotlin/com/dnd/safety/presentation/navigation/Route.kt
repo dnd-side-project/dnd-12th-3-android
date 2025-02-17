@@ -1,5 +1,6 @@
 package com.dnd.safety.presentation.navigation
 
+import com.dnd.safety.domain.model.Incident
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -12,6 +13,11 @@ sealed interface Route {
 
     @Serializable
     data object SearchLocation : Route
+
+    @Serializable
+    data class IncidentDetail(
+        val incident: Incident
+    ) : Route
 
     @Serializable
     data class LocationConfirm(

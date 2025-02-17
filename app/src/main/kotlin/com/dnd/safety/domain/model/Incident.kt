@@ -1,9 +1,12 @@
 package com.dnd.safety.domain.model
 
+import com.dnd.safety.presentation.navigation.utils.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
 import java.time.Duration
 import java.time.LocalDateTime
 
-data class Incidents(
+@Serializable
+data class Incident(
     val id: Long,
     val title: String,
     val userName: String,
@@ -12,27 +15,15 @@ data class Incidents(
     val address: String,
     val pointX: Double,
     val pointY: Double,
-    val createdDate: LocalDateTime,
-    val updatedDate: LocalDateTime,
+    @Serializable(with = LocalDateTimeSerializer::class) val createdDate: LocalDateTime,
+    @Serializable(with = LocalDateTimeSerializer::class) val updatedDate: LocalDateTime,
     val incidentCategory: IncidentCategory,
     val mediaFiles: List<MediaFile>,
 ) {
 
-    fun daysAgo(): String {
-        val now = LocalDateTime.now()
-        val duration = Duration.between(createdDate, now)
-
-        return when {
-            duration.toDays() > 0 -> "${duration.toDays()}일 전"
-            duration.toHours() > 0 -> "${duration.toHours()}시간 전"
-            duration.toMinutes() > 0 -> "${duration.toMinutes()}분 전"
-            else -> "방금 전"
-        }
-    }
-
     companion object {
         val sampleIncidents = listOf(
-            Incidents(
+            Incident(
                 id = 1,
                 title = "title",
                 description = "description",

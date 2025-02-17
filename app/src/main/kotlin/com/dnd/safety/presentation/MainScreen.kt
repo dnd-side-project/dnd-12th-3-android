@@ -41,9 +41,7 @@ private fun MainScreenContent(
 ) {
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .fillMaxSize(),
         content = {
             MainNavHost(
                 navigator = navigator,
