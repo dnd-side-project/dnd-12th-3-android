@@ -2,6 +2,7 @@ package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.remote.api.IncidentsApi
 import com.dnd.safety.domain.mapper.toIncidentsList
+import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.utils.Logger
@@ -17,11 +18,16 @@ class IncidentListRepositoryImpl @Inject constructor(
 ) : IncidentListRepository {
 
     override suspend fun getIncidents(
-        location: LatLng
+        boundingBox: BoundingBox,
+        myLocation: LatLng
     ): ApiResponse<List<Incident>> {
         return incidentsApi.getIncidents(
-            location.longitude,
-            location.latitude,
+            topRightX = boundingBox.topRight.x,
+            topRightY = boundingBox.topRight.y,
+            bottomLeftX = boundingBox.bottomleft.x,
+            bottomLeftY = boundingBox.bottomleft.y,
+            myX = myLocation.latitude,
+            myY = myLocation.longitude
         ).mapSuccess {
             toIncidentsList()
         }.onFailure {

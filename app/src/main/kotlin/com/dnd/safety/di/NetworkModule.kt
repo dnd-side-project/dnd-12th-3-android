@@ -1,6 +1,7 @@
 package com.dnd.safety.di
 
 import com.dnd.safety.BuildConfig
+import com.dnd.safety.data.datastore.datasource.UserPreferenceDataSource
 import com.dnd.safety.data.remote.api.GoogleAuthService
 import com.dnd.safety.data.remote.api.IncidentService
 import com.dnd.safety.data.remote.api.IncidentsApi
@@ -45,15 +46,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClientBuilder(): OkHttpClient.Builder {
+    fun provideOkHttpClientBuilder(
+        userPreferenceDataSource: UserPreferenceDataSource
+    ): OkHttpClient.Builder {
         return OkHttpClient.Builder()
             .addInterceptor(HttpNetworkLogger())
             .addInterceptor { chain ->
-                val token = runBlocking { "" }
+                val token = runBlocking { userPreferenceDataSource.getToken() }
 
                 val requestBuilder = chain.request().newBuilder()
                     .header("Content-Type", "application/json; charset=utf-8")
-                    .header("token", token)
+                    .header("Authorization: Bearer ", token)
                 val request = requestBuilder.build()
                 chain.proceed(request)
             }

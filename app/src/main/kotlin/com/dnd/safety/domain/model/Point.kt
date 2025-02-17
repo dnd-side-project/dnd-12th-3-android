@@ -6,5 +6,5 @@ data class Point(
     val x: Double,
     val y: Double
 ) {
-    constructor(latLng: LatLng) : this(latLng.latitude, latLng.longitude)
+    constructor(latLng: LatLng) : this(latLng.longitude, latLng.latitude)
 }

@@ -38,12 +38,8 @@ class HomeViewModel @Inject constructor(
     incidentListRepository: IncidentListRepository,
 ) : ViewModel() {
 
-    val myLocation = locationService
-        .requestLocationUpdates()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
+    val myLocation = locationService.requestLocationUpdates().stateIn(
+            scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = null
         )
 
     var keyword = MutableStateFlow("")
@@ -52,28 +48,34 @@ class HomeViewModel @Inject constructor(
     private val _cameraLocationState = MutableStateFlow<LatLng?>(null)
     val cameraLocationState: StateFlow<LatLng?> get() = _cameraLocationState
 
-    private val boundingBoxState = MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
+    private val boundingBoxState =
+        MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
 
-    val incidentsState: StateFlow<IncidentsState> = cameraLocationState.map { location ->
-        if (location != null) {
-                when (val incidents = incidentListRepository.getIncidents(location)) {
+    val incidentsState: StateFlow<IncidentsState> = boundingBoxState.map { state ->
+        when (state) {
+            BoundingBoxState.NotInitialized -> IncidentsState.Loading
+            is BoundingBoxState.Success -> {
+                when (val incidents = incidentListRepository.getIncidents(
+                    state.boundingBox, myLocation.value ?: SEOUL_LAT_LNG
+                )) {
                     is ApiResponse.Success -> {
                         IncidentsState.Success(incidents.data)
                     }
+
                     is ApiResponse.Failure.Error -> {
                         Logger.e(incidents.message())
                         IncidentsState.Loading
                     }
+
                     is ApiResponse.Failure.Exception -> {
                         Logger.e("${incidents.message}")
                         IncidentsState.Loading
                     }
                 }
-        } else {
-            IncidentsState.Loading
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -109,14 +111,12 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateBoundingBoxState(
-        topRight: LatLng,
-        bottomLeft: LatLng
+        topLeft: LatLng, bottomRight: LatLng
     ) {
         boundingBoxState.update {
             BoundingBoxState.Success(
                 BoundingBox(
-                    topRight = Point(topRight),
-                    bottomLeft = Point(bottomLeft)
+                    topRight = Point(topLeft), bottomleft = Point(bottomRight)
                 )
             )
         }
@@ -124,11 +124,9 @@ class HomeViewModel @Inject constructor(
 
     fun setIncidentTypeFilter(type: IncidentTypeFilter) {
         _homeUiState.update {
-            it.copy(
-                typeFilters = it.typeFilters.map { filter ->
-                    filter.copy(isSelected = filter == type)
-                }
-            )
+            it.copy(typeFilters = it.typeFilters.map { filter ->
+                filter.copy(isSelected = filter == type)
+            })
         }
     }
 
@@ -143,8 +141,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun likeIncident(incident: Incident) {
-        viewModelScope.launch {
-        }
+        viewModelScope.launch {}
     }
 
     fun showSearchModal() {

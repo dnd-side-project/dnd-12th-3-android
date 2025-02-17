@@ -7,10 +7,13 @@ import retrofit2.http.Query
 
 interface IncidentsApi {
 
-    @GET("/api/incidents/nearby")
+    @GET("/api/incidents/newest")
     suspend fun getIncidents(
-        @Query("pointX") latitude: Double,
-        @Query("pointY") longitude: Double,
-        @Query("radiusInKm") distance: Int = 5
+        @Query("topRightX") topRightX: Double,
+        @Query("topRightY") topRightY: Double,
+        @Query("bottomLeftX") bottomLeftX: Double,
+        @Query("bottomLeftY") bottomLeftY: Double,
+        @Query("myX") myX: Double,
+        @Query("myY") myY: Double,
     ): ApiResponse<IncidentsResponse>
 }
