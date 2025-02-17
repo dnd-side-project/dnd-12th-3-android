@@ -45,7 +45,7 @@ googleService = "4.4.2"
 mapsCompose = "6.4.1"
 firebase = "3.0.2"
 pagingCommonAndroid = "3.3.5"
-v2All = "2.20.6"
+kakao = "2.20.6"
 kotlinxImmutable = "0.3.7"
 androidxComposeMaterial3 = "1.3.1"
 
@@ -115,7 +115,8 @@ sandwich-retrofit = { module = "com.github.skydoves:sandwich-retrofit", version.
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 firebase = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebase" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
-v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
+kakao-all = { module = "com.kakao.sdk:v2-all", version.ref = "kakao" }
+kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }

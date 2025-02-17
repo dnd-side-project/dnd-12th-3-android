@@ -52,11 +52,13 @@ class AuthRepositoryImpl @Inject constructor(
     private var signUpRequest: BeginSignInRequest,
 ) : AuthRepository {
 
+    override suspend fun checkKakaoLogin(): Boolean {
+        return kakaoLoginDataSource.isUserLoggedIn()
+    }
+
     override suspend fun loginWithKakao(): ApiResponse<String> {
         return kakaoLoginDataSource.login()
-            .mapSuccess {
-                accessToken
-            }.onFailure {
+            .onFailure {
                 Logger.e(message())
             }
     }

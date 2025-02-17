@@ -141,7 +141,8 @@ dependencies {
     implementation(libs.landscapist.coil)
 
     // KakaoTalk
-    implementation(libs.v2.all)
+    implementation(libs.kakao.all)
+    implementation(libs.kakao.user)
 
     // Google Auth
     implementation(libs.play.services.auth)

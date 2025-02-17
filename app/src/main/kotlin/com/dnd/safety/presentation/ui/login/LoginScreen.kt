@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,11 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,12 +32,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.data.model.AuthState
 import com.dnd.safety.data.model.DataProvider
+import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.login.component.AnonymousSignIn
 import com.dnd.safety.presentation.ui.login.component.OneTapSignIn
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseUser
 
 @Composable
 fun LoginScreen(
@@ -49,27 +49,54 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     val currentUser = viewModel.currentUser.collectAsStateWithLifecycle().value
+
+    LoginScreen(
+        isLoading = isLoading,
+        state = state,
+        onKakaoLoginClick = viewModel::loginWithKakao,
+        onGoogleLoginClick = viewModel::oneTapSignIn,
+    )
+
+    LoginEffect(
+        currentUser = currentUser,
+        viewModel = viewModel,
+        onShowLocationSearch = onShowLocationSearch,
+        onShowHome = onShowHome,
+        onShowSnackBar = onShowSnackBar,
+    )
+}
+
+@Composable
+private fun LoginEffect(
+    currentUser: FirebaseUser?,
+    viewModel: LoginViewModel,
+    onShowLocationSearch: () -> Unit,
+    onShowHome: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
+) {
     DataProvider.updateAuthState(currentUser)
 
     if (DataProvider.authState != AuthState.SignedOut) {
         viewModel.checkIsNeedToEnterLocation()
+    } else {
+        viewModel.loginRequired()
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             try {
                 Logger.d("Login")
-                val credentials = viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
+                val credentials =
+                    viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
                 viewModel.signInWithGoogle(credentials)
                 viewModel.checkIsNeedToEnterLocation()
-            }
-            catch (e: ApiException) {
+            } catch (e: ApiException) {
                 Logger.e("Login One-tap $e")
             }
-        }
-        else if (result.resultCode == Activity.RESULT_CANCELED){
+        } else if (result.resultCode == Activity.RESULT_CANCELED) {
             Logger.e("OneTapClient Canceled")
         }
     }
@@ -89,55 +116,28 @@ fun LoginScreen(
         }
     }
 
-    LoginContent(
-        state = state,
-        onKakaoLoginClick = { },
-        onGoogleLoginClick = {
-            viewModel.oneTapSignIn()
-        }
+    AnonymousSignIn(
+        onChangeLoading = viewModel::changeLoadingState
     )
 
-    if (DataProvider.authState == AuthState.SignedOut) {
-        Button(
-            onClick = {
-                viewModel.signInAnonymously()
-            },
-            modifier = Modifier
-                .size(width = 200.dp, height = 50.dp)
-                .padding(horizontal = 16.dp),
-        ) {
-            Text(
-                text = "Skip",
-                modifier = Modifier.padding(6.dp),
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        }
-    }
-
-    AnonymousSignIn()
-
-    OneTapSignIn (
-        launch = {
-            launch(it)
-        }
-    )
+    OneTapSignIn(launch = ::launch)
 }
 
 @Composable
-fun LoginContent(
-    state: LoginState,
-    modifier: Modifier = Modifier,
+private fun LoginScreen(
+    isLoading: Boolean,
+    state: LoginUiState,
     onKakaoLoginClick: () -> Unit,
     onGoogleLoginClick: () -> Unit,
 ) {
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
-        Surface(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            color = MaterialTheme.colorScheme.background
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -147,32 +147,46 @@ fun LoginContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-
                     Spacer(modifier = Modifier.weight(1f))
-
                     WatchOutImage()
-
                     Spacer(modifier = Modifier.weight(1f))
-
-                    SocialLoginButton(
-                        type = SocialLoginType.KAKAO,
-                        onClick = onKakaoLoginClick,
-                        enabled = !state.isLoading
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    SocialLoginButton(
-                        type = SocialLoginType.GOOGLE,
-                        onClick = onGoogleLoginClick,
-                        enabled = !state.isLoading
-                    )
-
-                    Spacer(modifier = Modifier.height(48.dp))
+                    Crossfade(state) {
+                        when (it) {
+                            LoginUiState.Initializing -> {}
+                            LoginUiState.NeedLogin -> {
+                                LoginButtons(
+                                    onKakaoLoginClick = onKakaoLoginClick,
+                                    onGoogleLoginClick = onGoogleLoginClick,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(34.dp))
                 }
             }
 
+            if (isLoading) {
+                ProgressIndicator()
+            }
         }
+    }
+}
+
+@Composable
+private fun LoginButtons(
+    onKakaoLoginClick: () -> Unit,
+    onGoogleLoginClick: () -> Unit,
+) {
+    Column {
+        SocialLoginButton(
+            type = SocialLoginType.KAKAO,
+            onClick = onKakaoLoginClick,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        SocialLoginButton(
+            type = SocialLoginType.GOOGLE,
+            onClick = onGoogleLoginClick,
+        )
     }
 }
 
@@ -185,19 +199,16 @@ fun WatchOutImage(modifier: Modifier = Modifier) {
     )
 }
 
-
 @Composable
 fun SocialLoginButton(
     type: SocialLoginType,
     onClick: () -> Unit,
-    enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clickable(
-                enabled = enabled,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onClick
@@ -220,8 +231,9 @@ fun SocialLoginButton(
 @Composable
 private fun LoginScreenPreview() {
     SafetyTheme {
-        LoginContent(
-            state = LoginState(isLoading = false),
+        LoginScreen(
+            isLoading = false,
+            state = LoginUiState.NeedLogin,
             onKakaoLoginClick = {},
             onGoogleLoginClick = {},
         )

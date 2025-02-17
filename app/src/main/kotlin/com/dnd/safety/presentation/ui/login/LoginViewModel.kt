@@ -8,13 +8,16 @@ import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.identity.SignInCredential
+import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.suspendOnFailure
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,11 +29,32 @@ class LoginViewModel @Inject constructor(
 
     val currentUser = getAuthState()
 
-    private val _state = MutableStateFlow(LoginState())
-    val state = _state.asStateFlow()
+    var isLoading = MutableStateFlow(false)
+        private set
+
+    private val _state: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.Initializing)
+    val state: StateFlow<LoginUiState> get() = _state
 
     private val _effect = Channel<LoginEffect>()
     val effect = _effect.receiveAsFlow()
+
+    init {
+        viewModelScope.launch {
+            if (authRepository.checkKakaoLogin()) {
+                checkIsNeedToEnterLocation()
+            } else {
+                loginRequired()
+            }
+        }
+    }
+
+    fun changeLoadingState(isLoading: Boolean) {
+        this.isLoading.value = isLoading
+    }
+
+    fun loginRequired() {
+        _state.update { LoginUiState.NeedLogin }
+    }
 
     fun checkIsNeedToEnterLocation() {
         viewModelScope.launch {
@@ -87,9 +111,18 @@ class LoginViewModel @Inject constructor(
         DataProvider.deleteAccountResponse = Response.Loading
         DataProvider.deleteAccountResponse = authRepository.deleteUserAccount(googleIdToken)
     }
-}
 
-sealed class LoginEvent {
-    data class GoogleSignInSuccess(val idToken: String) : LoginEvent()
-    data class GoogleSignInError(val error: Throwable) : LoginEvent()
+    fun loginWithKakao() {
+        changeLoadingState(true)
+        viewModelScope.launch {
+            authRepository.loginWithKakao()
+                .onSuccess {
+                    checkIsNeedToEnterLocation()
+                    changeLoadingState(false)
+                }.suspendOnFailure {
+                    _effect.send(LoginEffect.ShowSnackBar("카카오 로그인에 실패했습니다"))
+                    changeLoadingState(false)
+                }
+        }
+    }
 }

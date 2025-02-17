@@ -3,14 +3,14 @@ package com.dnd.safety.di
 import com.dnd.safety.data.repository.AuthRepositoryImpl
 import com.dnd.safety.data.repository.CameraRepositoryImpl
 import com.dnd.safety.data.repository.IncidentRepositoryImpl
-import com.dnd.safety.data.repository.IncidentsRepositoryImpl
+import com.dnd.safety.data.repository.IncidentListRepositoryImpl
 import com.dnd.safety.data.repository.LawDistrictRepositoryImpl
 import com.dnd.safety.data.repository.LocationRepositoryImpl
 import com.dnd.safety.data.repository.MediaRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.CameraRepository
 import com.dnd.safety.domain.repository.IncidentRepository
-import com.dnd.safety.domain.repository.IncidentsRepository
+import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.domain.repository.LawDistrictRepository
 import com.dnd.safety.domain.repository.LocationRepository
 import com.dnd.safety.domain.repository.MediaRepository
@@ -56,8 +56,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideIncidentsRepository(
-        repositoryImpl: IncidentsRepositoryImpl
-    ): IncidentsRepository
+        repositoryImpl: IncidentListRepositoryImpl
+    ): IncidentListRepository
 
     @Binds
     @Singleton

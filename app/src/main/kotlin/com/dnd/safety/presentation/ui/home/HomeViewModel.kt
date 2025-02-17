@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Point
-import com.dnd.safety.domain.repository.IncidentsRepository
+import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.location.LocationService
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     locationService: LocationService,
-    incidentsRepository: IncidentsRepository,
+    incidentListRepository: IncidentListRepository,
 ) : ViewModel() {
 
     val myLocation = locationService
@@ -55,7 +55,7 @@ class HomeViewModel @Inject constructor(
 
     val incidentsState: StateFlow<IncidentsState> = cameraLocationState.map { location ->
         if (location != null) {
-                when (val incidents = incidentsRepository.getIncidents(location)) {
+                when (val incidents = incidentListRepository.getIncidents(location)) {
                     is ApiResponse.Success -> {
                         IncidentsState.Success(incidents.data)
                     }

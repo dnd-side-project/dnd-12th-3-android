@@ -8,17 +8,20 @@ import com.dnd.safety.data.model.Response
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 
 @Composable
-fun AnonymousSignIn() {
+fun AnonymousSignIn(
+    onChangeLoading: (Boolean) -> Unit
+) {
     when (val anonymousResponse = DataProvider.anonymousSignInResponse) {
         is Response.Loading -> {
-            Log.i("Login:AnonymousSignIn", "Loading")
-            ProgressIndicator()
+            onChangeLoading(true)
         }
         is Response.Success -> anonymousResponse.data?.let { authResult ->
             Log.i("Login:AnonymousSignIn", "Success: $authResult")
+            onChangeLoading(false)
         }
         is Response.Failure -> LaunchedEffect(Unit) {
             Log.e("Login:AnonymousSignIn", "${anonymousResponse.e}")
+            onChangeLoading(false)
         }
     }
 }

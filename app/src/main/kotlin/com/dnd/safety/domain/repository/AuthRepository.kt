@@ -10,7 +10,11 @@ import com.skydoves.sandwich.ApiResponse
 import kotlinx.coroutines.CoroutineScope
 
 interface AuthRepository {
+
+    suspend fun checkKakaoLogin(): Boolean
+
     suspend fun loginWithKakao(): ApiResponse<String>
+
     suspend fun signInWithGoogle(idToken: String): ApiResponse<String>
 
     fun getAuthState(viewModelScope: CoroutineScope): AuthStateResponse
