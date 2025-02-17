@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.mytown
+package com.dnd.safety.presentation.ui.myPage
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,9 +20,9 @@ import com.dnd.safety.presentation.designsystem.component.NormalDialog
 import com.dnd.safety.presentation.designsystem.component.TopAppbar
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.MyLocationMarker
-import com.dnd.safety.presentation.ui.mytown.component.MyTownSheet
-import com.dnd.safety.presentation.ui.mytown.effect.MyTownModalState
-import com.dnd.safety.presentation.ui.mytown.state.MyTownUiState
+import com.dnd.safety.presentation.ui.myPage.component.MyTownSheet
+import com.dnd.safety.presentation.ui.myPage.effect.MyTownModalState
+import com.dnd.safety.presentation.ui.myPage.state.MyTownUiState
 import com.dnd.safety.presentation.ui.search_address_dialog.SearchAddressDialog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition

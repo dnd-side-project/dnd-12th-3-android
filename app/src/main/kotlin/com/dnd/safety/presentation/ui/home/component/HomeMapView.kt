@@ -2,15 +2,14 @@ package com.dnd.safety.presentation.ui.home.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.dnd.safety.domain.model.Incidents
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
+import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.utils.icon
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -26,12 +25,7 @@ fun HomeMapView(
     modifier: Modifier = Modifier
 ) {
     if (cameraLocation == null) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        ProgressIndicator()
     } else {
         HomeMapViewContent(
             myLocation = myLocation,

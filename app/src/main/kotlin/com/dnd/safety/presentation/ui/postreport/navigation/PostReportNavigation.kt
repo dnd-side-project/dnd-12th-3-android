@@ -26,6 +26,7 @@ fun NavGraphBuilder.postReportNavGraph(
         CameraScreen(
             onCameraCapture = onShowPostReport,
             onShowSnackBar = onShowSnackBar,
+            onGoBack = onGoBack,
         )
     }
     composable<MainTabRoute.PostReport.Report> {

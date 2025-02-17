@@ -20,12 +20,6 @@ sealed interface Route {
         val pointX: String,
         val pointY: String
     ) : Route
-
-    @Serializable
-    data object PhotoSelection : Route
-
-    @Serializable
-    data object MyTown : Route
 }
 
 sealed interface MainTabRoute : Route {
@@ -44,6 +38,19 @@ sealed interface MainTabRoute : Route {
     }
 
     @Serializable
-    data object MyPage : MainTabRoute
+    sealed interface MyPage : MainTabRoute {
+
+        @Serializable
+        data object Home : MyPage
+
+        @Serializable
+        data object MyReport : MyPage
+
+        @Serializable
+        data object MyTown : MyPage
+
+        @Serializable
+        data object SingOut : MyPage
+    }
 }
 

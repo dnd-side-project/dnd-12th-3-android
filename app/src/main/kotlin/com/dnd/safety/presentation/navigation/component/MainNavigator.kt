@@ -10,9 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.MyTown
-import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
@@ -20,8 +18,10 @@ import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
 import com.dnd.safety.presentation.ui.location_search.navigation.navigateToLocationSearch
 import com.dnd.safety.presentation.ui.location_search.navigation.navigationToLocationConfirm
 import com.dnd.safety.presentation.ui.login.navigation.navigateToLogin
-import com.dnd.safety.presentation.ui.my_page.navigation.navigateToMyPage
-import com.dnd.safety.presentation.ui.mytown.navigation.navigateToMyTown
+import com.dnd.safety.presentation.ui.myPage.navigation.navigateToMyPage
+import com.dnd.safety.presentation.ui.myPage.navigation.navigateToMyReport
+import com.dnd.safety.presentation.ui.myPage.navigation.navigateToMyTown
+import com.dnd.safety.presentation.ui.myPage.navigation.navigateToSignOut
 import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReport
 import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReportCamera
 
@@ -63,6 +63,14 @@ class MainNavigator(
 
     fun navigateToMyTown() {
         navController.navigateToMyTown()
+    }
+
+    fun navigateToSignOut() {
+        navController.navigateToSignOut()
+    }
+
+    fun navigateToMyReport() {
+        navController.navigateToMyReport()
     }
 
     fun navigateToSearchLocation() {

@@ -64,13 +64,14 @@ fun HomeBottomSheetScaffold(
                 onExpandTypeChanged = {
                     scope.launch {
                         peekHeight = when (it) {
-                            ExpandedType.COLLAPSED -> 56
+                            ExpandedType.COLLAPSED -> 84
                             ExpandedType.FULL -> screenHeight - marginTop
                             ExpandedType.HALF -> screenHeight / 2 - marginTop
                         }
                         bottomSheetSt.partialExpand()
                     }
-                }
+                },
+                modifier = modifier
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.mytown.effect
+package com.dnd.safety.presentation.ui.myPage.effect
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

@@ -1,7 +1,8 @@
-package com.dnd.safety.presentation.ui.my_page
+package com.dnd.safety.presentation.ui.myPage
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +41,10 @@ import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 
 @Composable
 fun MyPageRoute(
-    onGoBack: () -> Unit
+    onGoBack: () -> Unit,
+    onShowMyReport: () -> Unit,
+    onShowMyTown: () -> Unit,
+    onShowSingOut: () -> Unit
 ) {
 
     Scaffold(
@@ -57,23 +60,35 @@ fun MyPageRoute(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            MyPageContent()
+            MyPageContent(
+                onShowMyReport = onShowMyReport,
+                onShowMyTown = onShowMyTown,
+                onShowSingOut = onShowSingOut
+            )
         }
     }
 }
 
 @Composable
 fun MyPageContent(
-
+    onShowMyReport: () -> Unit,
+    onShowMyTown: () -> Unit,
+    onShowSingOut: () -> Unit
 ) {
     MyPageScreen(
-        name = "홍길동"
+        name = "홍길동",
+        onShowMyReport = onShowMyReport,
+        onShowMyTown = onShowMyTown,
+        onShowSingOut = onShowSingOut
     )
 }
 
 @Composable
 fun MyPageScreen(
-    name: String
+    name: String,
+    onShowMyReport: () -> Unit,
+    onShowMyTown: () -> Unit,
+    onShowSingOut: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -113,12 +128,12 @@ fun MyPageScreen(
         ) {
             MyPageButton(
                 text = "작성 글 보기",
-                onClick = {}
+                onClick = onShowMyReport
             )
             Spacer(modifier = Modifier.size(4.dp))
             MyPageButton(
                 text = "내 동네 설정",
-                onClick = {}
+                onClick = onShowMyTown
             )
             Spacer(modifier = Modifier.size(4.dp))
             TextFieldBox(
@@ -164,13 +179,17 @@ fun MyPageScreen(
                     text = "로그아웃",
                     style = SafetyTheme.typography.label3,
                     color = Gray50,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier
+                        .clickable {  }
+                        .padding(8.dp)
                 )
                 Text(
                     text = "회원탈퇴",
                     style = SafetyTheme.typography.label3,
                     color = Gray50,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier
+                        .clickable(onClick = onShowSingOut)
+                        .padding(8.dp)
                 )
             }
             Spacer(modifier = Modifier.size(16.dp))
@@ -193,7 +212,7 @@ private fun MyPageButton(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
             contentDescription = null,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp)
         )
     }
 }
@@ -203,7 +222,10 @@ private fun MyPageButton(
 private fun MyPageScreenPreview() {
     SafetyTheme {
         MyPageScreen(
-            name = "홍길동"
+            name = "홍길동",
+            onShowMyReport = {},
+            onShowMyTown = {},
+            onShowSingOut = {}
         )
     }
 }

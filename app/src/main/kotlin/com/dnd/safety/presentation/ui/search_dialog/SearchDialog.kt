@@ -77,8 +77,7 @@ fun SearchDialogContent(
     predictions: List<AutocompletePrediction>,
     onPredictionClick: (AutocompletePrediction) -> Unit,
     onDismissRequest: () -> Unit,
-
-    ) {
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

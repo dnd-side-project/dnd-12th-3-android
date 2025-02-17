@@ -15,8 +15,7 @@ import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
 import com.dnd.safety.presentation.ui.location_search.navigation.locationNavGraph
 import com.dnd.safety.presentation.ui.login.navigation.loginNavGraph
-import com.dnd.safety.presentation.ui.my_page.navigation.myPageNavGraph
-import com.dnd.safety.presentation.ui.mytown.navigation.myTownNavGraph
+import com.dnd.safety.presentation.ui.myPage.navigation.myPageNavGraph
 import com.dnd.safety.presentation.ui.postreport.navigation.postReportNavGraph
 import com.dnd.safety.presentation.ui.splash.navigation.splashNavGraph
 
@@ -47,7 +46,10 @@ fun MainNavHost(
                 onShowPostReport = navigator::navigateToReport
             )
             myPageNavGraph(
-                onGoBack = navigator::popBackStackIfNotHome
+                onGoBack = navigator::popBackStackIfNotHome,
+                onShowMyTown = navigator::navigateToMyTown,
+                onShowMyReport = navigator::navigateToMyReport,
+                onShowSingOut = navigator::navigateToSignOut
             )
             loginNavGraph(
                 onShowHome = { navigator.navigateTo(MainTab.Home) },
@@ -58,9 +60,6 @@ fun MainNavHost(
                 onGoBack = navigator::popBackStackIfNotHome,
                 onComplete = { navigator.navigateTo(MainTab.Home) },
                 onShowNavigationConfirm = navigator::navigateToLocationConfirm
-            )
-            myTownNavGraph(
-
             )
             splashNavGraph(
                 onPermissionAllowed = navigator::navigateToLogin

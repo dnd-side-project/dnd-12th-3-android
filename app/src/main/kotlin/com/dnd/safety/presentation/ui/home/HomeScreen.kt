@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.dnd.safety.presentation.ui.home
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -80,11 +84,15 @@ private fun HomeScreen(
     ) { paddingValues ->
         HomeBottomSheetScaffold(
             sheetContent = {
-                IncidentContent(
-                    incidentsState = incidentsState,
-                    homeUiState = homeUiState,
-                    viewModel = viewModel
-                )
+                Box(
+                    modifier = Modifier.padding(paddingValues)
+                ) {
+                    IncidentContent(
+                        incidentsState = incidentsState,
+                        homeUiState = homeUiState,
+                        viewModel = viewModel,
+                    )
+                }
             },
             modifier = Modifier.padding(paddingValues)
         ) {
@@ -108,7 +116,20 @@ private fun HomeScreen(
                     onClick = viewModel::setLocationCurrent,
                     shape = CircleShape,
                     modifier = Modifier
-                        .padding(it)
+                        .padding(
+                            start = (it.calculateLeftPadding(LayoutDirection.Ltr) - paddingValues.calculateLeftPadding(
+                                LayoutDirection.Ltr
+                            )).coerceAtLeast(0.dp),
+                            top = (it.calculateTopPadding() - paddingValues.calculateTopPadding()).coerceAtLeast(
+                                0.dp
+                            ),
+                            end = (it.calculateRightPadding(LayoutDirection.Ltr) - paddingValues.calculateRightPadding(
+                                LayoutDirection.Ltr
+                            )).coerceAtLeast(0.dp),
+                            bottom = (it.calculateBottomPadding() - paddingValues.calculateBottomPadding()).coerceAtLeast(
+                                0.dp
+                            )
+                        )
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                 ) {
@@ -125,8 +146,6 @@ private fun HomeScreen(
         }
     }
 }
-
-
 
 @Composable
 private fun IncidentContent(

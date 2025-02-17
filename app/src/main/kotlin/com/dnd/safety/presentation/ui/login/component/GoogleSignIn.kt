@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.data.model.Response
+import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 
 @Composable
 fun GoogleSignIn(
@@ -12,7 +13,7 @@ fun GoogleSignIn(
     when (val signInWithGoogleResponse = DataProvider.googleSignInResponse) {
         is Response.Loading -> {
             Log.i("Login:GoogleSignIn", "Loading")
-            AuthLoginProgressIndicator()
+            ProgressIndicator()
         }
         is Response.Success -> signInWithGoogleResponse.data?.let { authResult ->
             Log.i("Login:GoogleSignIn", "Success: $authResult")

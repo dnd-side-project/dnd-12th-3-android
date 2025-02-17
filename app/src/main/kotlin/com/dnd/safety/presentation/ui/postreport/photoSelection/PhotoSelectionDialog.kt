@@ -67,6 +67,7 @@ import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import com.dnd.safety.domain.model.Media
 import com.dnd.safety.domain.model.MediaType
+import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
@@ -209,7 +210,7 @@ private fun PhotoSelectionContent(
                 .padding(paddingValues)
         ) {
             when {
-                state.isPermissionGranted == null || state.isLoading -> LoadingIndicator()
+                state.isPermissionGranted == null || state.isLoading -> ProgressIndicator()
                 !state.isPermissionGranted -> PermissionRequest(onRequestPermission)
                 else -> MediaGrid(
                     mediaItems = mediaItems,
@@ -219,16 +220,6 @@ private fun PhotoSelectionContent(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun LoadingIndicator() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
     }
 }
 

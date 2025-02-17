@@ -21,7 +21,7 @@ enum class MainTab(
     ),
     MyPage(
         icon = Icons.Default.Person,
-        route = MainTabRoute.MyPage,
+        route = MainTabRoute.MyPage.Home,
     ),
     ;
 

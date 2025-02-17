@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.dnd.safety.R
+import com.dnd.safety.presentation.designsystem.component.TopAppbarIcon
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.White
 import kotlinx.coroutines.flow.collectLatest
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun CameraScreen(
     onCameraCapture: (String) -> Unit,
     onShowSnackBar: (String) -> Unit,
+    onGoBack: () -> Unit,
     viewModel: CameraViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -43,48 +46,60 @@ fun CameraScreen(
     val screenWidth = configuration.screenWidthDp.dp
     var previewView: PreviewView
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Gray80)
     ) {
-        Box(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .height(screeHeight * 0.70f)
-                .width(screenWidth)
+                .fillMaxSize()
+                .background(Gray80)
         ) {
-            AndroidView(
-                factory = {
-                    previewView = PreviewView(it)
-                    viewModel.showCameraPreview(previewView, lifecycleOwner)
-                    previewView
-                },
+            Box(
                 modifier = Modifier
                     .height(screeHeight * 0.70f)
                     .width(screenWidth)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(
-                onClick = {
-                    viewModel.captureAndSave(context)
-                }
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_shutter),
-                    contentDescription = "",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(60.dp)
+                AndroidView(
+                    factory = {
+                        previewView = PreviewView(it)
+                        viewModel.showCameraPreview(previewView, lifecycleOwner)
+                        previewView
+                    },
+                    modifier = Modifier
+                        .height(screeHeight * 0.70f)
+                        .width(screenWidth)
                 )
             }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                IconButton(
+                    onClick = {
+                        viewModel.captureAndSave(context)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_shutter),
+                        contentDescription = "",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(60.dp)
+                    )
+                }
+            }
         }
+
+        TopAppbarIcon(
+            tint = White,
+            icon = Icons.AutoMirrored.Filled.ArrowBack,
+            onClick = onGoBack,
+            modifier = Modifier.align(Alignment.TopStart)
+        )
     }
 
     LaunchedEffect(Unit) {

@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.mytown.component
+package com.dnd.safety.presentation.ui.myPage.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.my_page
+package com.dnd.safety.presentation.ui.myPage
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.mytown.state
+package com.dnd.safety.presentation.ui.myPage.state
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

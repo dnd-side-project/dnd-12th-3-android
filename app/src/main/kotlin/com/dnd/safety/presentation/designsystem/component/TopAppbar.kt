@@ -83,7 +83,7 @@ fun TopAppbar(
 }
 
 @Composable
-private fun TopAppbarIcon(
+fun TopAppbarIcon(
     tint: Color,
     icon: ImageVector,
     onClick: () -> Unit,
