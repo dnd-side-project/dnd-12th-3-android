@@ -28,6 +28,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -60,6 +61,8 @@ class AuthRepositoryImpl @Inject constructor(
         return kakaoLoginDataSource.login()
             .onFailure {
                 Logger.e(message())
+            }.onError {
+                Logger.e(message())
             }
     }
 
@@ -68,6 +71,8 @@ class AuthRepositoryImpl @Inject constructor(
             .mapSuccess {
                 accessToken
             }.onFailure {
+                Logger.e(message())
+            }.onError {
                 Logger.e(message())
             }
     }

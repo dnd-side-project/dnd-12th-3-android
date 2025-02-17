@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onFailure
 import javax.inject.Inject
 
@@ -31,6 +32,8 @@ class IncidentListRepositoryImpl @Inject constructor(
         ).mapSuccess {
             toIncidentsList()
         }.onFailure {
+            Logger.e(message())
+        }.onError {
             Logger.e(message())
         }
     }

@@ -18,6 +18,7 @@ class LocationRepositoryImpl @Inject constructor(
     private val locationService: LocationService,
     private val locationDataSource: LocationDataSource,
 ): LocationRepository {
+
     override suspend fun fetchLocationData(query: String): List<Location> {
         return locationService.searchToQueryLocation(query = query)
             .documents

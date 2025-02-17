@@ -10,6 +10,7 @@ import com.dnd.safety.utils.Logger
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onFailure
 import org.locationtech.proj4j.CRSFactory
 import org.locationtech.proj4j.CoordinateTransformFactory
@@ -26,6 +27,8 @@ class LawDistrictRepositoryImpl @Inject constructor(
                 toLawDistricts()
             }.onFailure {
                 Logger.e(message())
+            }.onError {
+                Logger.e(message())
             }
     }
 
@@ -40,6 +43,8 @@ class LawDistrictRepositoryImpl @Inject constructor(
             val juso = results.juso.first()
             convertUTM_KToWGS84(juso.entX, juso.entY)
         }.onFailure {
+            Logger.e(message())
+        }.onError {
             Logger.e(message())
         }
     }
