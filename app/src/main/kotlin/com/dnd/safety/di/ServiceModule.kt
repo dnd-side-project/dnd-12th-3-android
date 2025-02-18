@@ -5,6 +5,7 @@ import com.dnd.safety.data.remote.api.IncidentListService
 import com.dnd.safety.data.remote.api.IncidentService
 import com.dnd.safety.data.remote.api.LawDistrictService
 import com.dnd.safety.data.remote.api.LocationService
+import com.dnd.safety.data.remote.api.MyReportService
 import com.dnd.safety.data.remote.api.MyTownService
 import com.dnd.safety.di.utils.GoogleRetrofit
 import com.dnd.safety.di.utils.KakaoRetrofit
@@ -62,5 +63,13 @@ object ServiceModule {
         retrofit: Retrofit
     ): LoginService {
         return retrofit.create(LoginService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMyReportService(
+        retrofit: Retrofit
+    ): MyReportService {
+        return retrofit.create(MyReportService::class.java)
     }
 }

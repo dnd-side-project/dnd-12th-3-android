@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyTownResponse(
     val code: String = "",
+    val message: String = "",
     val data: List<Data>
 ) {
 

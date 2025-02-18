@@ -22,15 +22,19 @@ import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.MyLocationMarker
 import com.dnd.safety.presentation.ui.myPage.component.MyTownSheet
 import com.dnd.safety.presentation.ui.myPage.effect.MyTownModalState
+import com.dnd.safety.presentation.ui.myPage.effect.MyTownUiEffect
 import com.dnd.safety.presentation.ui.myPage.state.MyTownUiState
 import com.dnd.safety.presentation.ui.search_address_dialog.SearchAddressDialog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MyTownRoute(
+    onGoBack: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
     viewModel: MyTownViewModel = hiltViewModel()
 ) {
     val myLocation by viewModel.myLocation.collectAsStateWithLifecycle()
@@ -40,20 +44,30 @@ fun MyTownRoute(
     MyTownContent(
         myTownUiState = myTownUiState,
         myLocation = myLocation,
-        viewModel = viewModel
+        viewModel = viewModel,
+        onGoBack = onGoBack
     )
 
     MyTownModelContent(
         modalState = modalState,
         viewModel = viewModel
     )
+    
+    LaunchedEffect(Unit) {
+        viewModel.myTownUiEffect.collectLatest {
+            when (it) {
+                is MyTownUiEffect.ShowSnackBar -> onShowSnackBar(it.message)
+            }
+        }
+    }
 }
 
 @Composable
 fun MyTownContent(
     myTownUiState: MyTownUiState,
     myLocation: LatLng,
-    viewModel: MyTownViewModel
+    viewModel: MyTownViewModel,
+    onGoBack: () -> Unit,
 ) {
     FadeAnimatedVisibility(
         myTownUiState is MyTownUiState.Success
@@ -63,6 +77,7 @@ fun MyTownContent(
                 location = myTownUiState.selectedLocation ?: myLocation,
                 firstMyTown = myTownUiState.firstMyTown,
                 secondMyTown = myTownUiState.secondMyTown,
+                onGoBack = onGoBack,
                 onAddClick = viewModel::showTownSearch,
                 onDeleteClick = viewModel::showDeleteCheck,
                 onSelectClick = viewModel::selectTown
@@ -76,6 +91,7 @@ private fun MyTownScreen(
     location: LatLng,
     firstMyTown: MyTown?,
     secondMyTown: MyTown?,
+    onGoBack: () -> Unit,
     onAddClick: () -> Unit,
     onDeleteClick: (MyTown) -> Unit,
     onSelectClick: (MyTown) -> Unit,
@@ -88,6 +104,7 @@ private fun MyTownScreen(
         topBar = {
             TopAppbar(
                 title = "마이페이지",
+                onBackEvent = onGoBack
             )
         }
     ) { innerPadding ->
@@ -150,6 +167,7 @@ private fun MyTownScreenPreview() {
         MyTownScreen(
             firstMyTown = MyTown(1, "My Town", "address", Point( 126.9780, 37.5665), true),
             secondMyTown = null,
+            onGoBack = {},
             onAddClick = {},
             onSelectClick = {},
             onDeleteClick = {},

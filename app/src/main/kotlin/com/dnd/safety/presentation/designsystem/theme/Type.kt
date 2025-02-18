@@ -71,6 +71,11 @@ val Typography = SafetyTypography(
         fontSize = 20.sp,
         lineHeight = 30.sp,
     ),
+    body1B = pretendardStyle.copy(
+        fontSize = 18.sp,
+        lineHeight = 27.sp,
+        fontWeight = FontWeight.Bold,
+    ),
     body1 = pretendardStyle.copy(
         fontSize = 18.sp,
         lineHeight = 27.sp,
@@ -131,6 +136,7 @@ data class SafetyTypography(
     val title3: TextStyle,
     val title4: TextStyle,
     val title5: TextStyle,
+    val body1B: TextStyle,
     val body1: TextStyle,
     val body2: TextStyle,
     val body3: TextStyle,
@@ -151,6 +157,7 @@ val LocalTypography = staticCompositionLocalOf {
         title3 = pretendardStyle,
         title4 = pretendardStyle,
         title5 = pretendardStyle,
+        body1B = pretendardStyle,
         body1 = pretendardStyle,
         body2 = pretendardStyle,
         body3 = pretendardStyle,

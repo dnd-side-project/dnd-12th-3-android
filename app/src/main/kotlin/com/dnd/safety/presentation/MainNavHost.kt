@@ -47,6 +47,7 @@ fun MainNavHost(
                 onShowPostReport = navigator::navigateToReport
             )
             myPageNavGraph(
+                onShowSnackBar = onShowSnackBar,
                 onGoBack = navigator::popBackStackIfNotHome,
                 onShowMyTown = navigator::navigateToMyTown,
                 onShowMyReport = navigator::navigateToMyReport,

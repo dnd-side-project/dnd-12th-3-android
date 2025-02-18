@@ -8,6 +8,7 @@ import com.dnd.safety.data.repository.LawDistrictRepositoryImpl
 import com.dnd.safety.data.repository.LocationRepositoryImpl
 import com.dnd.safety.data.repository.LoginRepositoryImpl
 import com.dnd.safety.data.repository.MediaRepositoryImpl
+import com.dnd.safety.data.repository.MyReportRepositoryImpl
 import com.dnd.safety.data.repository.MyTownRepositoryImpl
 import com.dnd.safety.data.repository.TokenRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
@@ -18,6 +19,7 @@ import com.dnd.safety.domain.repository.LawDistrictRepository
 import com.dnd.safety.domain.repository.LocationRepository
 import com.dnd.safety.domain.repository.LoginRepository
 import com.dnd.safety.domain.repository.MediaRepository
+import com.dnd.safety.domain.repository.MyReportRepository
 import com.dnd.safety.domain.repository.MyTownRepository
 import com.dnd.safety.domain.repository.TokenRepository
 import com.dnd.safety.utils.AndroidFileManager
@@ -94,4 +96,10 @@ abstract class RepositoryModule {
     abstract fun provideLoginRepository(
         repositoryImpl: LoginRepositoryImpl
     ): LoginRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideMyReportRepository(
+        repositoryImpl: MyReportRepositoryImpl
+    ): MyReportRepository
 }

@@ -16,8 +16,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dnd.safety.presentation.designsystem.theme.Black
+import com.dnd.safety.presentation.designsystem.theme.Gray20
 import com.dnd.safety.presentation.designsystem.theme.Gray30
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.White
 
 
 @Composable
@@ -29,16 +32,17 @@ fun WatchOutButton(
     hideKeyboardOnClick: Boolean = false,
 ) {
     val focusManager = LocalFocusManager.current
+
     val backgroundColor = if (enabled) {
         MaterialTheme.colorScheme.primary
     } else {
-        Gray30
+        Gray20
     }
 
     val contentColor = if (enabled) {
-        MaterialTheme.colorScheme.onPrimary
+        White
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        Black
     }
 
     Button(
@@ -48,21 +52,19 @@ fun WatchOutButton(
             }
             onClick()
         },
-        enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             disabledContainerColor = backgroundColor,
-            contentColor = contentColor,
-            disabledContentColor = contentColor
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
             text = text,
-            style = SafetyTheme.typography.body1,
+            style = SafetyTheme.typography.body1B,
+            color = contentColor
         )
     }
 }
@@ -70,24 +72,26 @@ fun WatchOutButton(
 @Preview(showBackground = true)
 @Composable
 private fun WatchOutButtonPreview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // 활성화된 버튼
-        WatchOutButton(
-            text = "다음",
-            enabled = true,
-            onClick = {}
-        )
+    SafetyTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 활성화된 버튼
+            WatchOutButton(
+                text = "다음",
+                enabled = true,
+                onClick = {}
+            )
 
-        // 비활성화된 버튼
-        WatchOutButton(
-            text = "다음",
-            enabled = false,
-            onClick = {}
-        )
+            // 비활성화된 버튼
+            WatchOutButton(
+                text = "다음",
+                enabled = false,
+                onClick = {}
+            )
+        }
     }
 }

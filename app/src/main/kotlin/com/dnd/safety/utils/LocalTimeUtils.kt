@@ -10,7 +10,7 @@ fun String.toLocalDateTime(): LocalDateTime {
     return LocalDateTime.parse(this)
 }
 
-fun LocalDate.formatLocalDateDot(): String {
+fun LocalDateTime.formatLocalDateDot(): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
     return format(formatter)
 }

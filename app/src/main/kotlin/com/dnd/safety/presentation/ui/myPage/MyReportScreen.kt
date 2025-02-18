@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,8 +31,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
-import com.dnd.safety.domain.model.MyReport
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.component.PullToRefreshBox
 import com.dnd.safety.presentation.designsystem.component.TopAppbar
@@ -44,17 +44,18 @@ import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.ui.myPage.state.MyReportListState
 import com.dnd.safety.utils.formatLocalDateDot
 import com.skydoves.landscapist.coil.CoilImage
-import java.time.LocalDate
 
 @Composable
 fun MyReportRoute(
     onGoBack: () -> Unit,
     viewModel: MyReportViewModel = hiltViewModel()
 ) {
+    val myReportListState by viewModel.myReportListState.collectAsStateWithLifecycle()
 
     MyReportScreen(
-        isRefreshing = viewModel.isRefreshing,
-        onRefresh = viewModel::refreshMyPort,
+        myReportListState = myReportListState,
+        isRefreshing = viewModel.isRefreshing.value,
+        onRefresh = viewModel::fetchMyReportList,
         onGoBack = onGoBack
     )
 }
@@ -62,6 +63,7 @@ fun MyReportRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyReportScreen(
+    myReportListState: MyReportListState,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onGoBack: () -> Unit
@@ -91,17 +93,7 @@ fun MyReportScreen(
                 onRefresh = onRefresh
             ) {
                 MyReportListContent(
-                    myReportListState = MyReportListState.Success(
-                        listOf(
-                            MyReport(
-                                id = 1,
-                                title = "제목",
-                                content = "내용",
-                                imageUrl = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
-                                date = LocalDate.now()
-                            ),
-                        )
-                    )
+                    myReportListState = myReportListState
                 )
             }
 
@@ -140,7 +132,7 @@ private fun MyReportListContent(
 
 @Composable
 private fun MyReportList(
-    myReports: List<MyReport>,
+    myReports: List<Incident>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -164,7 +156,7 @@ private fun MyReportList(
 
 @Composable
 private fun MyReportItem(
-    myReport: MyReport,
+    myReport: Incident,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -174,7 +166,7 @@ private fun MyReportItem(
             .padding(horizontal = 20.dp, vertical = 17.dp)
     ) {
         CoilImage(
-            imageModel = { myReport.imageUrl },
+            imageModel = { myReport.firstImage },
             modifier = Modifier
                 .size(60.dp)
                 .clip(RoundedCornerShape(4.dp))
@@ -191,7 +183,7 @@ private fun MyReportItem(
                 modifier = modifier.fillMaxWidth()
             )
             Text(
-                text = myReport.content,
+                text = myReport.description,
                 style = SafetyTheme.typography.paragraph2,
                 color = Gray50,
                 maxLines = 1,
@@ -199,7 +191,7 @@ private fun MyReportItem(
                 modifier = modifier.fillMaxWidth()
             )
             Text(
-                text = myReport.date.formatLocalDateDot(),
+                text = myReport.createdDate.formatLocalDateDot(),
                 style = SafetyTheme.typography.label2,
                 color = Gray50,
                 maxLines = 1,
@@ -218,7 +210,10 @@ private fun MyReportScreenPreview() {
         MyReportScreen(
             isRefreshing = false,
             onRefresh = { },
-            onGoBack = { }
+            onGoBack = { },
+            myReportListState = MyReportListState.Success(
+                Incident.sampleIncidents
+            )
         )
     }
 }

@@ -79,17 +79,18 @@ private fun LoginEffect(
     onShowSnackBar: (String) -> Unit,
 ) {
     DataProvider.updateAuthState(currentUser)
-
-    if (DataProvider.authState != AuthState.SignedOut) {
-        currentUser?.getIdToken(true)
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val idToken = task.result?.token
-                    viewModel.loginByGoogle(idToken.toString())
+    LaunchedEffect(Unit) {
+        if (DataProvider.authState != AuthState.SignedOut) {
+            currentUser?.getIdToken(true)
+                ?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val idToken = task.result?.token
+                        viewModel.loginByGoogle(idToken.toString())
+                    }
                 }
-            }
-    } else {
-        viewModel.loginRequired()
+        } else {
+            viewModel.loginRequired()
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->

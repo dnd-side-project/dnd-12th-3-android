@@ -8,6 +8,7 @@ import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.ui.myPage.MyPageRoute
 import com.dnd.safety.presentation.ui.myPage.MyReportRoute
 import com.dnd.safety.presentation.ui.myPage.MyTownRoute
+import com.dnd.safety.presentation.ui.myPage.SignOutRoute
 
 fun NavController.navigateToMyPage(navOptions: NavOptions) {
     navigate(MainTabRoute.MyPage.Home, navOptions)
@@ -29,7 +30,8 @@ fun NavGraphBuilder.myPageNavGraph(
     onGoBack: () -> Unit,
     onShowMyReport: () -> Unit,
     onShowMyTown: () -> Unit,
-    onShowSingOut: () -> Unit
+    onShowSingOut: () -> Unit,
+    onShowSnackBar: (String) -> Unit
 ) {
     composable<MainTabRoute.MyPage.Home> {
         MyPageRoute(
@@ -47,10 +49,16 @@ fun NavGraphBuilder.myPageNavGraph(
     }
 
     composable<MainTabRoute.MyPage.MyTown> {
-        MyTownRoute()
+        MyTownRoute(
+            onGoBack = onGoBack,
+            onShowSnackBar = onShowSnackBar
+        )
     }
 
     composable<MainTabRoute.MyPage.SingOut> {
-        MyTownRoute()
+        SignOutRoute(
+            onGoBack = onGoBack,
+            onShowSnackBar = onShowSnackBar
+        )
     }
 }

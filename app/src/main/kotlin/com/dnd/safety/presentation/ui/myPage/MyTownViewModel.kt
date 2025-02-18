@@ -3,17 +3,22 @@ package com.dnd.safety.presentation.ui.myPage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.MyTown
-import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.model.SearchResult
+import com.dnd.safety.domain.repository.MyTownRepository
 import com.dnd.safety.location.LocationService
 import com.dnd.safety.presentation.ui.myPage.effect.MyTownModalState
+import com.dnd.safety.presentation.ui.myPage.effect.MyTownUiEffect
 import com.dnd.safety.presentation.ui.myPage.state.MyTownUiState
 import com.dnd.safety.utils.Const.SEOUL_LAT_LNG
 import com.dnd.safety.utils.Logger
 import com.dnd.safety.utils.trigger.TriggerStateFlow
 import com.dnd.safety.utils.trigger.triggerStateIn
+import com.skydoves.sandwich.onFailure
+import com.skydoves.sandwich.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -25,7 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyTownViewModel @Inject constructor(
-    private val locationService: LocationService
+    private val myTownRepository: MyTownRepository,
+    locationService: LocationService
 ) : ViewModel() {
 
     val myLocation = locationService
@@ -39,7 +45,15 @@ class MyTownViewModel @Inject constructor(
 
     private val _myTownUiState = MutableStateFlow<MyTownUiState>(MyTownUiState.Loading)
     val myTownUiState: TriggerStateFlow<MyTownUiState> = _myTownUiState.onStart {
-        fetchMyTowns()
+        myTownRepository.getMyTownList()
+            .onSuccess {
+                _myTownUiState.update {
+                    MyTownUiState.Success(data)
+                }
+            }
+            .onFailure {
+                showSnackBar("오류가 발생했습니다.")
+            }
     }.triggerStateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3000L),
@@ -49,34 +63,35 @@ class MyTownViewModel @Inject constructor(
     private val _myTownModalState = MutableStateFlow<MyTownModalState>(MyTownModalState.Dismiss)
     val myTownModalState: StateFlow<MyTownModalState> get() = _myTownModalState
 
-    private fun fetchMyTowns() {
-        viewModelScope.launch {
-            _myTownUiState.update {
-                MyTownUiState.Success(
-                    myTowns = listOf(
-                        MyTown(
-                            id = 1,
-                            title = "My Town",
-                            address = "Seoul",
-                            point = Point(37.5665, 126.9780),
-                            selected = true
-                        )
-                    )
-                )
-            }
-        }
-    }
+    private val _myTownUiEffect = MutableSharedFlow<MyTownUiEffect>()
+    val myTownUiEffect: SharedFlow<MyTownUiEffect> get() = _myTownUiEffect
 
     fun addressSelected(searchResult: SearchResult) {
         Logger.d("addressSelected: $searchResult")
     }
 
     fun addMyTown(myTown: MyTown) {
-        // add my town
+        viewModelScope.launch {
+            myTownRepository.addMyTown(myTown)
+                .onSuccess {
+                    myTownUiState.restart()
+                }
+                .onFailure {
+                    showSnackBar("내 동네 추가에 실패했습니다.")
+                }
+        }
     }
 
     fun deleteMyTown(myTownId: Long) {
-        // delete my town
+        viewModelScope.launch {
+            myTownRepository.deleteMyTown(myTownId)
+                .onSuccess {
+                    myTownUiState.restart()
+                }
+                .onFailure {
+                    showSnackBar("내 동네 삭제에 실패했습니다.")
+                }
+        }
     }
 
     fun selectTown(myTown: MyTown) {
@@ -102,6 +117,12 @@ class MyTownViewModel @Inject constructor(
     fun showDeleteCheck(myTown: MyTown) {
         _myTownModalState.update {
             MyTownModalState.ShowDeleteCheckDialog(myTown)
+        }
+    }
+
+    fun showSnackBar(message: String) {
+        viewModelScope.launch {
+            _myTownUiEffect.emit(MyTownUiEffect.ShowSnackBar(message))
         }
     }
 

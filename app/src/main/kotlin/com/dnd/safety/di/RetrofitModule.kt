@@ -6,6 +6,7 @@ import com.dnd.safety.di.utils.GoogleRetrofit
 import com.dnd.safety.di.utils.HttpNetworkLogger
 import com.dnd.safety.di.utils.KakaoRetrofit
 import com.dnd.safety.di.utils.LawRetrofit
+import com.dnd.safety.utils.Const
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
@@ -88,7 +89,7 @@ object RetrofitModule {
         converterFactory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl("http://3.37.245.234:8080/api/")
+            .baseUrl(Const.HOST_URL)
             .client(okHttpClient)
             .addConverterFactory(converterFactory)
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())

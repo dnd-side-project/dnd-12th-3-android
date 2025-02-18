@@ -2,7 +2,7 @@ package com.dnd.safety.presentation.ui.myPage.state
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import com.dnd.safety.domain.model.MyReport
+import com.dnd.safety.domain.model.Incident
 
 @Stable
 sealed interface MyReportListState {
@@ -15,7 +15,7 @@ sealed interface MyReportListState {
 
     @Immutable
     data class Success(
-        val myReports: List<MyReport>
+        val myReports: List<Incident>
     ) : MyReportListState {
 
     }
