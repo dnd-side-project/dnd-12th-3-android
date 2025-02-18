@@ -1,4 +1,4 @@
-package com.dnd.safety.domain.mapper
+package com.dnd.safety.data.mapper
 
 import com.dnd.safety.data.model.response.IncidentsResponse
 import com.dnd.safety.domain.model.IncidentCategory

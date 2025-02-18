@@ -19,7 +19,7 @@ fun NavController.navigationToLocationConfirm(
 ) {
     navigate(
         Route.LocationConfirm(
-            title = myTown.title,
+            title = myTown.title ?: "",
             address = myTown.address,
             pointX = myTown.point.x.toString(),
             pointY = myTown.point.y.toString(),

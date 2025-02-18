@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 
 data class MyTown(
     val id: Long,
-    val title: String,
+    val title: String?,
     val address: String,
     val point: Point,
     val selected: Boolean

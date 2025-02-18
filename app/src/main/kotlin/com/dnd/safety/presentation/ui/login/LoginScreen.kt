@@ -35,6 +35,7 @@ import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.login.component.AnonymousSignIn
+import com.dnd.safety.presentation.ui.login.component.GoogleSignIn
 import com.dnd.safety.presentation.ui.login.component.OneTapSignIn
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.BeginSignInResult
@@ -80,7 +81,13 @@ private fun LoginEffect(
     DataProvider.updateAuthState(currentUser)
 
     if (DataProvider.authState != AuthState.SignedOut) {
-        viewModel.checkIsNeedToEnterLocation()
+        currentUser?.getIdToken(true)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val idToken = task.result?.token
+                    viewModel.loginByGoogle(idToken.toString())
+                }
+            }
     } else {
         viewModel.loginRequired()
     }
@@ -89,10 +96,8 @@ private fun LoginEffect(
         if (result.resultCode == Activity.RESULT_OK) {
             try {
                 Logger.d("Login")
-                val credentials =
-                    viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
+                val credentials = viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
                 viewModel.signInWithGoogle(credentials)
-                viewModel.checkIsNeedToEnterLocation()
             } catch (e: ApiException) {
                 Logger.e("Login One-tap $e")
             }
@@ -121,6 +126,10 @@ private fun LoginEffect(
     )
 
     OneTapSignIn(launch = ::launch)
+
+    GoogleSignIn(
+        launch = viewModel::loginByGoogle
+    )
 }
 
 @Composable

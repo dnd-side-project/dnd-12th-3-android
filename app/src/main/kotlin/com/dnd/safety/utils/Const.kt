@@ -6,4 +6,6 @@ object Const {
 
     val SEOUL_LAT_LNG = LatLng(37.5665, 126.9780)
 
+    const val DEFAULT_TOKEN = ""
+
 }

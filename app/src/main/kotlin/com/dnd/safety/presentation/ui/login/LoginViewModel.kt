@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.data.model.Response
 import com.dnd.safety.domain.repository.AuthRepository
+import com.dnd.safety.domain.repository.LoginRepository
+import com.dnd.safety.domain.usecase.CheckLocationNeedUsecase
+import com.dnd.safety.domain.usecase.CheckTokenUsecase
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.identity.SignInCredential
@@ -24,7 +27,10 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    val oneTapClient: SignInClient
+    val oneTapClient: SignInClient,
+    private val checkTokenUsecase: CheckTokenUsecase,
+    private val checkLocationNeedUsecase: CheckLocationNeedUsecase,
+    private val loginRepository: LoginRepository
 ) : ViewModel() {
 
     val currentUser = getAuthState()
@@ -40,10 +46,12 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if (authRepository.checkKakaoLogin()) {
-                checkIsNeedToEnterLocation()
-            } else {
+            val isLoginNeed = !checkTokenUsecase()
+
+            if (isLoginNeed) {
                 loginRequired()
+            } else {
+                checkIsNeedToEnterLocation()
             }
         }
     }
@@ -56,12 +64,44 @@ class LoginViewModel @Inject constructor(
         _state.update { LoginUiState.NeedLogin }
     }
 
+    fun loginByKakao(token: String) {
+        viewModelScope.launch {
+            loginRepository
+                .loginByKakao(token)
+                .onSuccess {
+                    checkIsNeedToEnterLocation()
+                    changeLoadingState(false)
+                }
+                .suspendOnFailure {
+                    _effect.send(LoginEffect.ShowSnackBar("로그인에 실패했습니다"))
+                    changeLoadingState(false)
+                }
+        }
+    }
+
+    fun loginByGoogle(token: String) {
+        viewModelScope.launch {
+            loginRepository
+                .loginByGoogle(token)
+                .onSuccess {
+                    checkIsNeedToEnterLocation()
+                    changeLoadingState(false)
+                }
+                .suspendOnFailure {
+                    _effect.send(LoginEffect.ShowSnackBar("로그인에 실패했습니다"))
+                    changeLoadingState(false)
+                }
+        }
+    }
+
     fun checkIsNeedToEnterLocation() {
         viewModelScope.launch {
-            if (true) {
-                _effect.send(LoginEffect.NavigateToHome)
-            } else {
+            val isNeedToEnterLocation = checkLocationNeedUsecase()
+
+            if (isNeedToEnterLocation) {
                 _effect.send(LoginEffect.NavigateToLocation)
+            } else {
+                _effect.send(LoginEffect.NavigateToHome)
             }
         }
     }
@@ -79,6 +119,10 @@ class LoginViewModel @Inject constructor(
     }
 
     fun signInWithGoogle(credentials: SignInCredential) = CoroutineScope(Dispatchers.IO).launch {
+        changeLoadingState(true)
+
+        credentials.googleIdToken
+
         DataProvider.googleSignInResponse = Response.Loading
         DataProvider.googleSignInResponse = authRepository.signInWithGoogle(credentials)
     }
@@ -94,8 +138,7 @@ class LoginViewModel @Inject constructor(
             val idToken = authRepository.authorizeGoogleSignIn()
             if (idToken != null) {
                 deleteAccount(idToken)
-            }
-            else {
+            } else {
                 // If failed initiate oneTap sign in flow
                 // deleteAccount(googleIdToken:) will be called from oneTap result callback
                 oneTapSignIn()
@@ -117,8 +160,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.loginWithKakao()
                 .onSuccess {
-                    checkIsNeedToEnterLocation()
-                    changeLoadingState(false)
+                    loginByKakao(data)
                 }.suspendOnFailure {
                     _effect.send(LoginEffect.ShowSnackBar("카카오 로그인에 실패했습니다"))
                     changeLoadingState(false)

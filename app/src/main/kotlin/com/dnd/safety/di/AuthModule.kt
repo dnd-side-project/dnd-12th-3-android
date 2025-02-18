@@ -3,8 +3,8 @@ package com.dnd.safety.di
 import android.app.Application
 import android.content.Context
 import com.dnd.safety.BuildConfig
-import com.dnd.safety.data.repository.AuthRepositoryImpl
-import com.dnd.safety.domain.repository.AuthRepository
+import com.dnd.safety.di.utils.SignInRequest
+import com.dnd.safety.di.utils.SignUpRequest
 import com.dnd.safety.presentation.navigation.utils.GoogleSignInHelper
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -16,15 +16,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
-
-    const val SIGN_IN_REQUEST = "SIGN_IN_REQUEST"
-    const val SIGN_UP_REQUEST = "SIGN_UP_REQUEST"
 
     @Provides
     @Singleton
@@ -59,7 +55,7 @@ object AuthModule {
     ) = GoogleSignIn.getClient(app, options)
 
     @Provides
-    @Named(SIGN_IN_REQUEST)
+    @SignInRequest
     fun provideSignInRequest(
     ) = BeginSignInRequest.Builder()
         .setGoogleIdTokenRequestOptions(
@@ -73,7 +69,7 @@ object AuthModule {
         .build()
 
     @Provides
-    @Named(SIGN_UP_REQUEST)
+    @SignUpRequest
     fun provideSignUpRequest(
     ) = BeginSignInRequest.Builder()
         .setGoogleIdTokenRequestOptions(

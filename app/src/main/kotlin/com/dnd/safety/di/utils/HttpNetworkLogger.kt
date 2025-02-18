@@ -1,4 +1,4 @@
-package com.dnd.safety.di
+package com.dnd.safety.di.utils
 
 import com.dnd.safety.utils.Logger
 import okhttp3.Interceptor

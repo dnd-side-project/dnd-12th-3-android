@@ -5,10 +5,11 @@ import androidx.compose.runtime.LaunchedEffect
 import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.data.model.Response
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
+import com.dnd.safety.utils.Logger
 
 @Composable
 fun GoogleSignIn(
-    launch: () -> Unit
+    launch: (String) -> Unit
 ) {
     when (val signInWithGoogleResponse = DataProvider.googleSignInResponse) {
         is Response.Loading -> {
@@ -16,11 +17,16 @@ fun GoogleSignIn(
             ProgressIndicator()
         }
         is Response.Success -> signInWithGoogleResponse.data?.let { authResult ->
-            Log.i("Login:GoogleSignIn", "Success: $authResult")
-            launch()
+            val token = authResult.user?.getIdToken(true)?.result?.token
+            Logger.i("Login:GoogleSignIn Success: $token")
+            token?.let { launch(it) }
         }
         is Response.Failure -> LaunchedEffect(Unit) {
-            Log.e("Login:GoogleSignIn", "${signInWithGoogleResponse.e}")
+            if (signInWithGoogleResponse.e.message == "User has already been linked to the given provider.") {
+            } else {
+                Log.e("Login:GoogleSignIn", "${signInWithGoogleResponse.e}")
+            }
         }
     }
 }
+

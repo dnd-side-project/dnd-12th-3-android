@@ -2,16 +2,22 @@ package com.dnd.safety.data.datastore.datasource
 
 import androidx.datastore.core.DataStore
 import com.dnd.safety.data.datastore.model.UserPreferences
+import com.dnd.safety.utils.Const.DEFAULT_TOKEN
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class UserPreferenceDataSource @Inject constructor(
-    userPreferences: DataStore<UserPreferences>,
+    private val userPreferences: DataStore<UserPreferences>,
 ) {
 
     val userPreferenceDataFlow = userPreferences.data.catch { emit(UserPreferences()) }
 
-    suspend fun getToken() = userPreferenceDataFlow.firstOrNull()?.token ?: UserPreferences.DEFAULT_TOKEN
+    suspend fun getToken() = userPreferenceDataFlow.firstOrNull()?.token ?: DEFAULT_TOKEN
 
+    suspend fun setToken(token: String) {
+        userPreferences.updateData { preferences ->
+            preferences.copy(token = token)
+        }
+    }
 }

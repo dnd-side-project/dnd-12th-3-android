@@ -11,7 +11,7 @@ import retrofit2.http.Part
 
 interface IncidentService {
     @Multipart
-    @POST("api/incidents")
+    @POST("incidents")
     suspend fun createIncident(
         @Part("incidentData") incidentData: IncidentRequestDto,
         @Part files: List<MultipartBody.Part>

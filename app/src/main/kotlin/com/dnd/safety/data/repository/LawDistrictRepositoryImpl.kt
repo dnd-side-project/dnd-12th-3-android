@@ -1,7 +1,7 @@
 package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.remote.api.LawDistrictService
-import com.dnd.safety.domain.mapper.toLawDistricts
+import com.dnd.safety.data.mapper.toLawDistricts
 import com.dnd.safety.domain.model.LawDistrict
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.model.PointDto

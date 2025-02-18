@@ -1,6 +1,5 @@
 package com.dnd.safety.data.repository
 
-import android.util.Log
 import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.data.model.DeleteAccountResponse
 import com.dnd.safety.data.model.FirebaseSignInResponse
@@ -8,10 +7,8 @@ import com.dnd.safety.data.model.OneTapSignInResponse
 import com.dnd.safety.data.model.Response
 import com.dnd.safety.data.model.SignOutResponse
 import com.dnd.safety.data.model.isWithinPast
-import com.dnd.safety.data.model.request.GoogleLogInRequest
-import com.dnd.safety.data.remote.api.GoogleAuthService
-import com.dnd.safety.di.AuthModule.SIGN_IN_REQUEST
-import com.dnd.safety.di.AuthModule.SIGN_UP_REQUEST
+import com.dnd.safety.di.utils.SignInRequest
+import com.dnd.safety.di.utils.SignUpRequest
 import com.dnd.safety.domain.datasource.KakaoLoginDataSource
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.utils.Logger
@@ -26,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onFailure
@@ -38,18 +34,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 import javax.inject.Inject
-import javax.inject.Named
 
 class AuthRepositoryImpl @Inject constructor(
     private val kakaoLoginDataSource: KakaoLoginDataSource,
-    private val googleAuthService: GoogleAuthService,
     private val auth: FirebaseAuth,
     private var oneTapClient: SignInClient,
     private var googleSignInClient: GoogleSignInClient,
 
-    @Named(SIGN_IN_REQUEST)
+    @SignInRequest
     private var signInRequest: BeginSignInRequest,
-    @Named(SIGN_UP_REQUEST)
+    @SignUpRequest
     private var signUpRequest: BeginSignInRequest,
 ) : AuthRepository {
 
@@ -66,16 +60,6 @@ class AuthRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun signInWithGoogle(idToken: String): ApiResponse<String> {
-        return googleAuthService.googleSignIn(GoogleLogInRequest(idToken))
-            .mapSuccess {
-                accessToken
-            }.onFailure {
-                Logger.e(message())
-            }.onError {
-                Logger.e(message())
-            }
-    }
     override fun getAuthState(viewModelScope: CoroutineScope) = callbackFlow {
         val authStateListener = AuthStateListener { auth ->
             auth.currentUser?.let { user ->
@@ -168,6 +152,7 @@ class AuthRepositoryImpl @Inject constructor(
             DataProvider.updateAuthState(authResult?.user)
             Response.Success(authResult)
         }
+
         catch (error: Exception) {
             Response.Failure(error)
         }

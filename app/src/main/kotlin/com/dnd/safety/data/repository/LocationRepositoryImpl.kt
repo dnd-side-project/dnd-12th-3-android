@@ -8,7 +8,7 @@ import com.dnd.safety.data.model.Location
 import com.dnd.safety.data.model.response.KakaoLocationResponse
 import com.dnd.safety.data.remote.api.LocationService
 import com.dnd.safety.domain.datasource.LocationDataSource
-import com.dnd.safety.domain.mapper.LocationMapper.toLocation
+import com.dnd.safety.data.mapper.LocationMapper.toLocation
 import com.dnd.safety.domain.repository.LocationRepository
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.message

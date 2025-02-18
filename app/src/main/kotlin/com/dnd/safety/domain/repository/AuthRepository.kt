@@ -15,8 +15,6 @@ interface AuthRepository {
 
     suspend fun loginWithKakao(): ApiResponse<String>
 
-    suspend fun signInWithGoogle(idToken: String): ApiResponse<String>
-
     fun getAuthState(viewModelScope: CoroutineScope): AuthStateResponse
 
     suspend fun verifyGoogleSignIn(): Boolean

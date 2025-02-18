@@ -5,9 +5,9 @@ import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface IncidentsApi {
+interface IncidentListService {
 
-    @GET("/api/incidents/newest")
+    @GET("incidents/newest")
     suspend fun getIncidents(
         @Query("topRightX") topRightX: Double,
         @Query("topRightY") topRightY: Double,

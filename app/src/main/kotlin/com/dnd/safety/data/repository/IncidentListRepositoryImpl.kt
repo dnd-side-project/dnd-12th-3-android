@@ -1,7 +1,7 @@
 package com.dnd.safety.data.repository
 
-import com.dnd.safety.data.remote.api.IncidentsApi
-import com.dnd.safety.domain.mapper.toIncidentsList
+import com.dnd.safety.data.remote.api.IncidentListService
+import com.dnd.safety.data.mapper.toIncidentsList
 import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.repository.IncidentListRepository
@@ -15,14 +15,14 @@ import com.skydoves.sandwich.onFailure
 import javax.inject.Inject
 
 class IncidentListRepositoryImpl @Inject constructor(
-    private val incidentsApi: IncidentsApi
+    private val incidentListService: IncidentListService
 ) : IncidentListRepository {
 
     override suspend fun getIncidents(
         boundingBox: BoundingBox,
         myLocation: LatLng
     ): ApiResponse<List<Incident>> {
-        return incidentsApi.getIncidents(
+        return incidentListService.getIncidents(
             topRightX = boundingBox.topRight.x,
             topRightY = boundingBox.topRight.y,
             bottomLeftX = boundingBox.bottomleft.x,
