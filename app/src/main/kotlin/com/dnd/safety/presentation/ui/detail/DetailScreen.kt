@@ -1,6 +1,5 @@
 package com.dnd.safety.presentation.ui.detail
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,19 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -47,6 +40,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
 import com.dnd.safety.domain.model.Comment
 import com.dnd.safety.domain.model.Incident
@@ -62,6 +57,7 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.presentation.ui.detail.effect.DetailModalEffect
 import com.dnd.safety.presentation.ui.home.component.IncidentsItem
 import com.dnd.safety.utils.daysAgo
 import java.time.LocalDateTime
@@ -70,21 +66,27 @@ import java.time.LocalDateTime
 fun DetailRoute(
     incident: Incident,
     onGoBack: () -> Unit,
+    viewModel: DetailViewModel = hiltViewModel()
 ) {
+    val commentState by viewModel.commentState.collectAsStateWithLifecycle()
+
     DetailScreen(
         incident = incident,
-        comments = emptyList(),
+        comments = commentState,
         onGoBack = onGoBack,
-        onSendComment = {}
+        onSendComment = viewModel::writeComment,
+        onShowCommentActionMenu = viewModel::showCommentActionMenu
+
     )
 }
 
 @Composable
-fun DetailScreen(
+private fun DetailScreen(
     incident: Incident,
     comments: List<Comment>,
     onGoBack: () -> Unit,
-    onSendComment: (String) -> Unit
+    onSendComment: (String) -> Unit,
+    onShowCommentActionMenu: (Comment) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -125,7 +127,10 @@ fun DetailScreen(
                     .weight(1f)
             ) {
                 itemsIndexed(comments) { index, comment ->
-                    CommentItem(comment = comment)
+                    CommentItem(
+                        comment = comment,
+                        onShowCommentActionMenu = { onShowCommentActionMenu(comment) }
+                    )
 
                     if (index != comments.size - 1) {
                         HorizontalDivider(
@@ -146,7 +151,7 @@ fun DetailScreen(
 }
 
 @Composable
-fun CommentTextField(
+private fun CommentTextField(
     name: String,
     onSendComment: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -217,7 +222,8 @@ fun CommentTextField(
 
 @Composable
 private fun CommentItem(
-    comment: Comment
+    comment: Comment,
+    onShowCommentActionMenu: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -234,7 +240,7 @@ private fun CommentItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = comment.name,
+                text = comment.writerName,
                 style = SafetyTheme.typography.label1
             )
             Text(
@@ -248,13 +254,29 @@ private fun CommentItem(
                 style = SafetyTheme.typography.label5
             )
         }
-        Icon(
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = "menu Icon",
-            tint = Gray40,
-            modifier = Modifier
-                .padding(4.dp),
-        )
+        if (comment.isMyComment) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "menu Icon",
+                tint = Gray40,
+                modifier = Modifier
+                    .clickable(onClick = onShowCommentActionMenu)
+                    .padding(4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DetailModalEffect(
+    effect: DetailModalEffect,
+    viewModel: DetailViewModel
+) {
+    when (effect) {
+        is DetailModalEffect.Hidden -> {}
+        is DetailModalEffect.ShowCommentActionMenu -> {
+            // Show comment action menu
+        }
     }
 }
 
@@ -266,18 +288,24 @@ private fun DetailScreenPreview() {
             incident = Incident.sampleIncidents.first(),
             comments = listOf(
                 Comment(
-                    name = "John Doe",
+                    id = 0,
+                    writerId = 0,
+                    writerName = "John Doe",
                     date = LocalDateTime.now(),
                     comment = "This is a comment"
                 ),
                 Comment(
-                    name = "John Doe",
+                    id = 0,
+                    writerId = 0,
+                    writerName = "John Doe",
                     date = LocalDateTime.now(),
-                    comment = "This is a comment"
+                    comment = "This is a comment",
+                    isMyComment = true
                 )
             ),
             onGoBack = {},
-            onSendComment = {}
+            onSendComment = {},
+            onShowCommentActionMenu = {}
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.dnd.safety.location
+package com.dnd.safety.data.location
 
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow

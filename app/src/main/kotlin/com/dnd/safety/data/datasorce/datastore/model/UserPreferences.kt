@@ -1,4 +1,4 @@
-package com.dnd.safety.data.datastore.model
+package com.dnd.safety.data.datasorce.datastore.model
 
 import com.dnd.safety.utils.Const.DEFAULT_TOKEN
 import kotlinx.serialization.Serializable

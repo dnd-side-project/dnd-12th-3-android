@@ -17,7 +17,7 @@ class KakaoLoginUsecase @Inject constructor(
         onError: (String) -> Unit,
     ) {
         loginRepository
-            .loginByGoogle(kakaoToken)
+            .loginByKakao(kakaoToken)
             .suspendOnSuccess {
                 userInfoRepository.setUserInfo(
                     token = data.token,

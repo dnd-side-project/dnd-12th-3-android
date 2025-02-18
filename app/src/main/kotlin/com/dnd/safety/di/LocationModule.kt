@@ -1,8 +1,8 @@
 package com.dnd.safety.di
 
 import android.content.Context
-import com.dnd.safety.location.LocationService
-import com.dnd.safety.location.LocationServiceImpl
+import com.dnd.safety.data.location.LocationService
+import com.dnd.safety.data.location.LocationServiceImpl
 import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides

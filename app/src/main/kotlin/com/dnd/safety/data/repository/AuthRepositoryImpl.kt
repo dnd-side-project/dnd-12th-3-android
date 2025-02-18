@@ -220,7 +220,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteUserAccount(googleIdToken: String?): DeleteAccountResponse {
-        return try {
             auth.currentUser?.let { user ->
                 if (user.providerData.map { it.providerId }.contains("google.com")) {
                     // Re-authenticate if needed
@@ -233,15 +232,10 @@ class AuthRepositoryImpl @Inject constructor(
                 }
                 // Delete firebase user
                 auth.currentUser?.delete()?.await()
-                Response.Success(true)
+                return Response.Success(true)
             }
             Logger.e("FirebaseAuthError: Current user is not available")
-            Response.Success(false)
-        }
-        catch (e: Exception) {
-            Logger.e( "FirebaseAuthError: Failed to delete user")
-            Response.Failure(e)
-        }
+         return   Response.Success(false)
     }
 
     private suspend fun verifyAuthTokenResult(): Boolean {

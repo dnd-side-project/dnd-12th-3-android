@@ -68,6 +68,16 @@ fun LoginScreen(
         onShowHome = onShowHome,
         onShowSnackBar = onShowSnackBar,
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is LoginEffect.ShowSnackBar -> onShowSnackBar(effect.message)
+                LoginEffect.NavigateToHome -> onShowHome()
+                LoginEffect.NavigateToLocation -> onShowLocationSearch()
+            }
+        }
+    }
 }
 
 @Composable
@@ -79,47 +89,41 @@ private fun LoginEffect(
     onShowSnackBar: (String) -> Unit,
 ) {
     DataProvider.updateAuthState(currentUser)
+
     LaunchedEffect(Unit) {
         if (DataProvider.authState != AuthState.SignedOut) {
             currentUser?.getIdToken(true)
                 ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val idToken = task.result?.token
-                        viewModel.loginByGoogle(idToken.toString())
+                        viewModel.deleteAccount(idToken.toString())
                     }
                 }
         } else {
+            viewModel.signOut()
             viewModel.loginRequired()
         }
     }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            try {
-                Logger.d("Login")
-                val credentials = viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
-                viewModel.signInWithGoogle(credentials)
-            } catch (e: ApiException) {
-                Logger.e("Login One-tap $e")
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                try {
+                    Logger.d("Login")
+                    val credentials =
+                        viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
+                    viewModel.signInWithGoogle(credentials)
+                } catch (e: ApiException) {
+                    Logger.e("Login One-tap $e")
+                }
+            } else if (result.resultCode == Activity.RESULT_CANCELED) {
+                Logger.e("OneTapClient Canceled")
             }
-        } else if (result.resultCode == Activity.RESULT_CANCELED) {
-            Logger.e("OneTapClient Canceled")
         }
-    }
 
     fun launch(signInResult: BeginSignInResult) {
         val intent = IntentSenderRequest.Builder(signInResult.pendingIntent.intentSender).build()
         launcher.launch(intent)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is LoginEffect.ShowSnackBar -> onShowSnackBar(effect.message)
-                LoginEffect.NavigateToHome -> onShowHome()
-                LoginEffect.NavigateToLocation -> onShowLocationSearch()
-            }
-        }
     }
 
     AnonymousSignIn(
@@ -165,6 +169,7 @@ private fun LoginScreen(
                             LoginUiState.Initializing -> {}
                             LoginUiState.NeedLogin -> {
                                 LoginButtons(
+                                    isLoading = isLoading,
                                     onKakaoLoginClick = onKakaoLoginClick,
                                     onGoogleLoginClick = onGoogleLoginClick,
                                 )
@@ -184,16 +189,19 @@ private fun LoginScreen(
 
 @Composable
 private fun LoginButtons(
+    isLoading: Boolean,
     onKakaoLoginClick: () -> Unit,
     onGoogleLoginClick: () -> Unit,
 ) {
     Column {
         SocialLoginButton(
+            isLoading = isLoading,
             type = SocialLoginType.KAKAO,
             onClick = onKakaoLoginClick,
         )
         Spacer(modifier = Modifier.height(8.dp))
         SocialLoginButton(
+            isLoading = isLoading,
             type = SocialLoginType.GOOGLE,
             onClick = onGoogleLoginClick,
         )
@@ -211,6 +219,7 @@ fun WatchOutImage(modifier: Modifier = Modifier) {
 
 @Composable
 fun SocialLoginButton(
+    isLoading: Boolean,
     type: SocialLoginType,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -219,6 +228,7 @@ fun SocialLoginButton(
         modifier = modifier
             .fillMaxWidth()
             .clickable(
+                enabled = !isLoading,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onClick
@@ -253,3 +263,4 @@ private fun LoginScreenPreview() {
 enum class SocialLoginType {
     KAKAO, GOOGLE
 }
+

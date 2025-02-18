@@ -1,7 +1,7 @@
 package com.dnd.safety.di
 
 import com.dnd.safety.BuildConfig
-import com.dnd.safety.data.datastore.datasource.UserPreferenceDataSource
+import com.dnd.safety.data.datasorce.datastore.datasource.UserPreferenceDataSource
 import com.dnd.safety.di.utils.GoogleRetrofit
 import com.dnd.safety.di.utils.HttpNetworkLogger
 import com.dnd.safety.di.utils.KakaoRetrofit

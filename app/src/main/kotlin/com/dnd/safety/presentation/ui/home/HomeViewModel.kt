@@ -7,7 +7,7 @@ import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.IncidentListRepository
-import com.dnd.safety.location.LocationService
+import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.presentation.ui.home.effect.HomeUiEffect
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState

@@ -126,10 +126,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun signInWithGoogle(credentials: SignInCredential) = CoroutineScope(Dispatchers.IO).launch {
-        changeLoadingState(true)
-
-        credentials.googleIdToken
-
         DataProvider.googleSignInResponse = Response.Loading
         DataProvider.googleSignInResponse = authRepository.signInWithGoogle(credentials)
     }

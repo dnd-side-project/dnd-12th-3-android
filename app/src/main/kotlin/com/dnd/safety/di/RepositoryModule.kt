@@ -13,6 +13,8 @@ import com.dnd.safety.data.repository.MyTownRepositoryImpl
 import com.dnd.safety.data.repository.UserInfoRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.CameraRepository
+import com.dnd.safety.domain.repository.CommentRepository
+import com.dnd.safety.data.repository.CommentRepositoryImpl
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.domain.repository.LawDistrictRepository
@@ -102,4 +104,10 @@ abstract class RepositoryModule {
     abstract fun provideMyReportRepository(
         repositoryImpl: MyReportRepositoryImpl
     ): MyReportRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideCommentRepository(
+        repositoryImpl: CommentRepositoryImpl
+    ): CommentRepository
 }

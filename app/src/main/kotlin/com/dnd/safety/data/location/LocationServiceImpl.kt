@@ -1,4 +1,4 @@
-package com.dnd.safety.location
+package com.dnd.safety.data.location
 
 import android.annotation.SuppressLint
 import android.content.Context

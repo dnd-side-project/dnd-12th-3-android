@@ -1,6 +1,6 @@
 package com.dnd.safety.data.repository
 
-import com.dnd.safety.data.datastore.datasource.UserPreferenceDataSource
+import com.dnd.safety.data.datasorce.datastore.datasource.UserPreferenceDataSource
 import com.dnd.safety.domain.repository.UserInfoRepository
 import javax.inject.Inject
 

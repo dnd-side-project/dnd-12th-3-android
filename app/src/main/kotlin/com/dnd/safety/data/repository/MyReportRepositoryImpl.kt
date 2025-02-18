@@ -23,8 +23,6 @@ class MyReportRepositoryImpl @Inject constructor(
                 toIncidentsList()
             }.onFailure {
                 Logger.e(message())
-            }.onError {
-                Logger.e(message())
             }
     }
 }

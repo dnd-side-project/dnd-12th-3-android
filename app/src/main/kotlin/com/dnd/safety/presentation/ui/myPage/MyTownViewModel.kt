@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.domain.repository.MyTownRepository
-import com.dnd.safety.location.LocationService
+import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.presentation.ui.myPage.effect.MyTownModalState
 import com.dnd.safety.presentation.ui.myPage.effect.MyTownUiEffect
 import com.dnd.safety.presentation.ui.myPage.state.MyTownUiState

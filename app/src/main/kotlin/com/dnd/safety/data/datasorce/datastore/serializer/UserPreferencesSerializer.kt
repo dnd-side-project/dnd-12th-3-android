@@ -1,8 +1,8 @@
-package com.dnd.safety.data.datastore.serializer
+package com.dnd.safety.data.datasorce.datastore.serializer
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import com.dnd.safety.data.datastore.model.UserPreferences
+import com.dnd.safety.data.datasorce.datastore.model.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException

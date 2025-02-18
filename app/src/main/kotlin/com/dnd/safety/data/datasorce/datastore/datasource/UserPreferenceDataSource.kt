@@ -1,7 +1,7 @@
-package com.dnd.safety.data.datastore.datasource
+package com.dnd.safety.data.datasorce.datastore.datasource
 
 import androidx.datastore.core.DataStore
-import com.dnd.safety.data.datastore.model.UserPreferences
+import com.dnd.safety.data.datasorce.datastore.model.UserPreferences
 import com.dnd.safety.utils.Const.DEFAULT_TOKEN
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull

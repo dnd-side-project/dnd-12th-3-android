@@ -1,5 +1,6 @@
 package com.dnd.safety.di
 
+import com.dnd.safety.data.remote.api.CommentService
 import com.dnd.safety.data.remote.api.LoginService
 import com.dnd.safety.data.remote.api.IncidentListService
 import com.dnd.safety.data.remote.api.IncidentService
@@ -71,5 +72,13 @@ object ServiceModule {
         retrofit: Retrofit
     ): MyReportService {
         return retrofit.create(MyReportService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommentService(
+        retrofit: Retrofit
+    ): CommentService {
+        return retrofit.create(CommentService::class.java)
     }
 }

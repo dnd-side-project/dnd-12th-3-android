@@ -37,7 +37,7 @@ fun BottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
         containerColor = Gray80,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         dragHandle = null,
         content = content
     )
@@ -143,3 +143,4 @@ private fun NormalDialogPreview() {
         )
     }
 }
+
