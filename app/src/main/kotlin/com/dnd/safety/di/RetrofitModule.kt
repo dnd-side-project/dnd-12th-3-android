@@ -52,7 +52,7 @@ object RetrofitModule {
                     .header("Content-Type", "application/json; charset=utf-8")
                     .also {
                         if (token.isNotBlank()) {
-                            it.header("Authorization: Bearer", token)
+                            it.header("Authorization", "Bearer $token")
                         }
                     }
                 val request = requestBuilder.build()
@@ -146,5 +146,5 @@ object RetrofitModule {
             .client(builder.build())
             .build()
     }
-
 }
+

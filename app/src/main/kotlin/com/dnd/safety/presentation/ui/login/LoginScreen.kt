@@ -2,7 +2,7 @@ package com.dnd.safety.presentation.ui.login
 
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
@@ -24,23 +24,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dnd.safety.BuildConfig
 import com.dnd.safety.R
-import com.dnd.safety.data.model.AuthState
-import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
-import com.dnd.safety.presentation.ui.login.component.AnonymousSignIn
-import com.dnd.safety.presentation.ui.login.component.GoogleSignIn
-import com.dnd.safety.presentation.ui.login.component.OneTapSignIn
-import com.dnd.safety.utils.Logger
-import com.google.android.gms.auth.api.identity.BeginSignInResult
-import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseUser
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
 fun LoginScreen(
@@ -51,22 +46,34 @@ fun LoginScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    val currentUser = viewModel.currentUser.collectAsStateWithLifecycle().value
+    val gso = GoogleSignInOptions
+        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestEmail()
+        .requestIdToken(BuildConfig.GOOGLE_CLIENT_ID)
+        .requestId()
+        .requestProfile()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+
+    val startForResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                if (result.data != null) {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                    viewModel.loginByGoogle(task.result.idToken!!)
+                }
+            }
+        }
 
     LoginScreen(
         isLoading = isLoading,
         state = state,
         onKakaoLoginClick = viewModel::loginWithKakao,
-        onGoogleLoginClick = viewModel::oneTapSignIn,
-    )
-
-    LoginEffect(
-        currentUser = currentUser,
-        viewModel = viewModel,
-        onShowLocationSearch = onShowLocationSearch,
-        onShowHome = onShowHome,
-        onShowSnackBar = onShowSnackBar,
+        onGoogleLoginClick = { startForResult.launch(googleSignInClient.signInIntent) },
     )
 
     LaunchedEffect(Unit) {
@@ -80,62 +87,6 @@ fun LoginScreen(
     }
 }
 
-@Composable
-private fun LoginEffect(
-    currentUser: FirebaseUser?,
-    viewModel: LoginViewModel,
-    onShowLocationSearch: () -> Unit,
-    onShowHome: () -> Unit,
-    onShowSnackBar: (String) -> Unit,
-) {
-    DataProvider.updateAuthState(currentUser)
-
-    LaunchedEffect(Unit) {
-        if (DataProvider.authState != AuthState.SignedOut) {
-            currentUser?.getIdToken(true)
-                ?.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val idToken = task.result?.token
-                        viewModel.deleteAccount(idToken.toString())
-                    }
-                }
-        } else {
-            viewModel.signOut()
-            viewModel.loginRequired()
-        }
-    }
-
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                try {
-                    Logger.d("Login")
-                    val credentials =
-                        viewModel.oneTapClient.getSignInCredentialFromIntent(result.data)
-                    viewModel.signInWithGoogle(credentials)
-                } catch (e: ApiException) {
-                    Logger.e("Login One-tap $e")
-                }
-            } else if (result.resultCode == Activity.RESULT_CANCELED) {
-                Logger.e("OneTapClient Canceled")
-            }
-        }
-
-    fun launch(signInResult: BeginSignInResult) {
-        val intent = IntentSenderRequest.Builder(signInResult.pendingIntent.intentSender).build()
-        launcher.launch(intent)
-    }
-
-    AnonymousSignIn(
-        onChangeLoading = viewModel::changeLoadingState
-    )
-
-    OneTapSignIn(launch = ::launch)
-
-    GoogleSignIn(
-        launch = viewModel::loginByGoogle
-    )
-}
 
 @Composable
 private fun LoginScreen(
@@ -263,4 +214,5 @@ private fun LoginScreenPreview() {
 enum class SocialLoginType {
     KAKAO, GOOGLE
 }
+
 

@@ -1,4 +1,5 @@
 package com.dnd.safety.presentation.ui.login.component
+
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,17 +19,12 @@ fun GoogleSignIn(
             ProgressIndicator()
         }
         is Response.Success -> signInWithGoogleResponse.data?.let { authResult ->
-            authResult.user?.reload()
-                ?.addOnCompleteListener { reloadTask ->
-                    if (reloadTask.isSuccessful) {
-                        authResult.user?.getIdToken(true)
-                            ?.addOnCompleteListener { tokenTask ->
-                                if (tokenTask.isSuccessful) {
-                                    val idToken = tokenTask.result?.token
-                                    Logger.d("Login:GoogleSignIn idToken: $idToken")
-                                    launch(idToken ?: "")
-                                }
-                            }
+            Log.i("Login:GoogleSignIn", "Success: $authResult")
+            authResult.user?.getIdToken(true)
+                ?.addOnSuccessListener { result ->
+                    Logger.i("Login:GoogleSignIn Token: ${result.token}")
+                    result.token?.let { token ->
+                        launch(token)
                     }
                 }
         }
