@@ -2,12 +2,15 @@ package com.dnd.safety.presentation.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dnd.safety.data.model.DataProvider
 import com.dnd.safety.data.model.Response
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.LoginRepository
 import com.dnd.safety.domain.usecase.CheckLocationNeedUsecase
 import com.dnd.safety.domain.usecase.CheckTokenUsecase
+import com.dnd.safety.domain.usecase.GoogleLoginUsecase
+import com.dnd.safety.domain.usecase.KakaoLoginUsecase
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.identity.SignInCredential
@@ -30,7 +33,8 @@ class LoginViewModel @Inject constructor(
     val oneTapClient: SignInClient,
     private val checkTokenUsecase: CheckTokenUsecase,
     private val checkLocationNeedUsecase: CheckLocationNeedUsecase,
-    private val loginRepository: LoginRepository
+    private val googleLoginUsecase: GoogleLoginUsecase,
+    private val kakaoLoginUsecase: KakaoLoginUsecase
 ) : ViewModel() {
 
     val currentUser = getAuthState()
@@ -66,31 +70,34 @@ class LoginViewModel @Inject constructor(
 
     fun loginByKakao(token: String) {
         viewModelScope.launch {
-            loginRepository
-                .loginByKakao(token)
-                .onSuccess {
+            kakaoLoginUsecase(
+                kakaoToken = token,
+                onSuccess = {
                     checkIsNeedToEnterLocation()
                     changeLoadingState(false)
-                }
-                .suspendOnFailure {
-                    _effect.send(LoginEffect.ShowSnackBar("로그인에 실패했습니다"))
-                    changeLoadingState(false)
-                }
+                },
+                onError = ::sendFailMessage
+            )
         }
     }
 
     fun loginByGoogle(token: String) {
         viewModelScope.launch {
-            loginRepository
-                .loginByGoogle(token)
-                .onSuccess {
+            googleLoginUsecase(
+                googleToken = token,
+                onSuccess = {
                     checkIsNeedToEnterLocation()
                     changeLoadingState(false)
-                }
-                .suspendOnFailure {
-                    _effect.send(LoginEffect.ShowSnackBar("로그인에 실패했습니다"))
-                    changeLoadingState(false)
-                }
+                },
+                onError = ::sendFailMessage
+            )
+        }
+    }
+
+    private fun sendFailMessage(message: String) {
+        viewModelScope.launch {
+            _effect.send(LoginEffect.ShowSnackBar(message))
+            changeLoadingState(false)
         }
     }
 

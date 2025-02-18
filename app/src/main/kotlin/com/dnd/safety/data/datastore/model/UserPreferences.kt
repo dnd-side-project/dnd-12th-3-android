@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserPreferences(
-    val token: String = DEFAULT_TOKEN
+    val token: String = DEFAULT_TOKEN,
+    val name: String = "",
 )

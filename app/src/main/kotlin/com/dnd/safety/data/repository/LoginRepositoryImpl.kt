@@ -1,7 +1,9 @@
 package com.dnd.safety.data.repository
 
+import com.dnd.safety.data.mapper.toUserInfo
 import com.dnd.safety.data.model.request.LoginRequest
 import com.dnd.safety.data.remote.api.LoginService
+import com.dnd.safety.domain.model.UserInfo
 import com.dnd.safety.domain.repository.LoginRepository
 import com.dnd.safety.utils.Logger
 import com.skydoves.sandwich.ApiResponse
@@ -15,10 +17,12 @@ class LoginRepositoryImpl @Inject constructor(
     private val loginService: LoginService
 ) : LoginRepository {
 
-    override suspend fun loginByKakao(token: String): ApiResponse<String> {
+    override suspend fun loginByKakao(token: String): ApiResponse<UserInfo> {
         return loginService
             .kakaoLogin(LoginRequest(token))
-            .mapSuccess { this.accessToken }
+            .mapSuccess {
+                toUserInfo()
+            }
             .onFailure {
                 Logger.e(message())
             }.onError {
@@ -26,10 +30,12 @@ class LoginRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun loginByGoogle(token: String): ApiResponse<String> {
+    override suspend fun loginByGoogle(token: String): ApiResponse<UserInfo> {
         return loginService
             .googleLogin(LoginRequest(token))
-            .mapSuccess { this.accessToken }
+            .mapSuccess {
+                toUserInfo()
+            }
             .onFailure {
                 Logger.e(message())
             }.onError {

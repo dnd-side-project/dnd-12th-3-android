@@ -15,9 +15,14 @@ class UserPreferenceDataSource @Inject constructor(
 
     suspend fun getToken() = userPreferenceDataFlow.firstOrNull()?.token ?: DEFAULT_TOKEN
 
-    suspend fun setToken(token: String) {
+    suspend fun setUserInfo(token: String, name: String) {
         userPreferences.updateData { preferences ->
-            preferences.copy(token = token)
+            preferences.copy(
+                token = token,
+                name = name
+            )
         }
     }
+
+    suspend fun getName() = userPreferenceDataFlow.firstOrNull()?.name ?: ""
 }
