@@ -1,10 +1,14 @@
 package com.dnd.safety.presentation.ui.detail
 
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.Comment
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.repository.CommentRepository
+import com.dnd.safety.presentation.navigation.Route
+import com.dnd.safety.presentation.navigation.utils.toRouteType
 import com.dnd.safety.presentation.ui.detail.effect.DetailModalEffect
 import com.dnd.safety.presentation.ui.detail.effect.DetailUiEffect
 import com.dnd.safety.utils.trigger.TriggerStateFlow
@@ -24,30 +28,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    val incidentId = savedStateHandle.toRouteType<Route.IncidentDetail, Incident>().incident.id
 
     private var cursor = mutableLongStateOf(0L)
 
     private val _commentState = MutableStateFlow<List<Comment>>(emptyList())
-    val commentState: TriggerStateFlow<List<Comment>> = _commentState.onStart {
-        commentRepository.getComments(
-            incidentId = 0,
-            cursor = cursor.longValue
-        ).onSuccess {
-            cursor.longValue = data.nextCursor
-
-            _commentState.update {
-               data.comments
-            }
-        }.onFailure {
-
-        }
-    }.triggerStateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(3000L),
-        initialValue = emptyList()
-    )
+    val commentState: TriggerStateFlow<List<Comment>> = _commentState
+        .onStart { getComments() }
+        .triggerStateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(3000L),
+            initialValue = emptyList()
+        )
 
     private val _detailModalState = MutableStateFlow<DetailModalEffect>(DetailModalEffect.Hidden)
     val detailModalState: StateFlow<DetailModalEffect> get() = _detailModalState
@@ -55,7 +51,24 @@ class DetailViewModel @Inject constructor(
     private val _detailUiEffect = MutableSharedFlow<DetailUiEffect>()
     val detailUiEffect: SharedFlow<DetailUiEffect> get() = _detailUiEffect
 
-    fun resetComment() {
+    private fun getComments() {
+        viewModelScope.launch {
+            commentRepository.getComments(
+                incidentId = incidentId,
+                cursor = cursor.longValue
+            ).onSuccess {
+                cursor.longValue = data.nextCursor
+
+                _commentState.update {
+                    data.comments
+                }
+            }.onFailure {
+
+            }
+        }
+    }
+
+    private fun resetComment() {
         cursor.longValue = 0L
         commentState.restart()
     }
@@ -63,12 +76,12 @@ class DetailViewModel @Inject constructor(
     fun writeComment(comment: String) {
         viewModelScope.launch {
             commentRepository.writeComment(
-                incidentId = 0,
+                incidentId = incidentId,
                 comment = comment
             ).onSuccess {
                 resetComment()
             }.onFailure {
-                showSnackBar("댓글 작성에 실패했습니다.")
+                showSnackBar("댓글 작성에 실패했습니다")
             }
         }
     }
@@ -76,12 +89,13 @@ class DetailViewModel @Inject constructor(
     fun deleteComment(commentId: Long) {
         viewModelScope.launch {
             commentRepository.deleteComment(
-                incidentId = 0,
+                incidentId = incidentId,
                 commentId = commentId
             ).onSuccess {
                 resetComment()
+                showSnackBar("댓글이 삭제되었습니다")
             }.onFailure {
-                showSnackBar("댓글 삭제에 실패했습니다.")
+                showSnackBar("댓글 삭제에 실패했습니다")
             }
         }
     }
@@ -89,13 +103,14 @@ class DetailViewModel @Inject constructor(
     fun editComment(commentId: Long, comment: String) {
         viewModelScope.launch {
             commentRepository.editComment(
-                incidentId = 0,
+                incidentId = incidentId,
                 commentId = commentId,
                 comment = comment
             ).onSuccess {
                 resetComment()
+                showSnackBar("댓글이 수정되었습니다")
             }.onFailure {
-                showSnackBar("댓글 수정에 실패했습니다.")
+                showSnackBar("댓글 수정에 실패했습니다")
             }
         }
     }

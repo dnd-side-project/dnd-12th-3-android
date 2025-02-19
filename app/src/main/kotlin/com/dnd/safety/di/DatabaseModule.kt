@@ -3,7 +3,7 @@ package com.dnd.safety.di
 import android.content.Context
 import androidx.room.Room
 import com.dnd.safety.data.local.AppDatabase
-import com.dnd.safety.data.local.dao.SampleDao
+import com.dnd.safety.data.local.dao.SettingDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,9 +26,9 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideSampleDao(
+    fun provideSettingDao(
         database: AppDatabase
-    ): SampleDao = database.sampleDao()
+    ): SettingDao = database.settingDao()
 
     private const val DATABASE_NAME = "app_database"
 }

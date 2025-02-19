@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -53,24 +54,18 @@ class HomeViewModel @Inject constructor(
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
 
-    val incidentsState: StateFlow<IncidentsState> = boundingBoxState.map { state ->
-        when (state) {
+    val incidentsState: StateFlow<IncidentsState> = combine(
+        boundingBoxState,
+        homeUiState
+    ) { boundingBoxState, homeUiState ->
+        when (boundingBoxState) {
             BoundingBoxState.NotInitialized -> IncidentsState.Loading
             is BoundingBoxState.Success -> {
-                when (val incidents = incidentListRepository.getIncidents(
-                    state.boundingBox, myLocation.value ?: SEOUL_LAT_LNG
-                )) {
-                    is ApiResponse.Success -> {
-                        IncidentsState.Success(incidents.data)
-                    }
+                val incidents = incidentListRepository.getIncidents(boundingBoxState.boundingBox, myLocation.value ?: SEOUL_LAT_LNG)
+                when (incidents) {
+                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
+                    is ApiResponse.Failure -> {
 
-                    is ApiResponse.Failure.Error -> {
-                        Logger.e(incidents.message())
-                        IncidentsState.Loading
-                    }
-
-                    is ApiResponse.Failure.Exception -> {
-                        Logger.e("${incidents.message}")
                         IncidentsState.Loading
                     }
                 }

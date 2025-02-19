@@ -14,7 +14,8 @@ class HttpNetworkLogger : Interceptor {
         val request = chain.request()
 
         val logMessage = StringBuilder()
-        logMessage.appendLine("\nRequest URL: ${request.url}")
+        logMessage.appendLine("\nRequest Method: ${request.method}")
+        logMessage.appendLine("Request URL: ${request.url}")
 
         // 요청 바디 로깅 (길이 제한)
         request.body?.let { body ->

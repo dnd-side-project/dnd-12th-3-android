@@ -1,6 +1,7 @@
 package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.mapper.toComments
+import com.dnd.safety.data.model.request.CommentRequest
 import com.dnd.safety.data.remote.api.CommentService
 import com.dnd.safety.domain.model.Comments
 import com.dnd.safety.domain.repository.CommentRepository
@@ -29,7 +30,7 @@ class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun writeComment(incidentId: Long, comment: String): ApiResponse<Unit> {
         return commentService
-            .writeComment(incidentId, comment)
+            .writeComment(incidentId, CommentRequest(comment))
             .mapSuccess {  }
             .onFailure {
                 Logger.e(message())

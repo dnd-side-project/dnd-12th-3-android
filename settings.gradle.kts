@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Safety"
+rootProject.name = "WatchOut"
 include(":app")

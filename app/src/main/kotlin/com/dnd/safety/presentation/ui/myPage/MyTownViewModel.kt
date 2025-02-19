@@ -2,6 +2,7 @@ package com.dnd.safety.presentation.ui.myPage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.domain.repository.MyTownRepository
@@ -44,21 +45,13 @@ class MyTownViewModel @Inject constructor(
         )
 
     private val _myTownUiState = MutableStateFlow<MyTownUiState>(MyTownUiState.Loading)
-    val myTownUiState: TriggerStateFlow<MyTownUiState> = _myTownUiState.onStart {
-        myTownRepository.getMyTownList()
-            .onSuccess {
-                _myTownUiState.update {
-                    MyTownUiState.Success(data)
-                }
-            }
-            .onFailure {
-                showSnackBar("오류가 발생했습니다.")
-            }
-    }.triggerStateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(3000L),
-        initialValue = MyTownUiState.Loading
-    )
+    val myTownUiState: TriggerStateFlow<MyTownUiState> = _myTownUiState
+        .onStart { getMyTowns() }
+        .triggerStateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(3000L),
+            initialValue = MyTownUiState.Loading
+        )
 
     private val _myTownModalState = MutableStateFlow<MyTownModalState>(MyTownModalState.Dismiss)
     val myTownModalState: StateFlow<MyTownModalState> get() = _myTownModalState
@@ -66,20 +59,45 @@ class MyTownViewModel @Inject constructor(
     private val _myTownUiEffect = MutableSharedFlow<MyTownUiEffect>()
     val myTownUiEffect: SharedFlow<MyTownUiEffect> get() = _myTownUiEffect
 
-    fun addressSelected(searchResult: SearchResult) {
-        Logger.d("addressSelected: $searchResult")
+    private fun getMyTowns() {
+        viewModelScope.launch {
+            myTownRepository.getMyTownList()
+                .onSuccess {
+                    _myTownUiState.update {
+                        when (it) {
+                            MyTownUiState.Loading -> {
+                                MyTownUiState.Success(
+                                    data.mapIndexed { index, myTown ->
+                                        myTown.copy(selected = index == 0)
+                                    }
+                                )
+                            }
+
+                            is MyTownUiState.Success -> MyTownUiState.Success(
+                                data.mapIndexed { index, myTown ->
+                                    myTown.copy(selected = data.lastIndex == index)
+                                }
+                            )
+                        }
+                    }
+                }
+                .onFailure {
+                    showSnackBar("오류가 발생했습니다")
+                }
+        }
     }
 
-    fun addMyTown(myTown: MyTown) {
+    fun addMyTown(searchResult: SearchResult) {
         viewModelScope.launch {
             myTownRepository.addMyTown(
-                title = myTown.title ?: "",
-                address = myTown.address,
-                point = myTown.point
+                title = searchResult.name,
+                address = searchResult.lotAddress,
+                point = searchResult.point
             ).onSuccess {
                 myTownUiState.restart()
+                showSnackBar("내 동네가 추가되었습니다")
             }.onFailure {
-                showSnackBar("내 동네 추가에 실패했습니다.")
+                showSnackBar("내 동네 추가에 실패했습니다")
             }
         }
     }
@@ -89,9 +107,10 @@ class MyTownViewModel @Inject constructor(
             myTownRepository.deleteMyTown(myTownId)
                 .onSuccess {
                     myTownUiState.restart()
+                    showSnackBar("내 동네가 삭제되었습니다")
                 }
                 .onFailure {
-                    showSnackBar("내 동네 삭제에 실패했습니다.")
+                    showSnackBar("내 동네 삭제에 실패했습니다")
                 }
         }
     }

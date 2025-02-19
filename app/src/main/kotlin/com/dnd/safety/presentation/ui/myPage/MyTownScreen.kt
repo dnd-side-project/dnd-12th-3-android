@@ -145,14 +145,14 @@ fun MyTownModelContent(
         MyTownModalState.Dismiss -> {}
         MyTownModalState.ShowSearchDialog -> {
             SearchAddressDialog(
-                onAddressSelected = viewModel::addressSelected,
+                onAddressSelected = viewModel::addMyTown,
                 onDismissRequest = viewModel::dismissModal,
             )
         }
         is MyTownModalState.ShowDeleteCheckDialog -> {
             NormalDialog(
                 title = "",
-                description = "${modalState.myTown.title}을 삭제하시겠습니까?",
+                description = "'${modalState.myTown.address}'을 삭제할까요?",
                 onDismissRequest = viewModel::dismissModal,
                 onPositiveClick = { viewModel.deleteMyTown(modalState.myTown.id) }
             )

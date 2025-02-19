@@ -66,8 +66,8 @@ fun MyTownSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 firstMyTown?.let {
-                    MyTown(
-                        selected = firstMyTown.selected,
+                    MyTownItem(
+                        myTown = it,
                         onDeleteClick = { onDeleteClick(it) },
                         onSelectClick = { onSelectClick(it) },
                         modifier = Modifier.weight(1f)
@@ -80,8 +80,8 @@ fun MyTownSheet(
                         modifier = Modifier.weight(1f)
                     )
                 } else {
-                    MyTown(
-                        selected = secondMyTown.selected,
+                    MyTownItem(
+                        myTown = secondMyTown,
                         onDeleteClick = { onDeleteClick(secondMyTown) },
                         onSelectClick = { onSelectClick(secondMyTown) },
                         modifier = Modifier.weight(1f)
@@ -93,15 +93,15 @@ fun MyTownSheet(
 }
 
 @Composable
-private fun MyTown(
-    selected: Boolean,
+private fun MyTownItem(
+    myTown: MyTown,
     onDeleteClick: () -> Unit,
     onSelectClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         shape = RoundedCornerShape(4.dp),
-        color = if (selected) MaterialTheme.colorScheme.primary else Gray10,
+        color = if (myTown.selected) MaterialTheme.colorScheme.primary else Gray10,
         onClick = onSelectClick,
         modifier = modifier
             .padding(vertical = 8.dp)
@@ -113,15 +113,16 @@ private fun MyTown(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "My Town",
-                color = if (selected) White else Black,
+                text =  myTown.address,
+                color = if (myTown.selected) White else Black,
                 style = SafetyTheme.typography.paragraph1,
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.weight(1f))
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "삭제하기",
-                tint = if (selected) White else Gray40,
+                tint = if (myTown.selected) White else Gray40,
                 modifier = Modifier
                     .padding(4.dp)
                     .clickable(onClick = onDeleteClick)

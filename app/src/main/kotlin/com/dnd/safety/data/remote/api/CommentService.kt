@@ -1,8 +1,10 @@
 package com.dnd.safety.data.remote.api
 
+import com.dnd.safety.data.model.request.CommentRequest
 import com.dnd.safety.data.model.response.CommentResponse
 import com.dnd.safety.data.model.response.DefaultResponse
 import com.skydoves.sandwich.ApiResponse
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -12,7 +14,7 @@ import retrofit2.http.Query
 
 interface CommentService {
 
-    @GET(BASE_URL)
+    @GET("$BASE_URL/cursor")
     suspend fun getComments(
         @Path("incidentId") incidentId: Long,
         @Query("key") cursor: Long,
@@ -22,20 +24,20 @@ interface CommentService {
     @POST(BASE_URL)
     suspend fun writeComment(
         @Path("incidentId") incidentId: Long,
-        content: String,
+        @Body request: CommentRequest
     ): ApiResponse<DefaultResponse>
 
     @DELETE(BASE_URL)
     suspend fun deleteComment(
         @Path("incidentId") incidentId: Long,
-        commentId: Long,
+        @Query("commentId") commentId: Long,
     ): ApiResponse<DefaultResponse>
 
     @PUT(BASE_URL)
     suspend fun editComment(
         @Path("incidentId") incidentId: Long,
-        commentId: Long,
-        content: String,
+        @Query("commentId") commentId: Long,
+        @Query("content") content: String,
     ): ApiResponse<CommentResponse>
 
     companion object {

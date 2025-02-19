@@ -124,7 +124,10 @@ fun NormalDialog(
         positiveButton = {
             RegularButton(
                 text = positiveText,
-                onClick = onPositiveClick,
+                onClick = {
+                    onPositiveClick()
+                    onDismissRequest()
+                },
                 modifier = Modifier.weight(1f)
             )
         }

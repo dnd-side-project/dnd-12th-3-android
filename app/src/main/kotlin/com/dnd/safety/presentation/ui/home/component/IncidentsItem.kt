@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.R
 import com.dnd.safety.domain.model.Incident
@@ -43,6 +44,7 @@ fun IncidentsItem(
     incident: Incident,
     onLike: () -> Unit,
     modifier: Modifier = Modifier,
+    imageHeight: Dp = 200.dp,
     onShowComment: (() -> Unit)? = null,
 ) {
     Column(
@@ -122,7 +124,8 @@ fun IncidentsItem(
         }
         Spacer(modifier = Modifier.height(16.dp))
         IncidentsImages(
-            imageUrls = incident.mediaFiles
+            imageUrls = incident.mediaFiles,
+            imageHeight = imageHeight
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column(
@@ -171,7 +174,8 @@ fun IncidentsItem(
 @Composable
 private fun IncidentsImages(
     imageUrls: List<MediaFile>,
-    modifier: Modifier = Modifier
+    imageHeight: Dp,
+    modifier: Modifier = Modifier,
 ) {
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
 
@@ -179,7 +183,7 @@ private fun IncidentsImages(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .height(imageHeight)
     ) {
         item {
             Spacer(modifier = Modifier.width(8.dp))
@@ -188,6 +192,7 @@ private fun IncidentsImages(
             item {
                 IncidentsImage(
                     url = imageUrls.first().fileUrl,
+                    imageHeight = imageHeight,
                     modifier = Modifier
                         .width(screenWidthDp.dp - 32.dp)
                 )
@@ -196,6 +201,7 @@ private fun IncidentsImages(
             items(imageUrls) { url ->
                 IncidentsImage(
                     url = url.fileUrl,
+                    imageHeight = imageHeight,
                     modifier = Modifier
                         .width(screenWidthDp.dp / 2)
                 )
@@ -211,17 +217,18 @@ private fun IncidentsImages(
 @Composable
 private fun IncidentsImage(
     url: String,
+    imageHeight: Dp,
     modifier: Modifier = Modifier
 ) {
     CoilImage(
         imageModel = { url },
         modifier = modifier
-            .height(150.dp)
+            .height(imageHeight)
             .clip(RoundedCornerShape(4.dp)),
         failure = {
             Box(
                 modifier = modifier
-                    .size(150.dp)
+                    .size(imageHeight)
                     .background(Color.Red)
             )
         }

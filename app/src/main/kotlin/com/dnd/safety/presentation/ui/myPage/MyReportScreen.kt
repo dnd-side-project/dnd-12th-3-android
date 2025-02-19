@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -22,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,19 +54,28 @@ fun MyReportRoute(
     viewModel: MyReportViewModel = hiltViewModel()
 ) {
     val myReportListState by viewModel.myReportListState.collectAsStateWithLifecycle()
+    val listState = rememberLazyListState()
 
     MyReportScreen(
         myReportListState = myReportListState,
+        listState = listState,
         isRefreshing = viewModel.isRefreshing.value,
-        onRefresh = viewModel::fetchMyReportList,
+        onRefresh = viewModel::refresh,
         onGoBack = onGoBack
     )
+
+    LaunchedEffect(listState.canScrollForward) {
+        if (!listState.canScrollForward && !viewModel.isRefreshing.value) {
+            viewModel.moveCursor()
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyReportScreen(
     myReportListState: MyReportListState,
+    listState: LazyListState,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onGoBack: () -> Unit
@@ -93,6 +105,7 @@ fun MyReportScreen(
                 onRefresh = onRefresh
             ) {
                 MyReportListContent(
+                    listState = listState,
                     myReportListState = myReportListState
                 )
             }
@@ -103,7 +116,8 @@ fun MyReportScreen(
 
 @Composable
 private fun MyReportListContent(
-    myReportListState: MyReportListState
+    myReportListState: MyReportListState,
+    listState: LazyListState,
 ) {
     Crossfade(myReportListState) { state ->
         when (state) {
@@ -123,6 +137,7 @@ private fun MyReportListContent(
             MyReportListState.Loading -> ProgressIndicator()
             is MyReportListState.Success -> {
                 MyReportList(
+                    listState = listState,
                     myReports = state.myReports
                 )
             }
@@ -132,10 +147,12 @@ private fun MyReportListContent(
 
 @Composable
 private fun MyReportList(
+    listState: LazyListState,
     myReports: List<Incident>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        state = listState,
         modifier = modifier.fillMaxSize()
     ) {
         item {
@@ -208,11 +225,13 @@ private fun MyReportItem(
 private fun MyReportScreenPreview() {
     SafetyTheme {
         MyReportScreen(
+            listState = rememberLazyListState(),
             isRefreshing = false,
             onRefresh = { },
             onGoBack = { },
             myReportListState = MyReportListState.Success(
-                Incident.sampleIncidents
+                Incident.sampleIncidents,
+                0L
             )
         )
     }

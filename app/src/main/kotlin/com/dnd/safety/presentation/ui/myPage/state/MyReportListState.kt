@@ -15,7 +15,8 @@ sealed interface MyReportListState {
 
     @Immutable
     data class Success(
-        val myReports: List<Incident>
+        val myReports: List<Incident>,
+        val nextCursor: Long
     ) : MyReportListState {
 
     }

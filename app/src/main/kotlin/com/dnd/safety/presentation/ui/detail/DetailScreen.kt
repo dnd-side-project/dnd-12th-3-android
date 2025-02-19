@@ -118,6 +118,7 @@ private fun DetailScreen(
         ) {
             IncidentsItem(
                 incident = incident,
+                imageHeight = 300.dp,
                 onLike = {},
             )
             HorizontalDivider(thickness = 8.dp)
@@ -140,7 +141,7 @@ private fun DetailScreen(
                 }
             }
             CommentTextField(
-                name = "John Doe",
+                name = incident.userName,
                 onSendComment = onSendComment,
                 modifier = Modifier
                     .fillMaxWidth()
