@@ -2,12 +2,12 @@ package com.dnd.safety.presentation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.domain.model.BoundingBox
-import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Incident
+import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.IncidentListRepository
-import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.presentation.ui.home.effect.HomeUiEffect
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
@@ -38,18 +38,17 @@ class HomeViewModel @Inject constructor(
     incidentListRepository: IncidentListRepository,
 ) : ViewModel() {
 
-    val myLocation = locationService.requestLocationUpdates().stateIn(
-            scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = null
+    val myLocation = locationService.requestLocationUpdates()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
         )
 
     var keyword = MutableStateFlow("")
         private set
 
-    private val _cameraLocationState = MutableStateFlow<LatLng?>(null)
-    val cameraLocationState: StateFlow<LatLng?> get() = _cameraLocationState
-
-    private val boundingBoxState =
-        MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
+    private val boundingBoxState = MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
@@ -96,8 +95,8 @@ class HomeViewModel @Inject constructor(
     private fun initLocation() {
         viewModelScope.launch {
             myLocation.collectLatest { location ->
-                if (location != null) {
-                    _cameraLocationState.update { location }
+                location?.let {
+                    moveCameraToLocation(it)
                     cancel()
                 }
             }
@@ -106,7 +105,7 @@ class HomeViewModel @Inject constructor(
 
     private fun updateLocationBySearch(location: LatLng) {
         viewModelScope.launch {
-            _cameraLocationState.update { location }
+            moveCameraToLocation(location)
         }
     }
 
@@ -137,11 +136,19 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setLocationCurrent() {
-        _cameraLocationState.update { myLocation.value ?: SEOUL_LAT_LNG }
+        myLocation.value?.let {
+            moveCameraToLocation(it)
+        }
     }
 
     fun likeIncident(incident: Incident) {
         viewModelScope.launch {}
+    }
+
+    fun moveCameraToLocation(latLng: LatLng) {
+        viewModelScope.launch {
+            _homeUiEffect.emit(HomeUiEffect.MoveCameraToLocation(latLng))
+        }
     }
 
     fun showSearchModal() {
@@ -159,6 +166,5 @@ class HomeViewModel @Inject constructor(
     fun dismissModal() {
         _homeModalState.update { HomeModalState.Dismiss }
     }
-
 }
 

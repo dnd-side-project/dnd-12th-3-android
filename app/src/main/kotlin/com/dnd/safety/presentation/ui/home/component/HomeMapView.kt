@@ -9,45 +9,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.designsystem.component.MyGoogleMap
-import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.utils.icon
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.CameraPositionState
 
 @Composable
 fun HomeMapView(
+    cameraPositionState: CameraPositionState,
     myLocation: LatLng?,
-    cameraLocation: LatLng?,
     incidents: List<Incident>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (cameraLocation == null) {
-        ProgressIndicator()
-    } else {
-        HomeMapViewContent(
-            myLocation = myLocation,
-            cameraLocation = cameraLocation,
-            incidents = incidents,
-            onUpdateBoundingBox = onUpdateBoundingBox,
-            modifier = modifier
-        )
-    }
+    HomeMapViewContent(
+        cameraPositionState = cameraPositionState,
+        myLocation = myLocation,
+        incidents = incidents,
+        onUpdateBoundingBox = onUpdateBoundingBox,
+        modifier = modifier
+    )
 }
 
 @Composable
 fun HomeMapViewContent(
+    cameraPositionState: CameraPositionState,
     myLocation: LatLng?,
-    cameraLocation: LatLng,
     incidents: List<Incident>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(cameraLocation, 15f)
-    }
     val markerList = remember { mutableStateListOf<Incident>() }
 
     Box(
@@ -55,6 +45,11 @@ fun HomeMapViewContent(
     ) {
         MyGoogleMap(
             modifier = modifier.fillMaxSize(),
+            onMapLoaded = {
+                cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { bounds ->
+                    onUpdateBoundingBox(bounds.northeast, bounds.southwest)
+                }
+            },
             cameraPositionState = cameraPositionState
         ) {
             MyLocationMarker(myLocation)
@@ -66,11 +61,6 @@ fun HomeMapViewContent(
                 )
             }
         }
-    }
-
-    LaunchedEffect(cameraLocation) {
-        val targetZoom = cameraPositionState.position.zoom.coerceAtMost(15f) // 최대 15로 제한
-        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(cameraLocation, targetZoom))
     }
 
     LaunchedEffect(cameraPositionState.isMoving) {

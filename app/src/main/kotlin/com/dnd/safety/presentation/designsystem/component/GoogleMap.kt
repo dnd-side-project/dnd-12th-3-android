@@ -16,6 +16,7 @@ fun MyGoogleMap(
     cameraPositionState: CameraPositionState,
     modifier: Modifier = Modifier,
     mapProperties: MapProperties = getMapDefaultProperties(),
+    onMapLoaded: () -> Unit = {},
     content: @Composable @GoogleMapComposable () -> Unit = {},
 ) {
     GoogleMap(
@@ -27,6 +28,7 @@ fun MyGoogleMap(
             compassEnabled = false,
             mapToolbarEnabled = false
         ),
+        onMapLoaded = onMapLoaded,
         content = content
     )
 }

@@ -38,7 +38,12 @@ import com.dnd.safety.presentation.ui.home.state.HomeModalState
 import com.dnd.safety.presentation.ui.home.state.HomeUiState
 import com.dnd.safety.presentation.ui.home.state.IncidentsState
 import com.dnd.safety.presentation.ui.search_dialog.SearchDialog
+import com.dnd.safety.utils.Const.SEOUL_LAT_LNG
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.collectLatest
 
@@ -48,18 +53,21 @@ fun HomeRoute(
     onBottomNavClicked: (MainTab) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val cameraLocationState by viewModel.cameraLocationState.collectAsStateWithLifecycle()
     val myLocation by viewModel.myLocation.collectAsStateWithLifecycle()
     val incidentsState by viewModel.incidentsState.collectAsStateWithLifecycle()
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val modalState by viewModel.homeModalState.collectAsStateWithLifecycle()
     val keyword by viewModel.keyword.collectAsStateWithLifecycle()
 
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(myLocation ?: SEOUL_LAT_LNG, 15f)
+    }
+
     HomeScreen(
+        cameraPositionState = cameraPositionState,
         incidentsState = incidentsState,
         homeUiState = homeUiState,
         myLocation = myLocation,
-        cameraLocation = cameraLocationState,
         keyword = keyword,
         viewModel = viewModel,
         onBottomNavClicked = onBottomNavClicked
@@ -74,6 +82,10 @@ fun HomeRoute(
         viewModel.homeUiEffect.collectLatest {
             when (it) {
                 is HomeUiEffect.ShowIncidentDetail -> onIncidentDetail(it.incident)
+                is HomeUiEffect.MoveCameraToLocation -> {
+                    val targetZoom = cameraPositionState.position.zoom.coerceAtMost(15f) // 최대 15로 제한
+                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(it.latLng, targetZoom))
+                }
             }
         }
     }
@@ -81,10 +93,10 @@ fun HomeRoute(
 
 @Composable
 private fun HomeScreen(
+    cameraPositionState: CameraPositionState,
     incidentsState: IncidentsState,
     homeUiState: HomeUiState,
     myLocation: LatLng?,
-    cameraLocation: LatLng?,
     keyword: String,
     viewModel: HomeViewModel,
     onBottomNavClicked: (MainTab) -> Unit,
@@ -118,8 +130,8 @@ private fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 HomeMapView(
+                    cameraPositionState = cameraPositionState,
                     myLocation = myLocation,
-                    cameraLocation = cameraLocation,
                     incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
                     onUpdateBoundingBox = viewModel::updateBoundingBoxState,
                 )
