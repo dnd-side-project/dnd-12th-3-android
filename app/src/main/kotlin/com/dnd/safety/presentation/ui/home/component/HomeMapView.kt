@@ -19,6 +19,7 @@ fun HomeMapView(
     myLocation: LatLng?,
     incidents: List<Incident>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
+    onShowIncidentDetail: (Incident) -> Unit,
     modifier: Modifier = Modifier
 ) {
     HomeMapViewContent(
@@ -26,6 +27,7 @@ fun HomeMapView(
         myLocation = myLocation,
         incidents = incidents,
         onUpdateBoundingBox = onUpdateBoundingBox,
+        onShowIncidentDetail = onShowIncidentDetail,
         modifier = modifier
     )
 }
@@ -36,6 +38,7 @@ fun HomeMapViewContent(
     myLocation: LatLng?,
     incidents: List<Incident>,
     onUpdateBoundingBox: (LatLng, LatLng) -> Unit,
+    onShowIncidentDetail: (Incident) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val markerList = remember { mutableStateListOf<Incident>() }
@@ -58,6 +61,9 @@ fun HomeMapViewContent(
                 IncidentsMarker(
                     iconId = data.incidentCategory.icon,
                     location = LatLng(data.latitude, data.longitude),
+                    onClick = {
+                        onShowIncidentDetail(data)
+                    }
                 )
             }
         }

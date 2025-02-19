@@ -49,6 +49,7 @@ import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.presentation.designsystem.component.FilterButton
+import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.component.TextField
 import com.dnd.safety.presentation.designsystem.component.TextFieldBox
 import com.dnd.safety.presentation.designsystem.component.WatchOutButton
@@ -60,6 +61,7 @@ import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
 import com.dnd.safety.presentation.ui.postreport.photoSelection.PhotoSelectionDialog
+import com.dnd.safety.presentation.ui.postreport.state.PostReportState
 import com.dnd.safety.presentation.ui.search_address_dialog.SearchAddressDialog
 import com.google.accompanist.flowlayout.FlowRow
 
@@ -211,12 +213,17 @@ private fun PostReportContent(
             Spacer(modifier = Modifier.weight(1f))
             WatchOutButton(
                 text = "완료",
+                enabled = state.isLoading,
                 onClick = onCompleteClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 27.dp),
             )
+        }
+
+        if (state.isLoading) {
+            ProgressIndicator()
         }
     }
 }

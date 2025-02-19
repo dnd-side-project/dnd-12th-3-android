@@ -14,6 +14,7 @@ import com.dnd.safety.domain.usecase.CreateIncidentReportUseCase
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
+import com.dnd.safety.presentation.ui.postreport.state.PostReportState
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnFailure
 import com.skydoves.sandwich.suspendOnSuccess

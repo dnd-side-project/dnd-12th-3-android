@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,6 +72,8 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.Typography
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.presentation.ui.postreport.effect.PhotoSelectionEffect
+import com.dnd.safety.presentation.ui.postreport.state.PhotoSelectionState
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -134,6 +135,7 @@ fun PhotoSelectionDialog(
             when (effect) {
                 is PhotoSelectionEffect.NavigateBack -> {
                     onPhotoSelected(state.selectedMedia.map { it.uri })
+                    onDismissRequest()
                 }
                 is PhotoSelectionEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()

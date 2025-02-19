@@ -134,17 +134,18 @@ fun IncidentsItem(
                 .padding(horizontal = 16.dp)
         ) {
             Row {
-                IconWithCount(
-                    icon = R.drawable.ic_message,
-                    count = incident.commentCount,
-                    modifier = Modifier
-                        .clickable(
-                            enabled = onShowComment != null,
-                            onClick = onShowComment ?: {}
-                        )
-                        .padding(vertical = 4.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
+                onShowComment?.let {
+                    IconWithCount(
+                        icon = R.drawable.ic_message,
+                        count = incident.commentCount,
+                        modifier = Modifier
+                            .clickable(
+                                onClick = onShowComment
+                            )
+                            .padding(vertical = 4.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                }
                 IconWithCount(
                     icon = R.drawable.ic_like,
                     count = incident.likeCount,

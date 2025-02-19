@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun HomeRoute(
     onIncidentDetail: (Incident) -> Unit,
     onBottomNavClicked: (MainTab) -> Unit,
+    onShowSnackBar: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val myLocation by viewModel.myLocation.collectAsStateWithLifecycle()
@@ -86,6 +87,7 @@ fun HomeRoute(
                     val targetZoom = cameraPositionState.position.zoom.coerceAtMost(15f) // 최대 15로 제한
                     cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(it.latLng, targetZoom))
                 }
+                is HomeUiEffect.ShowSnackBar -> onShowSnackBar(it.message)
             }
         }
     }
@@ -134,6 +136,7 @@ private fun HomeScreen(
                     myLocation = myLocation,
                     incidents = if (incidentsState is IncidentsState.Success) incidentsState.incidents else emptyList(),
                     onUpdateBoundingBox = viewModel::updateBoundingBoxState,
+                    onShowIncidentDetail = viewModel::showIncidentDetail,
                 )
                 HomeSearchBar(
                     keyword = keyword,

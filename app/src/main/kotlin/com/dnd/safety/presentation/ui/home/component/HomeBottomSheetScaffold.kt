@@ -47,7 +47,7 @@ fun HomeBottomSheetScaffold(
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val marginTop = 56
+    val marginTop = 75
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val bottomSheetSt = rememberStandardBottomSheetState(
         skipHiddenState = true,

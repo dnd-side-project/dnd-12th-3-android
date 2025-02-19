@@ -18,10 +18,10 @@ class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun getComments(
         incidentId: Long,
-        cursor: Long
+        cursor: Long?
     ): ApiResponse<Comments> {
         return commentService
-            .getComments(incidentId, cursor)
+            .getComments(incidentId, null)
             .mapSuccess { toComments() }
             .onFailure {
                 Logger.e(message())

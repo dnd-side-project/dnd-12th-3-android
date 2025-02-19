@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -57,6 +59,7 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
+import com.dnd.safety.presentation.ui.detail.component.CommentActionMenu
 import com.dnd.safety.presentation.ui.detail.effect.DetailModalEffect
 import com.dnd.safety.presentation.ui.home.component.IncidentsItem
 import com.dnd.safety.utils.daysAgo
@@ -69,24 +72,34 @@ fun DetailRoute(
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val commentState by viewModel.commentState.collectAsStateWithLifecycle()
+    val modalEffect by viewModel.detailModalState.collectAsStateWithLifecycle()
+    val commentMode by viewModel.commentMode.collectAsStateWithLifecycle()
 
     DetailScreen(
+        commentMode = commentMode,
         incident = incident,
         comments = commentState,
         onGoBack = onGoBack,
         onSendComment = viewModel::writeComment,
-        onShowCommentActionMenu = viewModel::showCommentActionMenu
+        onShowCommentActionMenu = viewModel::showCommentActionMenu,
+        onCloseEditMode = viewModel::closeCommentEditMode
+    )
 
+    DetailModalEffect(
+        effect = modalEffect,
+        viewModel = viewModel
     )
 }
 
 @Composable
 private fun DetailScreen(
+    commentMode: CommentMode,
     incident: Incident,
     comments: List<Comment>,
     onGoBack: () -> Unit,
     onSendComment: (String) -> Unit,
     onShowCommentActionMenu: (Comment) -> Unit,
+    onCloseEditMode: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -140,24 +153,87 @@ private fun DetailScreen(
                     }
                 }
             }
-            CommentTextField(
-                name = incident.userName,
+            CommentTextMode(
+                commentMode = commentMode,
                 onSendComment = onSendComment,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                onCloseEditMode = onCloseEditMode
             )
         }
+    }
+}
+
+sealed interface CommentMode {
+    data class Text(val name: String) : CommentMode
+    data class Edit(val originText: String) : CommentMode
+}
+
+@Composable
+private fun CommentTextMode(
+    commentMode: CommentMode,
+    onSendComment: (String) -> Unit,
+    onCloseEditMode: () -> Unit,
+) {
+    Column {
+        FadeAnimatedVisibility(
+            visible = commentMode is CommentMode.Edit,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "메시지 수정",
+                        style = SafetyTheme.typography.paragraph1,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                    )
+                    Text(
+                        text = (commentMode as? CommentMode.Edit)?.originText ?: "",
+                        style = SafetyTheme.typography.label2,
+                        color = Gray50,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "menu Icon",
+                    tint = Main,
+                    modifier = Modifier
+                        .circleBackground(White)
+                        .padding(end = 16.dp)
+                        .clickable(onClick = onCloseEditMode)
+                        .padding(4.dp)
+                )
+            }
+        }
+        CommentTextField(
+            name = (commentMode as? CommentMode.Text)?.name ?: "",
+            originText = (commentMode as? CommentMode.Edit)?.originText ?: "",
+            onSendComment = onSendComment,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
     }
 }
 
 @Composable
 private fun CommentTextField(
     name: String,
+    originText: String,
     onSendComment: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var value by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf(originText) }
 
     BasicTextField(
         value = value,
@@ -189,7 +265,7 @@ private fun CommentTextField(
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    if (value.isEmpty()) {
+                    if (value.isEmpty() && name.isNotEmpty()) {
                         Text(
                             text = "${name}에게 댓글을 남겨주세요",
                             style = SafetyTheme.typography.paragraph2,
@@ -276,7 +352,14 @@ private fun DetailModalEffect(
     when (effect) {
         is DetailModalEffect.Hidden -> {}
         is DetailModalEffect.ShowCommentActionMenu -> {
-            // Show comment action menu
+            CommentActionMenu(
+                onEdit = {
+                },
+                onDelete = {
+                    viewModel.deleteComment(effect.comment.commentId)
+                },
+                onDismissRequest = viewModel::dismiss
+            )
         }
     }
 }
@@ -286,18 +369,17 @@ private fun DetailModalEffect(
 private fun DetailScreenPreview() {
     SafetyTheme {
         DetailScreen(
+            commentMode = CommentMode.Edit("This is a comment"),
             incident = Incident.sampleIncidents.first(),
             comments = listOf(
                 Comment(
-                    id = 0,
-                    writerId = 0,
+                    commentId = 0,
                     writerName = "John Doe",
                     date = LocalDateTime.now(),
                     comment = "This is a comment"
                 ),
                 Comment(
-                    id = 0,
-                    writerId = 0,
+                    commentId = 0,
                     writerName = "John Doe",
                     date = LocalDateTime.now(),
                     comment = "This is a comment",
@@ -306,7 +388,8 @@ private fun DetailScreenPreview() {
             ),
             onGoBack = {},
             onSendComment = {},
-            onShowCommentActionMenu = {}
+            onShowCommentActionMenu = {},
+            onCloseEditMode = {}
         )
     }
 }

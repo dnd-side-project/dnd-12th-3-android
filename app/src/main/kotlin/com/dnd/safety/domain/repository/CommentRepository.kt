@@ -7,7 +7,7 @@ interface CommentRepository {
 
     suspend fun getComments(
         incidentId: Long,
-        cursor: Long,
+        cursor: Long?,
     ): ApiResponse<Comments>
 
     suspend fun writeComment(

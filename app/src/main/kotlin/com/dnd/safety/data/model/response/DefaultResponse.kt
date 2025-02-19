@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DefaultResponse(
     val code: String = "",
-    val data: String,
-    val timestamp: String
+    val data: String? = null,
+    val timestamp: String = ""
 )

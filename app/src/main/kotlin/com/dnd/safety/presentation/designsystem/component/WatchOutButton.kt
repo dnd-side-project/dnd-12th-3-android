@@ -13,12 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Black
 import com.dnd.safety.presentation.designsystem.theme.Gray20
-import com.dnd.safety.presentation.designsystem.theme.Gray30
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
 
@@ -26,6 +24,7 @@ import com.dnd.safety.presentation.designsystem.theme.White
 @Composable
 fun WatchOutButton(
     text: String,
+    reverse: Boolean = true,
     enabled: Boolean = true,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -33,13 +32,13 @@ fun WatchOutButton(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val backgroundColor = if (enabled) {
+    val backgroundColor = if (reverse) {
         MaterialTheme.colorScheme.primary
     } else {
         Gray20
     }
 
-    val contentColor = if (enabled) {
+    val contentColor = if (reverse) {
         White
     } else {
         Black
@@ -52,6 +51,7 @@ fun WatchOutButton(
             }
             onClick()
         },
+        enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -82,14 +82,14 @@ private fun WatchOutButtonPreview() {
             // 활성화된 버튼
             WatchOutButton(
                 text = "다음",
-                enabled = true,
+                reverse = true,
                 onClick = {}
             )
 
             // 비활성화된 버튼
             WatchOutButton(
                 text = "다음",
-                enabled = false,
+                reverse = false,
                 onClick = {}
             )
         }

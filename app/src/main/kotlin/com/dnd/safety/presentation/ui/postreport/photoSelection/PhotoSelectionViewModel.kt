@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.dnd.safety.domain.model.Media
 import com.dnd.safety.domain.usecase.GetMediaFromGalleryUseCase
-import com.dnd.safety.presentation.navigation.MainTabRoute
+import com.dnd.safety.presentation.ui.postreport.effect.PhotoSelectionEffect
+import com.dnd.safety.presentation.ui.postreport.state.PhotoSelectionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

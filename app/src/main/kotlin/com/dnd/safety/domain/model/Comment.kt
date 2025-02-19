@@ -3,10 +3,9 @@ package com.dnd.safety.domain.model
 import java.time.LocalDateTime
 
 data class Comment(
-    val id: Int,
-    val writerId: Int,
-    val writerName: String,
+    val commentId: Long,
     val comment: String,
+    val writerName: String,
     val date: LocalDateTime,
     val isMyComment: Boolean = false
 )

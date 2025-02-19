@@ -17,12 +17,11 @@ data class CommentResponse(
 
     @Serializable
     data class Content(
-        val incidentId: Int,
-        val id: Int,
-        val writerId: Int,
-        val writerName: String = "",
+        val commentId: Long,
         val content: String,
+        val writerName: String = "",
         val parentId: Long? = null,
-        val children: Long? = null,
+        val editable: Boolean = false,
+        val createdAt: String = "",
     )
 }

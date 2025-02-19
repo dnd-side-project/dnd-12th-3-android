@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.postreport.photoSelection
+package com.dnd.safety.presentation.ui.postreport.effect
 
 sealed class PhotoSelectionEffect {
     data object NavigateBack : PhotoSelectionEffect()

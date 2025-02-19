@@ -22,15 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray20
+import com.dnd.safety.presentation.designsystem.theme.Gray30
 import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.White
 
 @Composable
 fun IconButton(
@@ -135,6 +139,37 @@ fun RegularButton(
     }
 }
 
+
+@Composable
+fun BorderRegularButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = SafetyTheme.typography.paragraph1,
+    enabled: Boolean = true,
+) {
+    Button(
+        shape = RoundedCornerShape(8.dp),
+        border = ButtonDefaults.outlinedButtonBorder().copy(
+            width = 1.dp,
+            brush = SolidColor(Gray30)
+        ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = White,
+        ),
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+        enabled = enabled,
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Text(
+            text = text,
+            style = textStyle,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun IconButtonPreview() {
@@ -153,6 +188,18 @@ private fun IconButtonPreview() {
 private fun RegularButtonPreview() {
     SafetyTheme {
         RegularButton(
+            text = "Button",
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun BorderRegularButtonPreview() {
+    SafetyTheme {
+        BorderRegularButton(
             text = "Button",
             onClick = {},
             modifier = Modifier.padding(16.dp)

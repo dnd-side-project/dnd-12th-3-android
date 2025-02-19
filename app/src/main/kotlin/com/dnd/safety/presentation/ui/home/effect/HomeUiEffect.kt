@@ -9,6 +9,9 @@ import com.google.android.gms.maps.model.LatLng
 sealed interface HomeUiEffect {
 
     @Immutable
+    data class ShowSnackBar(val message: String) : HomeUiEffect
+
+    @Immutable
     data class ShowIncidentDetail(val incident: Incident) : HomeUiEffect
 
     @Immutable

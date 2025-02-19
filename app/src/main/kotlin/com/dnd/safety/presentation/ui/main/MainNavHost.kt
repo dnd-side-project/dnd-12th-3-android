@@ -37,7 +37,8 @@ fun MainNavHost(
         ) {
             homeNavGraph(
                 onShowDetail = navigator::navigateToDetail,
-                onBottomNavClicked = navigator::navigateTo
+                onBottomNavClicked = navigator::navigateTo,
+                onShowSnackBar = onShowSnackBar
             )
             postReportNavGraph(
                 onShowSnackBar = onShowSnackBar,

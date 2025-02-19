@@ -65,7 +65,7 @@ class HomeViewModel @Inject constructor(
                 when (incidents) {
                     is ApiResponse.Success -> IncidentsState.Success(incidents.data)
                     is ApiResponse.Failure -> {
-
+                        showSnackBar("네트워크 에러가 발생했습니다")
                         IncidentsState.Loading
                     }
                 }
@@ -158,8 +158,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun showSnackBar(message: String) {
+        viewModelScope.launch {
+            _homeUiEffect.emit(HomeUiEffect.ShowSnackBar(message))
+        }
+    }
+
     fun dismissModal() {
         _homeModalState.update { HomeModalState.Dismiss }
     }
 }
-

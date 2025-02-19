@@ -17,7 +17,7 @@ interface CommentService {
     @GET("$BASE_URL/cursor")
     suspend fun getComments(
         @Path("incidentId") incidentId: Long,
-        @Query("key") cursor: Long,
+        @Query("key") cursor: Long?,
         @Query("size") size: Int = 30,
     ): ApiResponse<CommentResponse>
 
@@ -27,16 +27,16 @@ interface CommentService {
         @Body request: CommentRequest
     ): ApiResponse<DefaultResponse>
 
-    @DELETE(BASE_URL)
+    @DELETE("$BASE_URL/{commentId}")
     suspend fun deleteComment(
         @Path("incidentId") incidentId: Long,
-        @Query("commentId") commentId: Long,
+        @Path("commentId") commentId: Long,
     ): ApiResponse<DefaultResponse>
 
-    @PUT(BASE_URL)
+    @PUT("$BASE_URL/{commentId}")
     suspend fun editComment(
         @Path("incidentId") incidentId: Long,
-        @Query("commentId") commentId: Long,
+        @Path("commentId") commentId: Long,
         @Query("content") content: String,
     ): ApiResponse<CommentResponse>
 

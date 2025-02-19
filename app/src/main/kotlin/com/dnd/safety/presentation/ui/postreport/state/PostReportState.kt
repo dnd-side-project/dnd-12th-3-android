@@ -1,4 +1,4 @@
-package com.dnd.safety.presentation.ui.postreport
+package com.dnd.safety.presentation.ui.postreport.state
 
 import android.net.Uri
 import com.dnd.safety.data.model.Location

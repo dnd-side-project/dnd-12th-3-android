@@ -47,10 +47,12 @@ fun MyLocationMarker(
 fun IncidentsMarker(
     iconId: Int,
     location: LatLng,
+    onClick: () -> Unit
 ) {
     CustomMapMarker(
-        fullName = "My Location",
+        fullName = "",
         location = location,
+        onClick = onClick
     ) {
         Box(
             modifier = Modifier.shadow(
@@ -113,7 +115,8 @@ private fun IncidentsMarkerPreview() {
     SafetyTheme {
         IncidentsMarker(
             iconId = R.drawable.ic_fire,
-            location = LatLng(0.0, 0.0)
+            location = LatLng(0.0, 0.0),
+            onClick = {}
         )
     }
 }

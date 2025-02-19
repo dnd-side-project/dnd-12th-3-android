@@ -60,7 +60,7 @@ private fun SignOutScreen(
                 WatchOutButton(
                     text = "취소",
                     onClick = onGoBack,
-                    enabled = false,
+                    reverse = false,
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
