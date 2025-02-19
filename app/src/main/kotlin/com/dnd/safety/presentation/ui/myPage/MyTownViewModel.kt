@@ -72,13 +72,15 @@ class MyTownViewModel @Inject constructor(
 
     fun addMyTown(myTown: MyTown) {
         viewModelScope.launch {
-            myTownRepository.addMyTown(myTown)
-                .onSuccess {
-                    myTownUiState.restart()
-                }
-                .onFailure {
-                    showSnackBar("내 동네 추가에 실패했습니다.")
-                }
+            myTownRepository.addMyTown(
+                title = myTown.title ?: "",
+                address = myTown.address,
+                point = myTown.point
+            ).onSuccess {
+                myTownUiState.restart()
+            }.onFailure {
+                showSnackBar("내 동네 추가에 실패했습니다.")
+            }
         }
     }
 

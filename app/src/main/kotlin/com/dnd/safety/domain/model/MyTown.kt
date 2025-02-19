@@ -3,11 +3,11 @@ package com.dnd.safety.domain.model
 import com.google.android.gms.maps.model.LatLng
 
 data class MyTown(
-    val id: Long,
+    val id: Long = 0L,
     val title: String?,
     val address: String,
     val point: Point,
-    val selected: Boolean
+    val selected: Boolean = false
 ) {
     val latLng: LatLng
         get() = LatLng(point.y, point.x)

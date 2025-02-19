@@ -4,6 +4,7 @@ import com.dnd.safety.data.mapper.toMyTowns
 import com.dnd.safety.data.model.request.MyTownRequest
 import com.dnd.safety.data.remote.api.MyTownService
 import com.dnd.safety.domain.model.MyTown
+import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.MyTownRepository
 import com.dnd.safety.utils.Logger
 import com.skydoves.sandwich.ApiResponse
@@ -29,13 +30,17 @@ class MyTownRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun addMyTown(myTown: MyTown): ApiResponse<Unit> {
+    override suspend fun addMyTown(
+        title: String,
+        address: String,
+        point: Point
+    ): ApiResponse<Unit> {
         return myTownService
             .addMyTown(
                 MyTownRequest(
-                    addressName = myTown.address,
-                    latitude = myTown.latLng.latitude,
-                    longitude = myTown.latLng.longitude
+                    addressName = address,
+                    latitude = point.y,
+                    longitude = point.x,
                 )
             )
             .mapSuccess {}

@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -40,7 +41,7 @@ class LocationSearchViewModel @Inject constructor(
     @OptIn(FlowPreview::class)
     val lawDistricts: StateFlow<List<LawDistrict>> = searchText
         .debounce(300)
-        .filterNot(String::isEmpty)
+        .filter { it.length >= 2 }
         .map {
             when (val data = lawDistrictRepository.getLawDistricts(it)) {
                 is ApiResponse.Success -> data.data

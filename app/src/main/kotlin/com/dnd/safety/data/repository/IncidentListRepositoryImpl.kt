@@ -27,8 +27,8 @@ class IncidentListRepositoryImpl @Inject constructor(
             topRightY = boundingBox.topRight.y,
             bottomLeftX = boundingBox.bottomleft.x,
             bottomLeftY = boundingBox.bottomleft.y,
-            myX = myLocation.latitude,
-            myY = myLocation.longitude
+            myX = myLocation.longitude,
+            myY = myLocation.latitude
         ).mapSuccess {
             toIncidentsList()
         }.onFailure {

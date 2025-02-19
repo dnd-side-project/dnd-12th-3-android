@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,6 +39,7 @@ fun LocationConfirmScreen(
     location: LatLng,
     onGoBack: () -> Unit,
     onComplete: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
     viewModel: LocationConfirmViewModel = hiltViewModel(),
 ) {
     val cameraPositionState = rememberCameraPositionState {
@@ -52,13 +55,16 @@ fun LocationConfirmScreen(
         bottomBar = {
             WatchOutButton(
                 text = "확인",
-                onClick = viewModel::onNextButtonClicked,
+                onClick = viewModel::addMyTown,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 20.dp)
             )
         },
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -112,6 +118,7 @@ fun LocationConfirmScreen(
         viewModel.effect.collectLatest {
             when (it) {
                 is LocationConfirmEffect.NavigateToMainScreen -> onComplete()
+                is LocationConfirmEffect.ShowSnackBar -> onShowSnackBar(it.message)
             }
         }
     }

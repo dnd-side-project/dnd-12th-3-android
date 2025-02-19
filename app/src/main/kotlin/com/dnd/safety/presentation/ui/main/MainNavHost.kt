@@ -60,7 +60,8 @@ fun MainNavHost(
             locationNavGraph(
                 onGoBack = navigator::popBackStackIfNotHome,
                 onComplete = { navigator.navigateTo(MainTab.Home) },
-                onShowNavigationConfirm = navigator::navigateToLocationConfirm
+                onShowNavigationConfirm = navigator::navigateToLocationConfirm,
+                onShowSnackBar = onShowSnackBar
             )
             splashNavGraph(
                 onPermissionAllowed = navigator::navigateToLogin

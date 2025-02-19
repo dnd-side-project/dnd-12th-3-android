@@ -31,11 +31,13 @@ fun NavGraphBuilder.locationNavGraph(
     onGoBack: () -> Unit,
     onComplete: () -> Unit,
     onShowNavigationConfirm: (MyTown) -> Unit,
+    onShowSnackBar: (String) -> Unit,
 ) {
     composable<Route.SearchLocation> {
         LocationSearchScreen(
             onGoBack = onGoBack,
             onShowNavigationConfirm = onShowNavigationConfirm,
+            onShowSnackBar = onShowSnackBar,
         )
     }
     composable<Route.LocationConfirm> { backStackEntry ->
@@ -45,6 +47,7 @@ fun NavGraphBuilder.locationNavGraph(
             location = LatLng(myTown.pointY.toDouble(), myTown.pointX.toDouble()),
             onGoBack = onGoBack,
             onComplete = onComplete,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 }
