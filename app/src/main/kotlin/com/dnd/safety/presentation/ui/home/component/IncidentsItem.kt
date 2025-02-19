@@ -89,7 +89,7 @@ fun IncidentsItem(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = incident.address,
+                    text = incident.roadNameAddress,
                     style = SafetyTheme.typography.label2,
                     color = Gray40
                 )
@@ -133,7 +133,7 @@ fun IncidentsItem(
             Row {
                 IconWithCount(
                     icon = R.drawable.ic_message,
-                    count = 1,
+                    count = incident.commentCount,
                     modifier = Modifier
                         .clickable(
                             enabled = onShowComment != null,
@@ -144,7 +144,7 @@ fun IncidentsItem(
                 Spacer(modifier = Modifier.width(16.dp))
                 IconWithCount(
                     icon = R.drawable.ic_like,
-                    count = 1,
+                    count = incident.likeCount,
                     modifier = Modifier
                         .clickable(
                             onClick = onLike

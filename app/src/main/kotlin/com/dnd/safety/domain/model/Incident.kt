@@ -2,7 +2,6 @@ package com.dnd.safety.domain.model
 
 import com.dnd.safety.presentation.navigation.utils.LocalDateTimeSerializer
 import kotlinx.serialization.Serializable
-import java.time.Duration
 import java.time.LocalDateTime
 
 @Serializable
@@ -12,9 +11,12 @@ data class Incident(
     val userName: String,
     val distance: String,
     val description: String,
-    val address: String,
-    val pointX: Double,
-    val pointY: Double,
+    val roadNameAddress: String,
+    val lotNumberAddress: String,
+    val latitude: Double,
+    val longitude: Double,
+    val likeCount: Int,
+    val commentCount: Int,
     @Serializable(with = LocalDateTimeSerializer::class) val createdDate: LocalDateTime,
     @Serializable(with = LocalDateTimeSerializer::class) val updatedDate: LocalDateTime,
     val incidentCategory: IncidentCategory,
@@ -28,14 +30,17 @@ data class Incident(
             Incident(
                 id = 1,
                 title = "title",
+                roadNameAddress = "address",
+                lotNumberAddress = "address",
                 description = "description",
-                pointX = 37.0,
-                pointY = 127.0,
+                longitude = 37.0,
+                latitude = 127.0,
                 mediaFiles = listOf(MediaFile(1, "mediaType", "fileUrl")),
                 distance = "distance",
                 userName = "userName",
-                address = "address",
                 incidentCategory = IncidentCategory.FIRE,
+                likeCount = 1,
+                commentCount = 1,
                 createdDate = LocalDateTime.now(),
                 updatedDate = LocalDateTime.now()
             )

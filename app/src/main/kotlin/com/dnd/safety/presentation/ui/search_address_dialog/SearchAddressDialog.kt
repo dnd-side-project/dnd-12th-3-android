@@ -37,8 +37,6 @@ import com.dnd.safety.domain.model.PointDto
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.presentation.designsystem.component.TextField
 import com.dnd.safety.presentation.designsystem.theme.Gray10
-import com.dnd.safety.presentation.designsystem.theme.Gray30
-import com.dnd.safety.presentation.designsystem.theme.Gray40
 import com.dnd.safety.presentation.designsystem.theme.Gray50
 import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
@@ -177,29 +175,30 @@ private fun SearchAddressDialogPreview() {
             lawDistricts = listOf(
                 LawDistrict(
                     address = "서울특별시 강남구",
-                    address2 = "서울특별시 강남구",
+                    roadAddress = "서울특별시 강남구",
+                    lotAddress = "서울특별시 강남구",
                     sido = "서울특별시",
                     name = "강남구",
                     sampleDto
                 ),
                 LawDistrict(
                     address = "서울특별시 강북구",
-                    address2 = "서울특별시 강북구",
-                    sido = "서울특별시",
+                    roadAddress = "서울특별시 강남구",
+                    lotAddress = "서울특별시 강남구", sido = "서울특별시",
                     name = "강남구",
                     sampleDto
                 ),
                 LawDistrict(
                     address = "서울특별시 강동구",
-                    address2 = "서울특별시 강동구",
-                    sido = "서울특별시",
+                    roadAddress = "서울특별시 강남구",
+                    lotAddress = "서울특별시 강남구", sido = "서울특별시",
                     name = "강남구",
                     sampleDto
                 ),
                 LawDistrict(
                     address = "서울특별시 강서구",
-                    address2 = "서울특별시 강서구",
-                    sido = "서울특별시",
+                    roadAddress = "서울특별시 강남구",
+                    lotAddress = "서울특별시 강남구", sido = "서울특별시",
                     name = "강남구",
                     sampleDto
                 ),

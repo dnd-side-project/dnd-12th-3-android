@@ -2,10 +2,10 @@ package com.dnd.safety.di
 
 import com.dnd.safety.data.repository.AuthRepositoryImpl
 import com.dnd.safety.data.repository.CameraRepositoryImpl
+import com.dnd.safety.data.repository.CommentRepositoryImpl
 import com.dnd.safety.data.repository.IncidentListRepositoryImpl
 import com.dnd.safety.data.repository.IncidentRepositoryImpl
 import com.dnd.safety.data.repository.LawDistrictRepositoryImpl
-import com.dnd.safety.data.repository.LocationRepositoryImpl
 import com.dnd.safety.data.repository.LoginRepositoryImpl
 import com.dnd.safety.data.repository.MediaRepositoryImpl
 import com.dnd.safety.data.repository.MyReportRepositoryImpl
@@ -14,11 +14,9 @@ import com.dnd.safety.data.repository.UserInfoRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.CameraRepository
 import com.dnd.safety.domain.repository.CommentRepository
-import com.dnd.safety.data.repository.CommentRepositoryImpl
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.domain.repository.LawDistrictRepository
-import com.dnd.safety.domain.repository.LocationRepository
 import com.dnd.safety.domain.repository.LoginRepository
 import com.dnd.safety.domain.repository.MediaRepository
 import com.dnd.safety.domain.repository.MyReportRepository
@@ -41,12 +39,6 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindLocationRepository(
-        locationRepositoryImpl: LocationRepositoryImpl
-    ): LocationRepository
 
     @Binds
     abstract fun bindMediaRepository(

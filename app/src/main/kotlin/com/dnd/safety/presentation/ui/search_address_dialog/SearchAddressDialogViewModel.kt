@@ -47,6 +47,7 @@ class SearchAddressDialogViewModel @Inject constructor(
                     Logger.e(data.message())
                     emptyList()
                 }
+
                 is ApiResponse.Failure.Exception -> {
                     Logger.e(data.message())
                     emptyList()
@@ -70,16 +71,23 @@ class SearchAddressDialogViewModel @Inject constructor(
             lawDistrictRepository.getPoint(
                 lawDistrict.pointDto
             ).onSuccess {
-                searchAddressComplete(data, lawDistrict.address, lawDistrict.name)
+                searchAddressComplete(data, lawDistrict)
             }.onFailure {
                 searchError()
             }
         }
     }
 
-    private fun searchAddressComplete(point: Point, address: String, name: String) {
+    private fun searchAddressComplete(point: Point, lawDistrict: LawDistrict) {
         viewModelScope.launch {
-            _searchAddressCompleteEffect.emit(SearchResult(address, name, point))
+            _searchAddressCompleteEffect.emit(
+                SearchResult(
+                    name = lawDistrict.name.ifBlank { lawDistrict.address },
+                    roadAddress = lawDistrict.roadAddress,
+                    lotAddress = lawDistrict.lotAddress,
+                    point = point
+                )
+            )
         }
     }
 

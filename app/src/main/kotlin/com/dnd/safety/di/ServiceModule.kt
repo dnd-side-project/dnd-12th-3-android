@@ -5,7 +5,6 @@ import com.dnd.safety.data.remote.api.LoginService
 import com.dnd.safety.data.remote.api.IncidentListService
 import com.dnd.safety.data.remote.api.IncidentService
 import com.dnd.safety.data.remote.api.LawDistrictService
-import com.dnd.safety.data.remote.api.LocationService
 import com.dnd.safety.data.remote.api.MyReportService
 import com.dnd.safety.data.remote.api.MyTownService
 import com.dnd.safety.di.utils.GoogleRetrofit
@@ -21,14 +20,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
-
-    @Provides
-    @Singleton
-    fun provideLocationService(
-        @KakaoRetrofit retrofit: Retrofit
-    ): LocationService {
-        return retrofit.create(LocationService::class.java)
-    }
 
     @Provides
     @Singleton

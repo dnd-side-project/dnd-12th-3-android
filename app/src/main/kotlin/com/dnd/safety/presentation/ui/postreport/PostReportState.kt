@@ -8,6 +8,12 @@ data class PostReportState(
     val content: String = "",
     val selectedCategory: IncidentCategory? = null,
     val imageUris: List<Uri> = emptyList(),
-    val location: Location = Location(0.0, 0.0, "", ""),
+    val location: Location = Location(
+        latitude = 0.0,
+        longitude = 0.0,
+        placeName = "",
+        roadNameAddress = "",
+        lotNumberAddress = ""
+    ),
     val isLoading: Boolean = false
 )

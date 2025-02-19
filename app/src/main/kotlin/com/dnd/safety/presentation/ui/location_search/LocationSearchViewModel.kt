@@ -6,7 +6,6 @@ import com.dnd.safety.domain.model.LawDistrict
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.LawDistrictRepository
-import com.dnd.safety.domain.usecase.FetchLocationUseCase
 import com.dnd.safety.presentation.ui.location_search.effect.LocationSearchEffect
 import com.dnd.safety.utils.Logger
 import com.skydoves.sandwich.ApiResponse
@@ -32,7 +31,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationSearchViewModel @Inject constructor(
     private val lawDistrictRepository: LawDistrictRepository,
-    private val fetchLocationUseCase: FetchLocationUseCase,
 ) : ViewModel() {
 
     var searchText = MutableStateFlow("")

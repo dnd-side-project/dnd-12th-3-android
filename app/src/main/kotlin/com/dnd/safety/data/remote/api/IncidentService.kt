@@ -10,10 +10,11 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 interface IncidentService {
+
     @Multipart
     @POST("incidents")
     suspend fun createIncident(
         @Part("incidentData") incidentData: IncidentRequestDto,
         @Part files: List<MultipartBody.Part>
-    ): Response<ApiResponse<Unit>>
+    ): ApiResponse<Unit>
 }

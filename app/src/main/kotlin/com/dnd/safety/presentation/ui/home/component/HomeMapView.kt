@@ -57,7 +57,7 @@ fun HomeMapViewContent(
             markerList.forEach { data ->
                 IncidentsMarker(
                     iconId = data.incidentCategory.icon,
-                    location = LatLng(data.pointY, data.pointX),
+                    location = LatLng(data.latitude, data.longitude),
                 )
             }
         }

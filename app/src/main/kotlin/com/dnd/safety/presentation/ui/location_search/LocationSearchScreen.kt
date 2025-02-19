@@ -218,7 +218,8 @@ fun PreviewLocationSearchScreen() {
             lawDistricts = listOf(
                 LawDistrict(
                     address = "서울특별시 강남구",
-                    address2 = "서울특별시 강남구",
+                    roadAddress = "서울특별시 강남구 역삼동 123-45",
+                    lotAddress = "서울특별시 강남구 강남대로 123-45",
                     sido = "서울특별시",
                     name = "강남구",
                     pointDto = PointDto(
@@ -231,7 +232,8 @@ fun PreviewLocationSearchScreen() {
                 ),
                 LawDistrict(
                     address = "서울특별시 강북구",
-                    address2 = "서울특별시 강북구",
+                    roadAddress = "서울특별시 강남구 역삼동 123-45",
+                    lotAddress = "서울특별시 강남구 강남대로 123-45",
                     sido = "서울특별시",
                     name = "강북구",
                     pointDto = PointDto(

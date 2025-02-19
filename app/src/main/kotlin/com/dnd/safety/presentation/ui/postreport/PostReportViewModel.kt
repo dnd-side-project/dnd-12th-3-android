@@ -11,10 +11,12 @@ import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.domain.model.IncidentReport
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.domain.usecase.CreateIncidentReportUseCase
-import com.dnd.safety.domain.usecase.GetCurrentLocationUseCase
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportEffect
 import com.dnd.safety.presentation.ui.postreport.effect.PostReportModalEffect
+import com.skydoves.sandwich.message
+import com.skydoves.sandwich.suspendOnFailure
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +29,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostReportViewModel @Inject constructor(
-    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val createIncidentReportUseCase: CreateIncidentReportUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -48,13 +49,7 @@ class PostReportViewModel @Inject constructor(
     val modalEffect: StateFlow<PostReportModalEffect> get() = _modalEffect
 
     fun fetchCurrentLocation() = viewModelScope.launch {
-        getCurrentLocationUseCase()
-            .onSuccess { location ->
-                _state.update { it.copy(location = location) }
-            }
-            .onFailure { throwable ->
-                Log.e("PostReportViewModel", "위치 정보 가져오기 실패", throwable)
-            }
+
     }
 
     fun updateContent(content: String) {
@@ -80,7 +75,6 @@ class PostReportViewModel @Inject constructor(
         _state.update { it.copy(isLoading = true) }
 
         val incidentReport = IncidentReport(
-            writerId = 1, // TODO: Get actual user ID
             description = currentState.content,
             disasterGroup = currentState.selectedCategory?.name ?: return@launch,
             location = currentState.location,
@@ -88,13 +82,13 @@ class PostReportViewModel @Inject constructor(
         )
 
         createIncidentReportUseCase(incidentReport)
-            .onSuccess {
+            .suspendOnSuccess {
                 _effect.send(PostReportEffect.NavigateBack)
                 _effect.send(PostReportEffect.ShowToast("사고 등록에 성공했습니다"))
             }
-            .onFailure { throwable ->
+            .suspendOnFailure {
                 _effect.send(PostReportEffect.ShowToast("사고 등록에 실패했습니다"))
-                Log.e("PostReportViewModel", "Failed to create incident", throwable)
+                Log.e("PostReportViewModel", "Failed to create incident ${message()}")
             }
             .also {
                 _state.update { it.copy(isLoading = false) }
@@ -104,7 +98,7 @@ class PostReportViewModel @Inject constructor(
     private fun validateInput(state: PostReportState): Boolean {
         return state.content.isNotBlank() &&
                 state.selectedCategory != null &&
-                state.location.address.isNotBlank()
+                state.location.placeName.isNotBlank()
     }
 
     fun addressSelected(searchResult: SearchResult) {
@@ -113,8 +107,9 @@ class PostReportViewModel @Inject constructor(
                 location = Location(
                     latitude = searchResult.point.y,
                     longitude = searchResult.point.x,
-                    address = searchResult.address,
-                    placeName = searchResult.name
+                    placeName = searchResult.name,
+                    roadNameAddress = searchResult.roadAddress,
+                    lotNumberAddress = searchResult.lotAddress
                 ),
             )
         }

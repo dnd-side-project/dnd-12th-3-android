@@ -4,8 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Location(
+    val placeName: String,
+    val roadNameAddress: String,
+    val lotNumberAddress: String,
     val latitude: Double,
     val longitude: Double,
-    val placeName: String,
-    val address: String
 )

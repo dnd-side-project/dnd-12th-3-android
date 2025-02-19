@@ -340,7 +340,8 @@ private fun PostReportScreenPreview() {
                     latitude = 37.501311,
                     longitude = 127.039471,
                     placeName = "강남역",
-                    address = "서울특별시 강남구 역삼동 123-45"
+                    lotNumberAddress = "서울특별시 강남구 역삼동 123-45",
+                    roadNameAddress = "서울특별시 강남구 강남대로 123-45"
                 )
             ),
             onImageAdd = {},
@@ -366,7 +367,8 @@ private fun PostReportScreenWithContentPreview() {
                     latitude = 37.501311,
                     longitude = 127.039471,
                     placeName = "강남역",
-                    address = "서울특별시 강남구 역삼동 123-45"
+                    lotNumberAddress = "서울특별시 강남구 역삼동 123-45",
+                    roadNameAddress = "서울특별시 강남구 강남대로 123-45"
                 )
             ),
             onImageAdd = {},

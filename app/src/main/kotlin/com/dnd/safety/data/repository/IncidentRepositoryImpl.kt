@@ -6,6 +6,7 @@ import com.dnd.safety.domain.model.IncidentReport
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.utils.FileManager
 import com.google.gson.Gson
+import com.skydoves.sandwich.ApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -17,27 +18,20 @@ class IncidentRepositoryImpl @Inject constructor(
     private val fileManager: FileManager
 ) : IncidentRepository {
 
-    override suspend fun createIncident(incidentReport: IncidentReport): Result<Unit> =
-        withContext(Dispatchers.IO) {
-            try {
-                val incidentDto = IncidentRequestDto.from(incidentReport)
+    override suspend fun createIncident(incidentReport: IncidentReport): ApiResponse<Unit> {
+        return try {
+            val incidentDto = IncidentRequestDto.from(incidentReport)
 
-                val imageParts = incidentReport.images.map { uri ->
-                    fileManager.getMultipartBody(uri)
-                }
-
-                val response = incidentService.createIncident(
-                    incidentData = incidentDto,
-                    files = imageParts
-                )
-
-                if (response.isSuccessful) {
-                    Result.success(Unit)
-                } else {
-                    Result.failure(Exception("Failed to create incident: ${response.code()}"))
-                }
-            } catch (e: Exception) {
-                Result.failure(e)
+            val imageParts = incidentReport.images.map { uri ->
+                fileManager.getMultipartBody(uri)
             }
+
+            incidentService.createIncident(
+                incidentData = incidentDto,
+                files = imageParts
+            )
+        } catch (e: Exception) {
+            ApiResponse.Failure.Error(e)
         }
+    }
 }

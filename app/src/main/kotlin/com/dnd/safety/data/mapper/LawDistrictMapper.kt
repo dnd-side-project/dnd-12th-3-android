@@ -7,7 +7,8 @@ import com.dnd.safety.domain.model.PointDto
 fun LawDistrictResponse.toLawDistricts() = results.juso.map {
     LawDistrict(
         address = it.roadAddr,
-        address2 = it.roadAddrPart1,
+        roadAddress = it.roadAddrPart1,
+        lotAddress = it.jibunAddr,
         sido = listOf(
             it.siNm,
             it.sggNm,

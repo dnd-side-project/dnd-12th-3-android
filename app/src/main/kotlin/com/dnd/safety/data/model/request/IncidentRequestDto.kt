@@ -5,19 +5,23 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class IncidentRequestDto(
-    val writerId: Long,
+    val locationInfoName: String,
+    val lotNumberAddress: String,
+    val roadNameAddress: String,
     val description: String,
-    val disasterGroup: String,
-    val pointX: Double,
-    val pointY: Double
+    val incidentCategory: String,
+    val latitude: Double,
+    val longitude: Double,
 ) {
     companion object {
         fun from(domain: IncidentReport) = IncidentRequestDto(
-            writerId = domain.writerId,
+            locationInfoName = domain.location.placeName,
+            lotNumberAddress = domain.location.lotNumberAddress,
+            roadNameAddress = domain.location.roadNameAddress,
             description = domain.description,
-            disasterGroup = mapCategoryToDisasterGroup(domain.disasterGroup),
-            pointX = domain.location.longitude,
-            pointY = domain.location.latitude
+            incidentCategory = mapCategoryToDisasterGroup(domain.disasterGroup),
+            longitude = domain.location.longitude,
+            latitude = domain.location.latitude
         )
 
         private fun mapCategoryToDisasterGroup(category: String): String {

@@ -2,7 +2,8 @@ package com.dnd.safety.domain.model
 
 data class LawDistrict(
     val address: String,
-    val address2: String,
+    val roadAddress: String,
+    val lotAddress: String,
     val sido: String,
     val name: String,
     val pointDto: PointDto
