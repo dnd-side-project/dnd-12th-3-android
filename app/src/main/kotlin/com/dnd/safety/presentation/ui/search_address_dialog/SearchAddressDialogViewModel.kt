@@ -1,8 +1,6 @@
 package com.dnd.safety.presentation.ui.search_address_dialog
 
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
@@ -13,7 +11,7 @@ import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.domain.repository.LawDistrictRepository
 import com.dnd.safety.utils.Logger
-import com.google.android.gms.maps.model.LatLng
+import com.dnd.safety.utils.getAddress
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onFailure
@@ -31,7 +29,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,7 +87,7 @@ class SearchAddressDialogViewModel @Inject constructor(
         viewModelScope.launch {
             val location = locationService.getCurrentLocation()
 
-            val address = getLastAddress(location, context)
+            val address = getAddress(location, context)
 
             if (address.isEmpty()) {
                 searchError()
@@ -126,64 +123,6 @@ class SearchAddressDialogViewModel @Inject constructor(
 
     private fun searchError() {
         textChanged(searchText.value)
-    }
-
-    private fun getLastAddress(location: LatLng?, context: Context): String {
-        if (location == null) {
-            return ""
-        }
-
-        val geocoder = Geocoder(context, Locale.getDefault())
-        var address = ""
-
-        try {
-            val geoAddress: Address? = geocoder.getFromLocation(
-                location.latitude,
-                location.longitude,
-                1
-            )?.get(0)
-
-            geoAddress?.let {
-                address = changeAddrtoString(geoAddress)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Logger.e("현재 주소를 가져올 수 없음: ${e.message}")
-        }
-
-        return address
-    }
-
-    private fun changeAddrtoString(addr: Address): String {
-        var address = ""
-
-        try {
-            if (addr.getAddressLine(0).isNullOrBlank()) {
-                address = if (!addr.adminArea.isNullOrBlank()) {
-                    addr.adminArea
-                } else {
-                    ""
-                } + if (!addr.locality.isNullOrBlank() && addr.adminArea != addr.locality) {
-                    " " + addr.locality
-                } else {
-                    ""
-                } + if (!addr.thoroughfare.isNullOrBlank()) {
-                    " " + addr.thoroughfare
-                } else {
-                    ""
-                } + if (!addr.featureName.isNullOrBlank()) {
-                    " " + addr.featureName
-                } else {
-                    ""
-                }
-            } else {
-                address = addr.getAddressLine(0).replace(addr.countryName, "").trim()
-            }
-        } catch (e: Exception) {
-            Logger.e("주소 변환 실패: ${e.message}")
-        }
-
-        return address
     }
 }
 

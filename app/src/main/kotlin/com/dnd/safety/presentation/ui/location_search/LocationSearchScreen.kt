@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -44,6 +45,7 @@ import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.PointDto
 import com.dnd.safety.presentation.designsystem.component.TextField
 import com.dnd.safety.presentation.designsystem.component.TopAppbar
+import com.dnd.safety.presentation.designsystem.component.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Gray50
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
@@ -59,6 +61,7 @@ fun LocationSearchScreen(
 ) {
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val lawDistricts by viewModel.lawDistricts.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     val focusRequester = remember { FocusRequester() }
 
@@ -68,6 +71,9 @@ fun LocationSearchScreen(
         focusRequester = focusRequester,
         onTextChange = viewModel::textChanged,
         onGetPoint = viewModel::getPoint,
+        onSearchToCurrentLocation = {
+            viewModel.searchToCurrentLocation(context)
+        },
         onGoBack = onGoBack
     )
 
@@ -82,7 +88,7 @@ fun LocationSearchScreen(
                 is LocationSearchEffect.NavigateToLocationConfirm -> {
                     onShowNavigationConfirm(effect.myTown)
                 }
-                is LocationSearchEffect.ShowToast -> onShowSnackBar(effect.message)
+                is LocationSearchEffect.ShowSnackBar -> onShowSnackBar(effect.message)
             }
         }
     }
@@ -95,6 +101,7 @@ fun LocationSearchScreen(
     lawDistricts: List<LawDistrict>,
     onTextChange: (String) -> Unit,
     onGetPoint: (LawDistrict) -> Unit,
+    onSearchToCurrentLocation: () -> Unit,
     onGoBack: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -124,7 +131,8 @@ fun LocationSearchScreen(
                 Text(
                     text = "주소를 설정해주세요",
                     style = SafetyTheme.typography.title1,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
                         .padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
@@ -146,6 +154,13 @@ fun LocationSearchScreen(
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
                         .padding(horizontal = 16.dp)
+                )
+                WatchOutButton(
+                    text = "현재 위치로 검색",
+                    style = SafetyTheme.typography.paragraph1,
+                    onClick = onSearchToCurrentLocation,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn(
@@ -248,6 +263,7 @@ fun PreviewLocationSearchScreen() {
             focusRequester = FocusRequester(),
             onTextChange = {},
             onGetPoint = {},
+            onSearchToCurrentLocation = {},
             onGoBack = {}
 
         )

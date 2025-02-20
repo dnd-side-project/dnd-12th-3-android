@@ -1,13 +1,16 @@
 package com.dnd.safety.presentation.ui.location_search
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.domain.model.LawDistrict
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.LawDistrictRepository
 import com.dnd.safety.presentation.ui.location_search.effect.LocationSearchEffect
 import com.dnd.safety.utils.Logger
+import com.dnd.safety.utils.getAddress
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onFailure
@@ -20,7 +23,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -31,6 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationSearchViewModel @Inject constructor(
     private val lawDistrictRepository: LawDistrictRepository,
+    private val locationService: LocationService
 ) : ViewModel() {
 
     var searchText = MutableStateFlow("")
@@ -92,6 +95,21 @@ class LocationSearchViewModel @Inject constructor(
                     )
                 )
             )
+        }
+    }
+
+    fun searchToCurrentLocation(context: Context) {
+        viewModelScope.launch {
+            val location = locationService.getCurrentLocation()
+
+            val address = getAddress(location, context)
+
+            if (address.isEmpty()) {
+                searchError()
+                _effect.send(LocationSearchEffect.ShowSnackBar("현재 위치에 대한 주소를 가져올 수 없습니다"))
+            } else {
+                searchText.value = address
+            }
         }
     }
 

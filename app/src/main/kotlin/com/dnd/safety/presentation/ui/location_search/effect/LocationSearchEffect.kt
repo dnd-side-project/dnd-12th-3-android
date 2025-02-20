@@ -4,5 +4,5 @@ import com.dnd.safety.domain.model.MyTown
 
 sealed class LocationSearchEffect {
     data class NavigateToLocationConfirm(val myTown: MyTown) : LocationSearchEffect()
-    data class ShowToast(val message: String) : LocationSearchEffect()
+    data class ShowSnackBar(val message: String) : LocationSearchEffect()
 }
