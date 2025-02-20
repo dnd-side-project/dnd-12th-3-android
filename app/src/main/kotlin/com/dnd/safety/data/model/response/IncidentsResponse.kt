@@ -20,6 +20,8 @@ data class IncidentData(
     val writer: WriterDto,
     val incident: IncidentDto,
     val distance: String = "",
+    val liked: Boolean = false,
+    val editable: Boolean = false,
     val mediaFiles: List<MediaFileDto>
 )
 
@@ -36,8 +38,6 @@ data class IncidentDto(
     val longitude: Double,
     val commentCount: Int,
     val likeCount: Int,
-    val liked: Boolean = false,
-    val editable: Boolean = false,
     val createdAt: String,
     val updatedAt: String,
 )

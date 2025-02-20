@@ -131,16 +131,18 @@ private fun DetailScreen(
                 onBackEvent = onGoBack,
                 navigationType = TopAppbarType.Custom {
                     Row {
-                        TopAppbarIcon(
-                            icon = painterResource(id = R.drawable.ic_share),
-                            tint = Gray80,
-                            onClick = {},
-                        )
-                        TopAppbarIcon(
-                            icon = Icons.Default.MoreVert,
-                            tint = Gray80,
-                            onClick = {},
-                        )
+//                        TopAppbarIcon(
+//                            icon = painterResource(id = R.drawable.ic_share),
+//                            tint = Gray80,
+//                            onClick = {},
+//                        )
+                        if (incident.editable) {
+                            TopAppbarIcon(
+                                icon = Icons.Default.MoreVert,
+                                tint = Gray80,
+                                onClick = {},
+                            )
+                        }
                     }
                 }
             )
