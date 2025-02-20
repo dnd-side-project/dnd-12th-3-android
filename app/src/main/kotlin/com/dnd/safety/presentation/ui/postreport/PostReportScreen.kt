@@ -116,6 +116,7 @@ fun PostReportScreen(
     )
 
     PostReportModalContent(
+        onShowSnackBar = onShowSnackBar,
         modalEffect = modalEffect,
         viewModel = viewModel
     )
@@ -310,7 +311,8 @@ private fun ReportTitle(
 }
 
 @Composable
-fun PostReportModalContent(
+private fun PostReportModalContent(
+    onShowSnackBar: (String) -> Unit,
     modalEffect: PostReportModalEffect,
     viewModel: PostReportViewModel
 ) {
@@ -324,6 +326,7 @@ fun PostReportModalContent(
         }
         PostReportModalEffect.ShowSearchDialog -> {
             SearchAddressDialog(
+                onShowSnackBar = onShowSnackBar,
                 onAddressSelected = viewModel::addressSelected,
                 onDismissRequest = viewModel::dismissModal,
             )

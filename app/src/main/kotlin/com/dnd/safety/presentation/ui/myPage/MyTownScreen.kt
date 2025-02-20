@@ -49,6 +49,7 @@ fun MyTownRoute(
     )
 
     MyTownModelContent(
+        onShowSnackBar = onShowSnackBar,
         modalState = modalState,
         viewModel = viewModel
     )
@@ -137,7 +138,8 @@ private fun MyTownScreen(
 }
 
 @Composable
-fun MyTownModelContent(
+private fun MyTownModelContent(
+    onShowSnackBar: (String) -> Unit,
     modalState: MyTownModalState,
     viewModel: MyTownViewModel
 ) {
@@ -147,6 +149,7 @@ fun MyTownModelContent(
             SearchAddressDialog(
                 onAddressSelected = viewModel::addMyTown,
                 onDismissRequest = viewModel::dismissModal,
+                onShowSnackBar =onShowSnackBar
             )
         }
         is MyTownModalState.ShowDeleteCheckDialog -> {

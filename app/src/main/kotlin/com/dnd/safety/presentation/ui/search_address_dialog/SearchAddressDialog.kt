@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import com.dnd.safety.domain.model.LawDistrict
 import com.dnd.safety.domain.model.PointDto
 import com.dnd.safety.domain.model.SearchResult
 import com.dnd.safety.presentation.designsystem.component.TextField
+import com.dnd.safety.presentation.designsystem.component.WatchOutButton
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray50
 import com.dnd.safety.presentation.designsystem.theme.Gray60
@@ -46,10 +48,12 @@ import com.dnd.safety.presentation.designsystem.theme.White
 fun SearchAddressDialog(
     onAddressSelected: (SearchResult) -> Unit,
     onDismissRequest: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
     viewModel: SearchAddressDialogViewModel = hiltViewModel()
 ) {
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val lawDistricts by viewModel.lawDistricts.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -65,6 +69,9 @@ fun SearchAddressDialog(
                 lawDistricts = lawDistricts,
                 onDismissRequest = onDismissRequest,
                 onTextChange = viewModel::textChanged,
+                onSearchToCurrentLocation = {
+                    viewModel.searchToCurrentLocation(context)
+                },
                 onGetPoint = viewModel::getPoint,
             )
 
@@ -85,8 +92,15 @@ fun SearchAddressDialog(
 
     LaunchedEffect(true) {
         viewModel.searchAddressCompleteEffect.collect {
-            onAddressSelected(it)
-            onDismissRequest()
+            when (it) {
+                is SearchAddressEffect.SearchAddressComplete -> {
+                    onAddressSelected(it.searchResult)
+                    onDismissRequest()
+                }
+                is SearchAddressEffect.ShowSnackBar -> {
+                    onShowSnackBar(it.message)
+                }
+            }
         }
     }
 }
@@ -98,6 +112,7 @@ private fun SearchAddressDialogContent(
     onDismissRequest: () -> Unit,
     onTextChange: (String) -> Unit,
     onGetPoint: (LawDistrict) -> Unit,
+    onSearchToCurrentLocation: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -124,6 +139,13 @@ private fun SearchAddressDialogContent(
             )
             Spacer(modifier = Modifier.width(16.dp))
         }
+        WatchOutButton(
+            text = "현재 위치로 검색",
+            style = SafetyTheme.typography.paragraph1,
+            onClick = onSearchToCurrentLocation,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+        )
         LazyColumn {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -204,6 +226,7 @@ private fun SearchAddressDialogPreview() {
                 ),
             ),
             onDismissRequest = {},
+            onSearchToCurrentLocation = {},
             onTextChange = {},
             onGetPoint = {},
         )

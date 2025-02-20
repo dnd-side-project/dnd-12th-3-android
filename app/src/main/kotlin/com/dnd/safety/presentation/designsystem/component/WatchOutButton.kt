@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Black
@@ -28,6 +29,7 @@ fun WatchOutButton(
     enabled: Boolean = true,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    style: TextStyle = SafetyTheme.typography.body1B,
     hideKeyboardOnClick: Boolean = false,
 ) {
     val focusManager = LocalFocusManager.current
@@ -52,9 +54,7 @@ fun WatchOutButton(
             onClick()
         },
         enabled = enabled,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             disabledContainerColor = backgroundColor,
@@ -63,8 +63,12 @@ fun WatchOutButton(
     ) {
         Text(
             text = text,
-            style = SafetyTheme.typography.body1B,
-            color = contentColor
+            style = style,
+            color = contentColor,
+            modifier = Modifier
+                .padding(
+                    vertical = 4.dp
+                )
         )
     }
 }
