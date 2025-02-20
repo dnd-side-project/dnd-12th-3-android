@@ -42,8 +42,6 @@ fun IncidentList(
             onFilterClick = onFilterClick,
         )
         HorizontalDivider(color = Gray10)
-        Spacer(modifier = Modifier.height(8.dp))
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,6 +52,9 @@ fun IncidentList(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 items(incidents) { incident ->
                     IncidentsItem(
                         incident = incident,

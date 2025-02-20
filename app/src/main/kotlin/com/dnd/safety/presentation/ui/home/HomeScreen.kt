@@ -123,9 +123,7 @@ private fun HomeScreen(
     ) { paddingValues ->
         HomeBottomSheetScaffold(
             sheetContent = {
-                Box(
-                    modifier = Modifier.padding(paddingValues)
-                ) {
+                Box{
                     IncidentContent(
                         incidentsState = incidentsState,
                         homeUiState = homeUiState,
