@@ -10,8 +10,8 @@ import com.dnd.safety.presentation.ui.myPage.MyReportRoute
 import com.dnd.safety.presentation.ui.myPage.MyTownRoute
 import com.dnd.safety.presentation.ui.myPage.SignOutRoute
 
-fun NavController.navigateToMyPage(navOptions: NavOptions) {
-    navigate(MainTabRoute.MyPage.Home, navOptions)
+fun NavController.navigateToMyPage() {
+    navigate(MainTabRoute.MyPage.Home)
 }
 
 fun NavController.navigateToMyReport() {

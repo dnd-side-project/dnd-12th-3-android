@@ -5,11 +5,12 @@ import com.dnd.safety.data.model.response.IncidentsResponse
 import com.dnd.safety.data.model.response.MediaFileDto
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.IncidentCategory
+import com.dnd.safety.domain.model.IncidentList
 import com.dnd.safety.domain.model.MediaFile
 import com.dnd.safety.domain.model.MyReports
 import com.dnd.safety.utils.toLocalDateTime
 
-fun IncidentsResponse.toIncidentsList() = this.data.map { it.toIncidents() }
+fun IncidentsResponse.toIncidentsList() = data.incidents.map(IncidentData::toIncidents)
 
 fun IncidentData.toIncidents(): Incident = Incident(
     id = incident.id,
@@ -24,6 +25,8 @@ fun IncidentData.toIncidents(): Incident = Incident(
     lotNumberAddress = incident.lotNumberAddress,
     likeCount = incident.likeCount,
     commentCount = incident.commentCount,
+    liked = incident.liked,
+    editable = incident.editable,
     createdDate = incident.createdAt.toLocalDateTime(),
     updatedDate = incident.updatedAt.toLocalDateTime(),
     mediaFiles = mediaFiles.map(MediaFileDto::toMediaFile)

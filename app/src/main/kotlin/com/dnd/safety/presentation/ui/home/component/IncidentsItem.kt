@@ -147,7 +147,7 @@ fun IncidentsItem(
                     Spacer(modifier = Modifier.width(16.dp))
                 }
                 IconWithCount(
-                    icon = R.drawable.ic_like,
+                    icon = if (incident.liked) R.drawable.ic_like_filled else R.drawable.ic_like,
                     count = incident.likeCount,
                     modifier = Modifier
                         .clickable(

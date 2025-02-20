@@ -2,6 +2,7 @@ package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.mapper.toMyReports
 import com.dnd.safety.data.remote.api.MyReportService
+import com.dnd.safety.domain.model.IncidentList
 import com.dnd.safety.domain.model.MyReports
 import com.dnd.safety.domain.repository.MyReportRepository
 import com.dnd.safety.utils.Logger
@@ -15,7 +16,7 @@ class MyReportRepositoryImpl @Inject constructor(
     private val myReportService: MyReportService
 ) : MyReportRepository {
 
-    override suspend fun getMyReports(cursor: Long): ApiResponse<MyReports> {
+    override suspend fun getMyReports(cursor: Long): ApiResponse<IncidentList> {
         return myReportService
             .getMyReport(cursor)
             .mapSuccess {

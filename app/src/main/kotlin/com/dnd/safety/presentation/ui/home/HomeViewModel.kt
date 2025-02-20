@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.Incident
+import com.dnd.safety.domain.model.Incident.Companion.incidentFilter
 import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.IncidentListRepository
+import com.dnd.safety.domain.repository.LikeRepository
 import com.dnd.safety.presentation.ui.home.effect.HomeUiEffect
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
@@ -17,7 +19,6 @@ import com.dnd.safety.utils.Const.SEOUL_LAT_LNG
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,7 +28,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,7 +36,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     locationService: LocationService,
-    incidentListRepository: IncidentListRepository,
+    private val incidentListRepository: IncidentListRepository,
+    private val likeRepository: LikeRepository
 ) : ViewModel() {
 
     val myLocation = locationService.requestLocationUpdates()
@@ -49,33 +50,14 @@ class HomeViewModel @Inject constructor(
     var keyword = MutableStateFlow("")
         private set
 
+
     private val boundingBoxState = MutableStateFlow<BoundingBoxState>(BoundingBoxState.NotInitialized)
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> get() = _homeUiState
 
-    val incidentsState: StateFlow<IncidentsState> = combine(
-        boundingBoxState,
-        homeUiState
-    ) { boundingBoxState, homeUiState ->
-        when (boundingBoxState) {
-            BoundingBoxState.NotInitialized -> IncidentsState.Loading
-            is BoundingBoxState.Success -> {
-                val incidents = incidentListRepository.getIncidents(boundingBoxState.boundingBox, myLocation.value ?: SEOUL_LAT_LNG)
-                when (incidents) {
-                    is ApiResponse.Success -> IncidentsState.Success(incidents.data)
-                    is ApiResponse.Failure -> {
-                        showSnackBar("네트워크 에러가 발생했습니다")
-                        IncidentsState.Loading
-                    }
-                }
-            }
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Lazily,
-        initialValue = IncidentsState.Loading
-    )
+    private val _incidentsState = MutableStateFlow<IncidentsState>(IncidentsState.Loading)
+    val incidentsState: StateFlow<IncidentsState> get() = _incidentsState
 
     private val _homeModalState = MutableStateFlow<HomeModalState>(HomeModalState.Dismiss)
     val homeModalState: StateFlow<HomeModalState> get() = _homeModalState
@@ -84,7 +66,58 @@ class HomeViewModel @Inject constructor(
     val homeUiEffect: SharedFlow<HomeUiEffect> get() = _homeUiEffect
 
     init {
+        viewModelScope.launch {
+            combine(
+                boundingBoxState,
+                homeUiState
+            ) { boundingBoxState, homeUiState ->
+                handleBoundingState(
+                    boxState = boundingBoxState,
+                    uiState = homeUiState
+                )
+            }.collectLatest { result ->
+                _incidentsState.update { result }
+            }
+        }
+
         initLocation()
+    }
+    
+    private suspend fun handleBoundingState(
+        boxState: BoundingBoxState,
+        uiState: HomeUiState
+    ): IncidentsState {
+        return when (boxState) {
+            BoundingBoxState.NotInitialized -> IncidentsState.Loading
+            is BoundingBoxState.Success -> {
+                handleUiState(
+                    boundingBox = boxState.boundingBox,
+                    uiState = uiState
+                )
+            }
+        }
+    }
+    
+    private suspend fun handleUiState(
+        boundingBox: BoundingBox,
+        uiState: HomeUiState
+    ): IncidentsState {
+        val incidents = incidentListRepository.getIncidents(
+            boundingBox = boundingBox,
+            myLocation = myLocation.value ?: SEOUL_LAT_LNG,
+        )
+
+        return when (incidents) {
+            is ApiResponse.Success -> {
+                IncidentsState.Success(
+                    incidents.data.incidentFilter(uiState.selectedType)
+                )
+            }
+            is ApiResponse.Failure -> {
+                showSnackBar("네트워크 에러가 발생했습니다")
+                IncidentsState.Loading
+            }
+        }
     }
 
     private fun initLocation() {
@@ -118,9 +151,10 @@ class HomeViewModel @Inject constructor(
 
     fun setIncidentTypeFilter(type: IncidentTypeFilter) {
         _homeUiState.update {
-            it.copy(typeFilters = it.typeFilters.map { filter ->
-                filter.copy(isSelected = filter == type)
-            })
+            it.copy(
+                typeFilters = it.typeFilters.map { filter ->
+                    filter.copy(isSelected = filter == type) }
+            )
         }
     }
 
@@ -136,8 +170,27 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun likeIncident(incident: Incident) {
-        viewModelScope.launch {}
+    fun likeIncident(selectedIncident: Incident) {
+        viewModelScope.launch {
+            likeRepository.toggleLike(selectedIncident.id)
+
+            val myLike = selectedIncident.liked
+            _incidentsState.update {
+                when (it) {
+                    is IncidentsState.Success -> {
+                        val updatedIncidents = it.incidents.map { incident ->
+                            if (incident.id == selectedIncident.id) {
+                                incident.copy(liked = !myLike)
+                            } else {
+                                incident
+                            }
+                        }
+                        IncidentsState.Success(updatedIncidents)
+                    }
+                    else -> it
+                }
+            }
+        }
     }
 
     fun moveCameraToLocation(latLng: LatLng) {

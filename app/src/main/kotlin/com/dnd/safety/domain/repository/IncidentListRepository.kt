@@ -12,5 +12,4 @@ interface IncidentListRepository {
         myLocation: LatLng
     ): ApiResponse<List<Incident>>
 
-    suspend fun getMyIncidents(): ApiResponse<List<Incident>>
 }

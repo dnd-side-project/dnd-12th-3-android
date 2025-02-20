@@ -6,6 +6,7 @@ import com.dnd.safety.data.repository.CommentRepositoryImpl
 import com.dnd.safety.data.repository.IncidentListRepositoryImpl
 import com.dnd.safety.data.repository.IncidentRepositoryImpl
 import com.dnd.safety.data.repository.LawDistrictRepositoryImpl
+import com.dnd.safety.data.repository.LikeRepositoryImpl
 import com.dnd.safety.data.repository.LoginRepositoryImpl
 import com.dnd.safety.data.repository.MediaRepositoryImpl
 import com.dnd.safety.data.repository.MyReportRepositoryImpl
@@ -17,6 +18,7 @@ import com.dnd.safety.domain.repository.CommentRepository
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.domain.repository.LawDistrictRepository
+import com.dnd.safety.domain.repository.LikeRepository
 import com.dnd.safety.domain.repository.LoginRepository
 import com.dnd.safety.domain.repository.MediaRepository
 import com.dnd.safety.domain.repository.MyReportRepository
@@ -102,4 +104,10 @@ abstract class RepositoryModule {
     abstract fun provideCommentRepository(
         repositoryImpl: CommentRepositoryImpl
     ): CommentRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideLikeRepository(
+        repositoryImpl: LikeRepositoryImpl
+    ): LikeRepository
 }

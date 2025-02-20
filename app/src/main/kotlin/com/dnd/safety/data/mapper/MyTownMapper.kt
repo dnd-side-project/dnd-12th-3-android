@@ -6,7 +6,7 @@ import com.dnd.safety.domain.model.Point
 
 fun MyTownResponse.toMyTowns() = data.map {
     MyTown(
-        id = it.id,
+        id = it.addressId,
         title = null,
         address = it.addressName,
         point = Point(it.longitude, it.latitude),

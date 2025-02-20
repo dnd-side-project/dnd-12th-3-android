@@ -213,7 +213,6 @@ private fun PostReportContent(
             Spacer(modifier = Modifier.weight(1f))
             WatchOutButton(
                 text = "완료",
-                enabled = state.isLoading,
                 onClick = onCompleteClick,
                 modifier = Modifier
                     .fillMaxWidth()

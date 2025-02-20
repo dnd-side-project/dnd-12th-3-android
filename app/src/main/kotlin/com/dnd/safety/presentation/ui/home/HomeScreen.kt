@@ -3,17 +3,20 @@
 package com.dnd.safety.presentation.ui.home
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,8 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.domain.model.Incident
+import com.dnd.safety.presentation.designsystem.component.BottomToTopAnimatedVisibility
 import com.dnd.safety.presentation.designsystem.component.circleBackground
+import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray70
+import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.ui.home.component.HomeBottomBar
@@ -175,6 +181,26 @@ private fun HomeScreen(
                             .circleBackground(White)
                     )
                 }
+
+                BottomToTopAnimatedVisibility(
+                    visible = incidentsState is IncidentsState.Success && incidentsState.incidents.isEmpty(),
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                ) {
+                    Surface(
+                        color = White,
+                        shadowElevation = 8.dp,
+                        border = BorderStroke(0.7.dp, Gray10),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "지도에 표시할 사고가 없습니다",
+                            style = SafetyTheme.typography.paragraph1,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+
             }
         }
     }

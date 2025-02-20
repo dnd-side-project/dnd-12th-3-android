@@ -4,6 +4,7 @@ import com.dnd.safety.data.remote.api.IncidentListService
 import com.dnd.safety.data.mapper.toIncidentsList
 import com.dnd.safety.domain.model.BoundingBox
 import com.dnd.safety.domain.model.Incident
+import com.dnd.safety.domain.model.IncidentList
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.maps.model.LatLng
@@ -28,7 +29,7 @@ class IncidentListRepositoryImpl @Inject constructor(
             bottomLeftX = boundingBox.bottomleft.x,
             bottomLeftY = boundingBox.bottomleft.y,
             myX = myLocation.longitude,
-            myY = myLocation.latitude
+            myY = myLocation.latitude,
         ).mapSuccess {
             toIncidentsList()
         }.onFailure {
@@ -36,9 +37,5 @@ class IncidentListRepositoryImpl @Inject constructor(
         }.onError {
             Logger.e(message())
         }
-    }
-
-    override suspend fun getMyIncidents(): ApiResponse<List<Incident>> {
-        TODO("Not yet implemented")
     }
 }

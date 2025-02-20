@@ -15,5 +15,7 @@ interface IncidentListService {
         @Query("bottomLeftY") bottomLeftY: Double,
         @Query("myX") myX: Double,
         @Query("myY") myY: Double,
+        @Query("key") cursor: Long? = null,
+        @Query("size") size: Int = 1000,
     ): ApiResponse<IncidentsResponse>
 }

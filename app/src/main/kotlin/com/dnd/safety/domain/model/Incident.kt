@@ -21,6 +21,8 @@ data class Incident(
     @Serializable(with = LocalDateTimeSerializer::class) val updatedDate: LocalDateTime,
     val incidentCategory: IncidentCategory,
     val mediaFiles: List<MediaFile>,
+    val liked: Boolean = false,
+    val editable: Boolean = false,
 ) {
 
     val firstImage get() = mediaFiles.firstOrNull { it.mediaType == "image" }?.fileUrl
@@ -45,6 +47,15 @@ data class Incident(
                 updatedDate = LocalDateTime.now()
             )
         )
+
+        fun List<Incident>.incidentFilter(incidentCategory: IncidentCategory) = this.filter {
+            if (incidentCategory == IncidentCategory.ALL) true
+            else it.incidentCategory == incidentCategory
+        }
     }
 }
 
+data class IncidentList(
+    val incidents: List<Incident>,
+    val nextCursor: Long
+)

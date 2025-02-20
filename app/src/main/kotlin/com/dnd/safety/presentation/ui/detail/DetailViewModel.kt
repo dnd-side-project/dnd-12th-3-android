@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.dnd.safety.domain.model.Comment
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.repository.CommentRepository
+import com.dnd.safety.domain.repository.LikeRepository
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.utils.toRouteType
 import com.dnd.safety.presentation.ui.detail.effect.DetailModalEffect
@@ -29,10 +30,13 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val commentRepository: CommentRepository,
+    private val likeRepository: LikeRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val incident = savedStateHandle.toRouteType<Route.IncidentDetail, Incident>().incident
+    var incident = MutableStateFlow(savedStateHandle.toRouteType<Route.IncidentDetail, Incident>().incident)
+        private set
+
     private var cursor = mutableStateOf<Long?>(null)
 
     private val _commentState = MutableStateFlow<List<Comment>>(emptyList())
@@ -50,13 +54,13 @@ class DetailViewModel @Inject constructor(
     private val _detailUiEffect = MutableSharedFlow<DetailUiEffect>()
     val detailUiEffect: SharedFlow<DetailUiEffect> get() = _detailUiEffect
 
-    var commentMode = MutableStateFlow(CommentMode.Text(incident.userName))
+    var commentMode = MutableStateFlow(CommentMode.Text(incident.value.userName))
         private set
 
     private fun getComments() {
         viewModelScope.launch {
             commentRepository.getComments(
-                incidentId = incident.id,
+                incidentId = incident.value.id,
                 cursor = cursor.value
             ).onSuccess {
                 cursor.value = data.nextCursor
@@ -78,7 +82,7 @@ class DetailViewModel @Inject constructor(
     fun writeComment(comment: String) {
         viewModelScope.launch {
             commentRepository.writeComment(
-                incidentId = incident.id,
+                incidentId = incident.value.id,
                 comment = comment
             ).onSuccess {
                 resetComment()
@@ -91,7 +95,7 @@ class DetailViewModel @Inject constructor(
     fun deleteComment(commentId: Long) {
         viewModelScope.launch {
             commentRepository.deleteComment(
-                incidentId = incident.id,
+                incidentId = incident.value.id,
                 commentId = commentId
             ).onSuccess {
                 resetComment()
@@ -107,7 +111,7 @@ class DetailViewModel @Inject constructor(
     fun editComment(commentId: Long, comment: String) {
         viewModelScope.launch {
             commentRepository.editComment(
-                incidentId = incident.id,
+                incidentId = incident.value.id,
                 commentId = commentId,
                 comment = comment
             ).onSuccess {
@@ -118,6 +122,21 @@ class DetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun likeIncident() {
+        viewModelScope.launch {
+            likeRepository.toggleLike(incident.value.id)
+
+            val myLike = incident.value.liked
+            incident.update {
+                it.copy(
+                    liked = !myLike,
+                    likeCount = if (myLike) it.likeCount - 1 else it.likeCount + 1
+                )
+            }
+        }
+    }
+
 
     fun showSnackBar(message: String) {
         viewModelScope.launch {
@@ -132,7 +151,7 @@ class DetailViewModel @Inject constructor(
     }
 
     fun closeCommentEditMode() {
-        commentMode.value = CommentMode.Text(incident.userName)
+        commentMode.value = CommentMode.Text(incident.value.userName)
     }
 
     fun dismiss() {

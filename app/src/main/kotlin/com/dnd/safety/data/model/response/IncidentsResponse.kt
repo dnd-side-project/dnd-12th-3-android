@@ -5,8 +5,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class IncidentsResponse(
     val code: String = "",
-    val data: List<IncidentData>
-)
+    val data: Data,
+) {
+
+    @Serializable
+    data class Data(
+        val incidents: List<IncidentData>,
+        val nextCursorRequest: NextCursorRequest
+    )
+}
 
 @Serializable
 data class IncidentData(
@@ -29,6 +36,8 @@ data class IncidentDto(
     val longitude: Double,
     val commentCount: Int,
     val likeCount: Int,
+    val liked: Boolean = false,
+    val editable: Boolean = false,
     val createdAt: String,
     val updatedAt: String,
 )

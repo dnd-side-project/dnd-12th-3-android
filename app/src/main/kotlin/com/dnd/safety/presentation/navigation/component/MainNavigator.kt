@@ -40,18 +40,10 @@ class MainNavigator(
         }
 
     fun navigateTo(menuItem: MainTab) {
-        val navOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-
         when (menuItem) {
-            MainTab.Home -> navController.navigateToHome(navOptions)
-            MainTab.PostReport -> navController.navigateToPostReportCamera(navOptions)
-            MainTab.MyPage -> navController.navigateToMyPage(navOptions)
+            MainTab.Home -> navController.navigateToHome()
+            MainTab.PostReport -> navController.navigateToPostReportCamera()
+            MainTab.MyPage -> navController.navigateToMyPage()
         }
     }
 
@@ -87,9 +79,12 @@ class MainNavigator(
         navController.navigateToDetail(incident)
     }
 
-    fun popBackStackIfNotHome() {
-        if (!isSameCurrentDestination<Route.Splash>() && !isSameCurrentDestination<MainTabRoute.Home>()) {
+    fun popBackStackIfNotHome(): Boolean {
+        return if (isSameCurrentDestination<Route.Splash>() || isSameCurrentDestination<Route.Login>() || isSameCurrentDestination<MainTabRoute.Home>()) {
+            true
+        } else {
             popBackStack()
+            false
         }
     }
 

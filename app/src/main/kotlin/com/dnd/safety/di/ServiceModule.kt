@@ -5,6 +5,7 @@ import com.dnd.safety.data.remote.api.LoginService
 import com.dnd.safety.data.remote.api.IncidentListService
 import com.dnd.safety.data.remote.api.IncidentService
 import com.dnd.safety.data.remote.api.LawDistrictService
+import com.dnd.safety.data.remote.api.LikeService
 import com.dnd.safety.data.remote.api.MyReportService
 import com.dnd.safety.data.remote.api.MyTownService
 import com.dnd.safety.di.utils.GoogleRetrofit
@@ -71,5 +72,13 @@ object ServiceModule {
         retrofit: Retrofit
     ): CommentService {
         return retrofit.create(CommentService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLikeService(
+        retrofit: Retrofit
+    ): LikeService {
+        return retrofit.create(LikeService::class.java)
     }
 }

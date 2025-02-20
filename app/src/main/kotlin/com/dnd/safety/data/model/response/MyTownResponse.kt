@@ -11,7 +11,7 @@ data class MyTownResponse(
 
     @Serializable
     data class Data(
-        val id: Long,
+        val addressId: Long,
         val addressName: String,
         val latitude: Double,
         val longitude: Double

@@ -8,8 +8,8 @@ import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.ui.postreport.CameraScreen
 import com.dnd.safety.presentation.ui.postreport.PostReportScreen
 
-fun NavController.navigateToPostReportCamera(navOptions: NavOptions) {
-    navigate(MainTabRoute.PostReport.Camera, navOptions)
+fun NavController.navigateToPostReportCamera() {
+    navigate(MainTabRoute.PostReport.Camera)
 }
 
 fun NavController.navigateToPostReport(uri: String) {

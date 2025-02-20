@@ -82,7 +82,8 @@ fun DetailRoute(
         onGoBack = onGoBack,
         onSendComment = viewModel::writeComment,
         onShowCommentActionMenu = viewModel::showCommentActionMenu,
-        onCloseEditMode = viewModel::closeCommentEditMode
+        onCloseEditMode = viewModel::closeCommentEditMode,
+        onLike = viewModel::likeIncident
     )
 
     DetailModalEffect(
@@ -100,6 +101,7 @@ private fun DetailScreen(
     onSendComment: (String) -> Unit,
     onShowCommentActionMenu: (Comment) -> Unit,
     onCloseEditMode: () -> Unit,
+    onLike: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -132,7 +134,7 @@ private fun DetailScreen(
             IncidentsItem(
                 incident = incident,
                 imageHeight = 300.dp,
-                onLike = {},
+                onLike = onLike,
             )
             HorizontalDivider(thickness = 8.dp)
             LazyColumn(
@@ -389,7 +391,8 @@ private fun DetailScreenPreview() {
             onGoBack = {},
             onSendComment = {},
             onShowCommentActionMenu = {},
-            onCloseEditMode = {}
+            onCloseEditMode = {},
+            onLike = {}
         )
     }
 }
