@@ -31,7 +31,7 @@ class MyReportViewModel @Inject constructor(
 
     var cursor = MutableStateFlow<Long?>(null)
 
-    val myReportListState: TriggerStateFlow<MyReportListState> get() = cursor.map {
+    val myReportListState: TriggerStateFlow<MyReportListState> = cursor.map {
         when (val result = myReportRepository.getMyReports(it)) {
             is ApiResponse.Success -> MyReportListState.Success(result.data.incidents, result.data.nextCursor)
             is ApiResponse.Failure -> MyReportListState.Empty
@@ -40,7 +40,7 @@ class MyReportViewModel @Inject constructor(
         isRefreshing.value = false
     }.triggerStateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.Lazily,
         initialValue = MyReportListState.Loading
     )
 
@@ -60,7 +60,7 @@ class MyReportViewModel @Inject constructor(
         if (cursor.value == 0L) {
             myReportListState.restart()
         } else {
-            cursor.value = 0L
+            cursor.value = null
         }
     }
 }

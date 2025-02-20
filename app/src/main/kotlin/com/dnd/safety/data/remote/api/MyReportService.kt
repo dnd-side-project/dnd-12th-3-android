@@ -10,11 +10,11 @@ import retrofit2.http.Query
 
 interface MyReportService {
 
-    @GET("incidents/writer/my")
+    @GET("incidents/my")
     suspend fun getMyReport(
         @Query("key") cursor: Long?,
         @Query("size") size: Int = 30
-    ): ApiResponse<MyReportResponse>
+    ): ApiResponse<IncidentsResponse>
 
     @DELETE("incidnets")
     suspend fun deleteReport(

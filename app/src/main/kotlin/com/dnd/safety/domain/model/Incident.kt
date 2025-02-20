@@ -25,7 +25,7 @@ data class Incident(
     val editable: Boolean = false,
 ) {
 
-    val firstImage get() = mediaFiles.firstOrNull { it.mediaType == "image" }?.fileUrl
+    val firstImage get() = mediaFiles.firstOrNull()?.fileUrl
 
     companion object {
         val sampleIncidents = listOf(

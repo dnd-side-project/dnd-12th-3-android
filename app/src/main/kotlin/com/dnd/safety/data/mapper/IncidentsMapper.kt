@@ -7,8 +7,12 @@ import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.IncidentCategory
 import com.dnd.safety.domain.model.IncidentList
 import com.dnd.safety.domain.model.MediaFile
-import com.dnd.safety.domain.model.MyReports
 import com.dnd.safety.utils.toLocalDateTime
+
+fun IncidentsResponse.toIncidentList() = IncidentList(
+    incidents = data.incidents.map(IncidentData::toIncidents),
+    nextCursor = data.nextCursorRequest.key,
+)
 
 fun IncidentsResponse.toIncidentsList() = data.incidents.map(IncidentData::toIncidents)
 

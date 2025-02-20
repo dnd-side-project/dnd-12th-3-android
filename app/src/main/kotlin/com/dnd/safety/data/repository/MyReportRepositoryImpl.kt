@@ -1,9 +1,8 @@
 package com.dnd.safety.data.repository
 
-import com.dnd.safety.data.mapper.toMyReports
+import com.dnd.safety.data.mapper.toIncidentList
 import com.dnd.safety.data.remote.api.MyReportService
 import com.dnd.safety.domain.model.IncidentList
-import com.dnd.safety.domain.model.MyReports
 import com.dnd.safety.domain.repository.MyReportRepository
 import com.dnd.safety.utils.Logger
 import com.skydoves.sandwich.ApiResponse
@@ -20,7 +19,9 @@ class MyReportRepositoryImpl @Inject constructor(
         return myReportService
             .getMyReport(cursor)
             .mapSuccess {
-                toMyReports()
+                toIncidentList().also {
+                    Logger.d("getMyReports: $it")
+                }
             }.onFailure {
                 Logger.e(message())
             }
