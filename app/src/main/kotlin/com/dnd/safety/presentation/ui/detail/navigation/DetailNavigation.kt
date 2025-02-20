@@ -17,9 +17,7 @@ fun NavGraphBuilder.detailNavGraph(
     onGoBack: () -> Unit,
 ) {
     composableType<Route.IncidentDetail, Incident> { backStackEntry ->
-        val incident = backStackEntry.toRoute<Route.IncidentDetail>().incident
         DetailRoute(
-            incident = incident,
             onGoBack = onGoBack,
         )
     }

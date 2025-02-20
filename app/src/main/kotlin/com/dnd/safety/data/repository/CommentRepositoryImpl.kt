@@ -48,7 +48,7 @@ class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun editComment(incidentId: Long, commentId: Long, comment: String): ApiResponse<Unit> {
         return commentService
-            .editComment(incidentId, commentId, comment)
+            .editComment(incidentId, commentId, CommentRequest(comment))
             .mapSuccess {  }
             .onFailure {
                 Logger.e(message())

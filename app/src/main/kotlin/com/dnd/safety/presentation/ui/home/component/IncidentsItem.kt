@@ -249,7 +249,7 @@ private fun IconWithCount(
         Icon(
             painter = painterResource(id = icon),
             contentDescription = null,
-            tint = Gray40,
+            tint = Color.Unspecified,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))

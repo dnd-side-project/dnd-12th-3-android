@@ -5,6 +5,7 @@ package com.dnd.safety.presentation.ui.home
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -134,6 +135,20 @@ private fun HomeScreen(
             },
             modifier = Modifier.padding(paddingValues)
         ) {
+            val padding = PaddingValues(
+                start = (it.calculateLeftPadding(LayoutDirection.Ltr) - paddingValues.calculateLeftPadding(
+                    LayoutDirection.Ltr
+                )).coerceAtLeast(0.dp),
+                top = (it.calculateTopPadding() - paddingValues.calculateTopPadding()).coerceAtLeast(
+                    0.dp
+                ),
+                end = (it.calculateRightPadding(LayoutDirection.Ltr) - paddingValues.calculateRightPadding(
+                    LayoutDirection.Ltr
+                )).coerceAtLeast(0.dp),
+                bottom = (it.calculateBottomPadding() - paddingValues.calculateBottomPadding()).coerceAtLeast(
+                    0.dp
+                )
+            )
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -155,20 +170,7 @@ private fun HomeScreen(
                     onClick = viewModel::setLocationCurrent,
                     shape = CircleShape,
                     modifier = Modifier
-                        .padding(
-                            start = (it.calculateLeftPadding(LayoutDirection.Ltr) - paddingValues.calculateLeftPadding(
-                                LayoutDirection.Ltr
-                            )).coerceAtLeast(0.dp),
-                            top = (it.calculateTopPadding() - paddingValues.calculateTopPadding()).coerceAtLeast(
-                                0.dp
-                            ),
-                            end = (it.calculateRightPadding(LayoutDirection.Ltr) - paddingValues.calculateRightPadding(
-                                LayoutDirection.Ltr
-                            )).coerceAtLeast(0.dp),
-                            bottom = (it.calculateBottomPadding() - paddingValues.calculateBottomPadding()).coerceAtLeast(
-                                0.dp
-                            )
-                        )
+                        .padding(padding)
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                 ) {
@@ -184,18 +186,20 @@ private fun HomeScreen(
 
                 BottomToTopAnimatedVisibility(
                     visible = incidentsState is IncidentsState.Success && incidentsState.incidents.isEmpty(),
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .padding(padding)
+                        .align(Alignment.BottomCenter)
                 ) {
                     Surface(
                         color = White,
                         shadowElevation = 8.dp,
                         border = BorderStroke(0.7.dp, Gray10),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(25.dp),
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
                             text = "지도에 표시할 사고가 없습니다",
-                            style = SafetyTheme.typography.paragraph1,
+                            style = SafetyTheme.typography.label1,
                             modifier = Modifier.padding(16.dp)
                         )
                     }

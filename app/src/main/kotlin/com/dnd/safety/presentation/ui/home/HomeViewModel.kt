@@ -180,7 +180,10 @@ class HomeViewModel @Inject constructor(
                     is IncidentsState.Success -> {
                         val updatedIncidents = it.incidents.map { incident ->
                             if (incident.id == selectedIncident.id) {
-                                incident.copy(liked = !myLike)
+                                incident.copy(
+                                    liked = !myLike,
+                                    likeCount = incident.likeCount + if (myLike) -1 else 1
+                                )
                             } else {
                                 incident
                             }

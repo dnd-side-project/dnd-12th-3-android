@@ -5,5 +5,5 @@ import com.dnd.safety.domain.model.MyReports
 import com.skydoves.sandwich.ApiResponse
 
 interface MyReportRepository {
-    suspend fun getMyReports(cursor: Long): ApiResponse<IncidentList>
+    suspend fun getMyReports(cursor: Long?): ApiResponse<IncidentList>
 }

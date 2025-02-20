@@ -54,7 +54,7 @@ class DetailViewModel @Inject constructor(
     private val _detailUiEffect = MutableSharedFlow<DetailUiEffect>()
     val detailUiEffect: SharedFlow<DetailUiEffect> get() = _detailUiEffect
 
-    var commentMode = MutableStateFlow(CommentMode.Text(incident.value.userName))
+    var commentMode = MutableStateFlow<CommentMode>(CommentMode.Text(incident.value.userName))
         private set
 
     private fun getComments() {
@@ -77,6 +77,7 @@ class DetailViewModel @Inject constructor(
     private fun resetComment() {
         cursor.value = 0L
         commentState.restart()
+        hideKeyboard()
     }
 
     fun writeComment(comment: String) {
@@ -109,6 +110,7 @@ class DetailViewModel @Inject constructor(
     }
 
     fun editComment(commentId: Long, comment: String) {
+        closeCommentEditMode()
         viewModelScope.launch {
             commentRepository.editComment(
                 incidentId = incident.value.id,
@@ -127,11 +129,10 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             likeRepository.toggleLike(incident.value.id)
 
-            val myLike = incident.value.liked
             incident.update {
                 it.copy(
-                    liked = !myLike,
-                    likeCount = if (myLike) it.likeCount - 1 else it.likeCount + 1
+                    liked = !it.liked,
+                    likeCount = it.likeCount + if (it.liked) -1 else 1
                 )
             }
         }
@@ -150,8 +151,18 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    fun showCommentEditMode(comment: Comment) {
+        commentMode.value = CommentMode.Edit(comment.comment, comment.commentId)
+    }
+
     fun closeCommentEditMode() {
         commentMode.value = CommentMode.Text(incident.value.userName)
+    }
+
+    fun hideKeyboard() {
+        viewModelScope.launch {
+            _detailUiEffect.emit(DetailUiEffect.HideKeyboard)
+        }
     }
 
     fun dismiss() {

@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,26 +66,30 @@ import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.ui.detail.component.CommentActionMenu
 import com.dnd.safety.presentation.ui.detail.effect.DetailModalEffect
+import com.dnd.safety.presentation.ui.detail.effect.DetailUiEffect
 import com.dnd.safety.presentation.ui.home.component.IncidentsItem
 import com.dnd.safety.utils.daysAgo
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDateTime
 
 @Composable
 fun DetailRoute(
-    incident: Incident,
     onGoBack: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val commentState by viewModel.commentState.collectAsStateWithLifecycle()
     val modalEffect by viewModel.detailModalState.collectAsStateWithLifecycle()
     val commentMode by viewModel.commentMode.collectAsStateWithLifecycle()
+    val incident by viewModel.incident.collectAsStateWithLifecycle()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     DetailScreen(
         commentMode = commentMode,
         incident = incident,
         comments = commentState,
         onGoBack = onGoBack,
-        onSendComment = viewModel::writeComment,
+        onWriteComment = viewModel::writeComment,
+        onEditComment = viewModel::editComment,
         onShowCommentActionMenu = viewModel::showCommentActionMenu,
         onCloseEditMode = viewModel::closeCommentEditMode,
         onLike = viewModel::likeIncident
@@ -90,6 +99,18 @@ fun DetailRoute(
         effect = modalEffect,
         viewModel = viewModel
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.detailUiEffect.collectLatest {
+            when (it) {
+                is DetailUiEffect.ShowSnackBar -> {
+                    // Show snackbar
+                }
+                DetailUiEffect.HideKeyboard -> keyboardController?.hide()
+            }
+
+        }
+    }
 }
 
 @Composable
@@ -98,7 +119,8 @@ private fun DetailScreen(
     incident: Incident,
     comments: List<Comment>,
     onGoBack: () -> Unit,
-    onSendComment: (String) -> Unit,
+    onWriteComment: (String) -> Unit,
+    onEditComment: (Long, String) -> Unit,
     onShowCommentActionMenu: (Comment) -> Unit,
     onCloseEditMode: () -> Unit,
     onLike: () -> Unit
@@ -123,25 +145,38 @@ private fun DetailScreen(
                 }
             )
         },
+        bottomBar = {
+            CommentTextMode(
+                commentMode = commentMode,
+                onSendComment = onWriteComment,
+                onEditComment = onEditComment,
+                onCloseEditMode = onCloseEditMode
+            )
+        },
         containerColor = White,
         modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding()
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
         ) {
-            IncidentsItem(
-                incident = incident,
-                imageHeight = 300.dp,
-                onLike = onLike,
-            )
-            HorizontalDivider(thickness = 8.dp)
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
+                item {
+                    IncidentsItem(
+                        incident = incident,
+                        imageHeight = 200.dp,
+                        onLike = onLike,
+                    )
+                    HorizontalDivider(thickness = 8.dp)
+                }
                 itemsIndexed(comments) { index, comment ->
                     CommentItem(
                         comment = comment,
@@ -155,27 +190,26 @@ private fun DetailScreen(
                     }
                 }
             }
-            CommentTextMode(
-                commentMode = commentMode,
-                onSendComment = onSendComment,
-                onCloseEditMode = onCloseEditMode
-            )
         }
     }
 }
 
 sealed interface CommentMode {
     data class Text(val name: String) : CommentMode
-    data class Edit(val originText: String) : CommentMode
+    data class Edit(val originText: String, val commentId: Long) : CommentMode
 }
 
 @Composable
 private fun CommentTextMode(
     commentMode: CommentMode,
     onSendComment: (String) -> Unit,
+    onEditComment: (Long, String) -> Unit,
     onCloseEditMode: () -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .background(Gray10)
+    ) {
         FadeAnimatedVisibility(
             visible = commentMode is CommentMode.Edit,
         ) {
@@ -185,7 +219,9 @@ private fun CommentTextMode(
                     .fillMaxWidth()
             ) {
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     HorizontalDivider()
                     Spacer(modifier = Modifier.height(16.dp))
@@ -210,7 +246,6 @@ private fun CommentTextMode(
                     contentDescription = "menu Icon",
                     tint = Main,
                     modifier = Modifier
-                        .circleBackground(White)
                         .padding(end = 16.dp)
                         .clickable(onClick = onCloseEditMode)
                         .padding(4.dp)
@@ -220,7 +255,12 @@ private fun CommentTextMode(
         CommentTextField(
             name = (commentMode as? CommentMode.Text)?.name ?: "",
             originText = (commentMode as? CommentMode.Edit)?.originText ?: "",
-            onSendComment = onSendComment,
+            onSendComment = {
+                when (commentMode) {
+                    is CommentMode.Text -> onSendComment(it)
+                    is CommentMode.Edit -> onEditComment(commentMode.commentId, it)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -235,7 +275,13 @@ private fun CommentTextField(
     onSendComment: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var value by remember { mutableStateOf(originText) }
+    var value by remember { mutableStateOf("") }
+
+    LaunchedEffect(originText) {
+        if (originText.isNotEmpty()) {
+            value = originText
+        }
+    }
 
     BasicTextField(
         value = value,
@@ -356,6 +402,8 @@ private fun DetailModalEffect(
         is DetailModalEffect.ShowCommentActionMenu -> {
             CommentActionMenu(
                 onEdit = {
+                    viewModel.dismiss()
+                    viewModel.showCommentEditMode(effect.comment)
                 },
                 onDelete = {
                     viewModel.deleteComment(effect.comment.commentId)
@@ -371,7 +419,7 @@ private fun DetailModalEffect(
 private fun DetailScreenPreview() {
     SafetyTheme {
         DetailScreen(
-            commentMode = CommentMode.Edit("This is a comment"),
+            commentMode = CommentMode.Edit("This is a comment", 1),
             incident = Incident.sampleIncidents.first(),
             comments = listOf(
                 Comment(
@@ -389,9 +437,10 @@ private fun DetailScreenPreview() {
                 )
             ),
             onGoBack = {},
-            onSendComment = {},
+            onWriteComment = {},
             onShowCommentActionMenu = {},
             onCloseEditMode = {},
+            onEditComment = { _, _ -> },
             onLike = {}
         )
     }

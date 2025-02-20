@@ -37,7 +37,7 @@ interface CommentService {
     suspend fun editComment(
         @Path("incidentId") incidentId: Long,
         @Path("commentId") commentId: Long,
-        @Query("content") content: String,
+        @Body request: CommentRequest
     ): ApiResponse<CommentResponse>
 
     companion object {

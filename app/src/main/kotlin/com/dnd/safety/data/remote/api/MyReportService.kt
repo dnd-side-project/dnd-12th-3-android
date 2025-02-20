@@ -12,7 +12,7 @@ interface MyReportService {
 
     @GET("incidents/writer/my")
     suspend fun getMyReport(
-        @Query("key") cursor: Long,
+        @Query("key") cursor: Long?,
         @Query("size") size: Int = 30
     ): ApiResponse<MyReportResponse>
 

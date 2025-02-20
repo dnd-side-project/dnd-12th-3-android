@@ -29,7 +29,7 @@ class MyReportViewModel @Inject constructor(
     var isRefreshing = mutableStateOf(false)
         private set
 
-    var cursor = MutableStateFlow(0L)
+    var cursor = MutableStateFlow<Long?>(null)
 
     val myReportListState: TriggerStateFlow<MyReportListState> get() = cursor.map {
         when (val result = myReportRepository.getMyReports(it)) {

@@ -8,4 +8,7 @@ interface DetailUiEffect {
 
     @Immutable
     data class ShowSnackBar(val message: String) : DetailUiEffect
+
+    @Immutable
+    data object HideKeyboard : DetailUiEffect
 }

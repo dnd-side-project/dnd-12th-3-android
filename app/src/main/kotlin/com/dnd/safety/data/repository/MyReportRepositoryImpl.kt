@@ -16,7 +16,7 @@ class MyReportRepositoryImpl @Inject constructor(
     private val myReportService: MyReportService
 ) : MyReportRepository {
 
-    override suspend fun getMyReports(cursor: Long): ApiResponse<IncidentList> {
+    override suspend fun getMyReports(cursor: Long?): ApiResponse<IncidentList> {
         return myReportService
             .getMyReport(cursor)
             .mapSuccess {
