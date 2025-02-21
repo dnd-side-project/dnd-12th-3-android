@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -165,11 +166,20 @@ private fun LoginButtons(
 
 @Composable
 fun WatchOutImage(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(R.drawable.ic_splash_watch_out),
-        contentDescription = "앱 스플래쉬 이미지",
-        modifier = modifier.size(200.dp)
-    )
+    Column(
+        horizontalAlignment = Alignment.End
+    ) {
+        Image(
+            painter = painterResource(R.drawable.login),
+            contentDescription = "앱 스플래쉬 이미지",
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Image(
+            painter = painterResource(R.drawable.ic_splash_watch_out),
+            contentDescription = "앱 스플래쉬 이미지",
+            modifier = modifier.width(200.dp)
+        )
+    }
 }
 
 @Composable

@@ -37,7 +37,6 @@ class SearchAddressDialogViewModel @Inject constructor(
     private val locationService: LocationService
 ) : ViewModel() {
 
-
     var searchText = MutableStateFlow("")
         private set
 

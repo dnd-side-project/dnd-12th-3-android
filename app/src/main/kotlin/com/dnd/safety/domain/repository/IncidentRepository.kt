@@ -2,6 +2,7 @@ package com.dnd.safety.domain.repository
 
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.IncidentReport
+import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
 
 interface IncidentRepository {
@@ -12,5 +13,8 @@ interface IncidentRepository {
 
     suspend fun deleteIncident(incidentId: Long): ApiResponse<Unit>
 
-    suspend fun getIncidentData(incidentId: Long): ApiResponse<Incident>
+    suspend fun getIncidentData(
+        incidentId: Long,
+        myLocation: LatLng
+    ): ApiResponse<Incident>
 }

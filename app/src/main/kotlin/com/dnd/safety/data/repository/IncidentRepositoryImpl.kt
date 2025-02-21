@@ -9,6 +9,7 @@ import com.dnd.safety.domain.model.IncidentReport
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.utils.FileManager
 import com.dnd.safety.utils.Logger
+import com.google.android.gms.maps.model.LatLng
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
@@ -63,9 +64,16 @@ class IncidentRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getIncidentData(incidentId: Long): ApiResponse<Incident> {
+    override suspend fun getIncidentData(
+        incidentId: Long,
+        myLocation: LatLng
+    ): ApiResponse<Incident> {
         return incidentService
-            .getIncidentData(incidentId)
+            .getIncidentData(
+                incidentId,
+                myLocation.longitude,
+                myLocation.latitude
+            )
             .mapSuccess {
                 data.toIncident()
             }

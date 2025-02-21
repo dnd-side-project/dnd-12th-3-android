@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.dnd.safety.data.location.LocationService
 import com.dnd.safety.domain.model.Comment
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.repository.CommentRepository
@@ -38,8 +39,16 @@ class DetailViewModel @Inject constructor(
     private val commentRepository: CommentRepository,
     private val likeRepository: LikeRepository,
     private val incidentRepository: IncidentRepository,
+    locationService: LocationService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    val myLocation = locationService.requestLocationUpdates()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
 
     private val incidentId = savedStateHandle.toRoute<Route.IncidentDetail>().incidentId
 
@@ -76,7 +85,11 @@ class DetailViewModel @Inject constructor(
 
     private fun getIncident() {
         viewModelScope.launch {
-            incidentRepository.getIncidentData(incidentId)
+            incidentRepository
+                .getIncidentData(
+                    incidentId,
+                    myLocation.value ?: return@launch
+                )
                 .onSuccess {
                     _incident.update { DetailUiState.IncidentDetail(data) }
                     closeCommentEditMode()

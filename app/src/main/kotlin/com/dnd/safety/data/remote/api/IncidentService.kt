@@ -1,12 +1,9 @@
 package com.dnd.safety.data.remote.api
 
 import com.dnd.safety.data.model.request.IncidentRequestDto
-import com.dnd.safety.data.model.response.IncidentData
 import com.dnd.safety.data.model.response.IncidentResponse
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -14,6 +11,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface IncidentService {
 
@@ -26,7 +24,9 @@ interface IncidentService {
 
     @GET("incidents/{incidentId}")
     suspend fun getIncidentData(
-        @Path("incidentId") incidentId: Long
+        @Path("incidentId") incidentId: Long,
+        @Query("myX") myX: Double,
+        @Query("myY") myY: Double
     ): ApiResponse<IncidentResponse>
 
     @PATCH("incidents/{incidentId}")
