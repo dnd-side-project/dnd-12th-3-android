@@ -20,12 +20,15 @@ import com.dnd.safety.utils.trigger.TriggerStateFlow
 import com.dnd.safety.utils.trigger.triggerStateIn
 import com.skydoves.sandwich.onFailure
 import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
@@ -85,19 +88,26 @@ class DetailViewModel @Inject constructor(
 
     private fun getIncident() {
         viewModelScope.launch {
-            incidentRepository
-                .getIncidentData(
-                    incidentId,
-                    myLocation.value ?: return@launch
-                )
-                .onSuccess {
-                    _incident.update { DetailUiState.IncidentDetail(data) }
-                    closeCommentEditMode()
+            myLocation.collectLatest {
+                if (it != null) {
+                    incidentRepository
+                        .getIncidentData(
+                            incidentId,
+                            it
+                        )
+                        .onSuccess {
+                            _incident.update {
+                                DetailUiState.IncidentDetail(data)
+                            }
+                            closeCommentEditMode()
+                        }
+                        .onFailure {
+                            showSnackBar("네트워크 오류가 발생했습니다")
+                            navigateBack()
+                        }
+                    cancel()
                 }
-                .onFailure {
-                    showSnackBar("네트워크 오류가 발생했습니다")
-                    navigateBack()
-                }
+            }
         }
     }
 
@@ -171,13 +181,13 @@ class DetailViewModel @Inject constructor(
 
     fun deleteIncident() {
         viewModelScope.launch {
-//            commentRepository.deleteIncident(incident.value.id)
-//                .onSuccess {
-//                    _detailUiEffect.emit(DetailUiEffect.NavigateBack)
-//                }
-//                .onFailure {
-//                    showSnackBar("삭제에 실패했습니다")
-//                }
+            incidentRepository.deleteIncident(incidentId)
+                .suspendOnSuccess {
+                    _detailUiEffect.emit(DetailUiEffect.NavigateToBack)
+                }
+                .onFailure {
+                    showSnackBar("삭제에 실패했습니다")
+                }
         }
     }
 
@@ -230,6 +240,8 @@ class DetailViewModel @Inject constructor(
     }
 
     fun showIncidentEditScreen() {
+        dismiss()
+
         val incident = (incident.value as? DetailUiState.IncidentDetail)?.incident ?: return
 
         viewModelScope.launch {
@@ -238,9 +250,7 @@ class DetailViewModel @Inject constructor(
     }
 
     fun showDeleteCheckDialog() {
-        viewModelScope.launch {
-            _detailModalState.emit(DetailModalEffect.ShowDeleteCheckDialog)
-        }
+        _detailModalState.update { DetailModalEffect.ShowDeleteCheckDialog }
     }
 
     fun closeCommentEditMode() {

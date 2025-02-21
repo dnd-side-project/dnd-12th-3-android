@@ -167,14 +167,5 @@ private fun MyTownModelContent(
 @Composable
 private fun MyTownScreenPreview() {
     SafetyTheme {
-        MyTownScreen(
-            firstMyTown = MyTown(1, "My Town", "address", Point( 126.9780, 37.5665), true),
-            secondMyTown = null,
-            onGoBack = {},
-            onAddClick = {},
-            onSelectClick = {},
-            onDeleteClick = {},
-            location = LatLng(37.5665, 126.9780)
-        )
     }
 }

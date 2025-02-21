@@ -93,7 +93,6 @@ private fun ActionButton(
             .fillMaxWidth()
             .clickable {
                 action.onClick()
-                onDismissRequest()
             }
             .padding(horizontal = 16.dp, vertical = 10.dp)
     )

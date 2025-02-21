@@ -113,7 +113,7 @@ private fun MyTownItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text =  myTown.address,
+                text =  myTown.title ?: myTown.address,
                 color = if (myTown.selected) White else Black,
                 style = SafetyTheme.typography.paragraph1,
                 maxLines = 1,

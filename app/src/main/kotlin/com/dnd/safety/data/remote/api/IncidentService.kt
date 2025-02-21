@@ -1,6 +1,7 @@
 package com.dnd.safety.data.remote.api
 
 import com.dnd.safety.data.model.request.IncidentRequestDto
+import com.dnd.safety.data.model.response.DefaultResponse
 import com.dnd.safety.data.model.response.IncidentResponse
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
@@ -29,14 +30,16 @@ interface IncidentService {
         @Query("myY") myY: Double
     ): ApiResponse<IncidentResponse>
 
+    @Multipart
     @PATCH("incidents/{incidentId}")
     suspend fun updateIncident(
+        @Path("incidentId") incidentId: Long,
         @Part("incidentData") incidentData: IncidentRequestDto,
         @Part files: List<MultipartBody.Part>
-    ): ApiResponse<Unit>
+    ): ApiResponse<DefaultResponse>
 
     @DELETE("incidents/{incidentId}")
     suspend fun deleteIncident(
         @Path("incidentId") incidentId: Long
-    ): ApiResponse<Unit>
+    ): ApiResponse<DefaultResponse>
 }

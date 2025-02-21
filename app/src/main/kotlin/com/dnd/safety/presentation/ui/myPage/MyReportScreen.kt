@@ -190,14 +190,6 @@ private fun MyReportList(
         state = listState,
         modifier = modifier.fillMaxSize()
     ) {
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .background(White)
-            )
-        }
         items(myReports) { myReport ->
             MyReportItem(
                 myReport = myReport,

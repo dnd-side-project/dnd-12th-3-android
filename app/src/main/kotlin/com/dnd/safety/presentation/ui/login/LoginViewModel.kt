@@ -11,6 +11,7 @@ import com.dnd.safety.domain.usecase.CheckLocationNeedUsecase
 import com.dnd.safety.domain.usecase.CheckTokenUsecase
 import com.dnd.safety.domain.usecase.GoogleLoginUsecase
 import com.dnd.safety.domain.usecase.KakaoLoginUsecase
+import com.dnd.safety.domain.usecase.SendTokenUsecase
 import com.dnd.safety.utils.Logger
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.identity.SignInCredential
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,10 +37,17 @@ class LoginViewModel @Inject constructor(
     private val checkTokenUsecase: CheckTokenUsecase,
     private val checkLocationNeedUsecase: CheckLocationNeedUsecase,
     private val googleLoginUsecase: GoogleLoginUsecase,
-    private val kakaoLoginUsecase: KakaoLoginUsecase
+    private val kakaoLoginUsecase: KakaoLoginUsecase,
+    private val sendTokenUsecase: SendTokenUsecase
 ) : ViewModel() {
 
     var isLoading = MutableStateFlow(false)
+        private set
+
+    var name = MutableStateFlow("")
+        private set
+
+    var email = MutableStateFlow("")
         private set
 
     private val _state: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.Initializing)
@@ -123,5 +132,42 @@ class LoginViewModel @Inject constructor(
                     changeLoadingState(false)
                 }
         }
+    }
+
+    fun sendToken() {
+        viewModelScope.launch {
+            if (name.value.isBlank()) {
+                _effect.send(LoginEffect.ShowSnackBar("이름을 입력해주세요"))
+                return@launch
+            }
+
+            if (email.value.isBlank()) {
+                _effect.send(LoginEffect.ShowSnackBar("이메일을 입력해주세요"))
+                return@launch
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+                _effect.send(LoginEffect.ShowSnackBar("이메일 형식이 올바르지 않습니다"))
+                return@launch
+            }
+
+            sendTokenUsecase(
+                name = name.value,
+                email = email.value,
+                onSuccess = {
+                    checkIsNeedToEnterLocation()
+                    changeLoadingState(false)
+                },
+                onError = ::sendFailMessage
+            )
+        }
+    }
+
+    fun onNameChange(name: String) {
+        this.name.value = name
+    }
+
+    fun onEmailChange(email: String) {
+        this.email.value = email
     }
 }

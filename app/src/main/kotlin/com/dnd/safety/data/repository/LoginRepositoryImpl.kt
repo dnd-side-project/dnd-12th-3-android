@@ -2,6 +2,7 @@ package com.dnd.safety.data.repository
 
 import com.dnd.safety.data.mapper.toUserInfo
 import com.dnd.safety.data.model.request.LoginRequest
+import com.dnd.safety.data.model.request.TokenRequest
 import com.dnd.safety.data.remote.api.LoginService
 import com.dnd.safety.domain.model.UserInfo
 import com.dnd.safety.domain.repository.LoginRepository
@@ -16,6 +17,25 @@ import javax.inject.Inject
 class LoginRepositoryImpl @Inject constructor(
     private val loginService: LoginService
 ) : LoginRepository {
+
+    override suspend fun sendToken(
+        name: String,
+        email: String
+    ): ApiResponse<UserInfo> {
+        return loginService
+            .tokenLogin(TokenRequest(
+                name = name,
+                email = email
+            ))
+            .mapSuccess {
+                toUserInfo()
+            }
+            .onFailure {
+                Logger.e(message())
+            }.onError {
+                Logger.e(message())
+            }
+    }
 
     override suspend fun loginByKakao(token: String): ApiResponse<UserInfo> {
         return loginService

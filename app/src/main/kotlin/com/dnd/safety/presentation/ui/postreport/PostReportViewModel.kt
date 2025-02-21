@@ -143,7 +143,8 @@ class PostReportViewModel @Inject constructor(
             disasterGroup = currentState.selectedCategory?.name ?: return,
             location = currentState.location,
             images = currentState.imageUris,
-            fileUrls = currentState.fileUrls
+            fileUrls = currentState.fileUrls,
+            id = currentState.id
         )
 
         incidentRepository.updateIncident(incidentReport)

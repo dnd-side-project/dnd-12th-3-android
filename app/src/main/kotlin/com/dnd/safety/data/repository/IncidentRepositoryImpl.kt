@@ -48,9 +48,10 @@ class IncidentRepositoryImpl @Inject constructor(
             }
 
             incidentService.updateIncident(
+                incidentId = incidentReport.id!!,
                 incidentData = incidentDto,
                 files = imageParts
-            )
+            ).mapSuccess { }
         } catch (e: Exception) {
             Logger.e("updateIncident: ${e.message}")
             ApiResponse.Failure.Error(e)
@@ -59,9 +60,11 @@ class IncidentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteIncident(incidentId: Long): ApiResponse<Unit> {
-        return incidentService.deleteIncident(incidentId).onFailure {
-            Logger.e("deleteIncident: ${message()}")
-        }
+        return incidentService.deleteIncident(incidentId)
+            .mapSuccess { }
+            .onFailure {
+                Logger.e("deleteIncident: ${message()}")
+            }
     }
 
     override suspend fun getIncidentData(

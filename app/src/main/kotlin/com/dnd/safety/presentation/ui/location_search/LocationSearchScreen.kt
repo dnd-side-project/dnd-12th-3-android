@@ -235,6 +235,8 @@ fun PreviewLocationSearchScreen() {
                     lotAddress = "서울특별시 강남구 강남대로 123-45",
                     sido = "서울특별시",
                     name = "강남구",
+                    sgg = "강남구",
+                    emd = "역삼동",
                     pointDto = PointDto(
                         "",
                         "",
@@ -243,20 +245,6 @@ fun PreviewLocationSearchScreen() {
                         0
                     )
                 ),
-                LawDistrict(
-                    address = "서울특별시 강북구",
-                    roadAddress = "서울특별시 강남구 역삼동 123-45",
-                    lotAddress = "서울특별시 강남구 강남대로 123-45",
-                    sido = "서울특별시",
-                    name = "강북구",
-                    pointDto = PointDto(
-                        "",
-                        "",
-                        "",
-                        0,
-                        0
-                    )
-                )
             ),
             focusRequester = FocusRequester(),
             onTextChange = {},

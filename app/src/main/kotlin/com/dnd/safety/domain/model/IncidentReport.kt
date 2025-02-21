@@ -8,5 +8,6 @@ data class IncidentReport(
     val disasterGroup: String,
     val location: Location,
     val images: List<Uri>,
-    val fileUrls: List<String>? = null
+    val fileUrls: List<String>? = null,
+    val id: Long ? = null,
 )

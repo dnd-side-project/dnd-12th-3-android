@@ -117,6 +117,8 @@ class MyReportViewModel @Inject constructor(
     }
 
     fun navigateToIncidentEdit(incident: Incident) {
+        dismiss()
+
         viewModelScope.launch {
             _myReportUiEffect.emit(MyReportUiEffect.NavigateToIncidentEdit(incident))
         }

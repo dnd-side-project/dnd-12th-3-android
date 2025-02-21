@@ -9,12 +9,9 @@ fun LawDistrictResponse.toLawDistricts() = results.juso.map {
         address = it.roadAddr,
         roadAddress = it.roadAddrPart1,
         lotAddress = it.jibunAddr,
-        sido = listOf(
-            it.siNm,
-            it.sggNm,
-            it.emdNm,
-            it.liNm,
-        ).joinToString(" "),
+        sido = it.siNm,
+        sgg = it.sggNm,
+        emd = it.emdNm,
         name = it.bdNm,
         pointDto = PointDto(
             admCd = it.admCd,

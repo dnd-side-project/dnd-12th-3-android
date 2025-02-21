@@ -204,35 +204,6 @@ private fun SearchAddressDialogPreview() {
         SearchAddressDialogContent(
             searchText = "서울",
             lawDistricts = listOf(
-                LawDistrict(
-                    address = "서울특별시 강남구",
-                    roadAddress = "서울특별시 강남구",
-                    lotAddress = "서울특별시 강남구",
-                    sido = "서울특별시",
-                    name = "강남구",
-                    sampleDto
-                ),
-                LawDistrict(
-                    address = "서울특별시 강북구",
-                    roadAddress = "서울특별시 강남구",
-                    lotAddress = "서울특별시 강남구", sido = "서울특별시",
-                    name = "강남구",
-                    sampleDto
-                ),
-                LawDistrict(
-                    address = "서울특별시 강동구",
-                    roadAddress = "서울특별시 강남구",
-                    lotAddress = "서울특별시 강남구", sido = "서울특별시",
-                    name = "강남구",
-                    sampleDto
-                ),
-                LawDistrict(
-                    address = "서울특별시 강서구",
-                    roadAddress = "서울특별시 강남구",
-                    lotAddress = "서울특별시 강남구", sido = "서울특별시",
-                    name = "강남구",
-                    sampleDto
-                ),
             ),
             onDismissRequest = {},
             onSearchToCurrentLocation = {},

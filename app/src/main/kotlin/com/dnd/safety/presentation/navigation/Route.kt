@@ -27,7 +27,10 @@ sealed interface Route {
         val title: String,
         val address: String,
         val pointX: String,
-        val pointY: String
+        val pointY: String,
+        val sido: String,
+        val sgg: String,
+        val emd: String,
     ) : Route
 }
 

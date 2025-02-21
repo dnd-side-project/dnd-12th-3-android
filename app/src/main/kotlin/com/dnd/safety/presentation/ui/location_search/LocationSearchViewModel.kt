@@ -75,23 +75,26 @@ class LocationSearchViewModel @Inject constructor(
             lawDistrictRepository.getPoint(
                 lawDistrict.pointDto
             ).onSuccess {
-                searchAddressComplete(data, lawDistrict.name, lawDistrict.address)
+                searchAddressComplete(data, lawDistrict)
             }.onFailure {
                 searchError()
             }
         }
     }
 
-    private fun searchAddressComplete(point: Point, name: String, address: String) {
+    private fun searchAddressComplete(point: Point, lawDistrict: LawDistrict) {
         viewModelScope.launch {
             _effect.send(
                 LocationSearchEffect.NavigateToLocationConfirm(
                     MyTown(
                         id = 0,
-                        title = name,
-                        address = address,
+                        title = lawDistrict.name,
+                        address = lawDistrict.address,
                         point = point,
-                        selected = false
+                        selected = false,
+                        sido = lawDistrict.sido,
+                        sgg = lawDistrict.sgg,
+                        emd = lawDistrict.emd
                     )
                 )
             )

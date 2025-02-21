@@ -48,7 +48,10 @@ class LocationConfirmViewModel @Inject constructor(
                 point = Point(
                     x = location.pointX.toDouble(),
                     y = location.pointY.toDouble()
-                )
+                ),
+                sido = location.sido,
+                sgg = location.sgg,
+                emd = location.emd
             ).suspendOnSuccess {
                 _effect.emit(LocationConfirmEffect.NavigateToMainScreen)
             }.suspendOnFailure {

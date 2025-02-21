@@ -464,7 +464,7 @@ private fun DetailModalEffect(
         DetailModalEffect.ShowDeleteCheckDialog -> {
             NormalDialog(
                 title = "",
-                description = "개시글을 삭제할까요?",
+                description = "게시글을 삭제할까요?",
                 onDismissRequest = viewModel::dismiss,
                 onPositiveClick = viewModel::deleteIncident
             )

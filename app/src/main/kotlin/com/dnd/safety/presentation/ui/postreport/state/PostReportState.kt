@@ -26,6 +26,7 @@ sealed interface PostReportState {
         ),
         val isLoading: Boolean = false,
         val fileUrls: List<String>? = null,
+        val id: Long? = null
     ) : PostReportState {
 
         constructor(incident: Incident) : this(
@@ -33,7 +34,8 @@ sealed interface PostReportState {
             selectedCategory = incident.incidentCategory,
             location = Location(incident),
             imageUris = emptyList(),
-            fileUrls = incident.mediaFiles.map { it.fileUrl }
+            fileUrls = incident.mediaFiles.map { it.fileUrl },
+            id = incident.id
         )
     }
 }

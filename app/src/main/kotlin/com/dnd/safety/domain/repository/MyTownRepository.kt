@@ -11,7 +11,10 @@ interface MyTownRepository {
     suspend fun addMyTown(
         title: String,
         address: String,
-        point: Point
+        point: Point,
+        sido: String,
+        sgg: String,
+        emd: String
     ): ApiResponse<Unit>
 
     suspend fun deleteMyTown(id: Long): ApiResponse<Unit>

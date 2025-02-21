@@ -92,7 +92,10 @@ class MyTownViewModel @Inject constructor(
             myTownRepository.addMyTown(
                 title = searchResult.name,
                 address = searchResult.lotAddress,
-                point = searchResult.point
+                point = searchResult.point,
+                sido = searchResult.sido,
+                sgg = searchResult.sgg,
+                emd = searchResult.emd
             ).onSuccess {
                 myTownUiState.restart()
                 showSnackBar("내 동네가 추가되었습니다")

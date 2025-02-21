@@ -105,7 +105,10 @@ class SearchAddressDialogViewModel @Inject constructor(
                         name = lawDistrict.name.ifBlank { lawDistrict.address },
                         roadAddress = lawDistrict.roadAddress,
                         lotAddress = lawDistrict.lotAddress,
-                        point = point
+                        point = point,
+                        sido = lawDistrict.sido,
+                        sgg = lawDistrict.sgg,
+                        emd = lawDistrict.emd
                     )
                 )
             )

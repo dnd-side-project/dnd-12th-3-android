@@ -1,12 +1,18 @@
 package com.dnd.safety.data.remote.api
 
 import com.dnd.safety.data.model.request.LoginRequest
+import com.dnd.safety.data.model.request.TokenRequest
 import com.dnd.safety.data.model.response.LoginResponse
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface LoginService {
+
+    @POST("oauth/token")
+    suspend fun tokenLogin(
+        @Body request: TokenRequest
+    ): ApiResponse<LoginResponse>
 
     @POST("oauth/kakao")
     suspend fun kakaoLogin(

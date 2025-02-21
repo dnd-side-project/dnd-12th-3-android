@@ -5,6 +5,8 @@ data class LawDistrict(
     val roadAddress: String,
     val lotAddress: String,
     val sido: String,
+    val sgg: String,
+    val emd: String,
     val name: String,
     val pointDto: PointDto
 )

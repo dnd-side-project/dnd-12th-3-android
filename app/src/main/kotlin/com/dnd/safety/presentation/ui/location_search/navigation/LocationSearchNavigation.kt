@@ -23,6 +23,9 @@ fun NavController.navigationToLocationConfirm(
             address = myTown.address,
             pointX = myTown.point.x.toString(),
             pointY = myTown.point.y.toString(),
+            sido = myTown.sido,
+            sgg = myTown.sgg,
+            emd = myTown.emd
         )
     )
 }

@@ -33,7 +33,10 @@ class MyTownRepositoryImpl @Inject constructor(
     override suspend fun addMyTown(
         title: String,
         address: String,
-        point: Point
+        point: Point,
+        sido: String,
+        sgg: String,
+        emd: String
     ): ApiResponse<Unit> {
         return myTownService
             .addMyTown(
@@ -41,6 +44,9 @@ class MyTownRepositoryImpl @Inject constructor(
                     addressName = address,
                     latitude = point.y,
                     longitude = point.x,
+                    sido = sido,
+                    sgg = sgg,
+                    emd = emd
                 )
             )
             .mapSuccess {}
