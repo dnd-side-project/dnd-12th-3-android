@@ -1,6 +1,6 @@
 package com.dnd.safety.domain.usecase
 
-import com.dnd.safety.data.datasorce.datastore.datasource.UserPreferenceDataSource
+import com.dnd.safety.data.local.datastore.datasource.UserPreferenceDataSource
 import com.dnd.safety.utils.Const
 import com.dnd.safety.utils.Logger
 import javax.inject.Inject

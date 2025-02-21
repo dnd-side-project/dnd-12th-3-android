@@ -107,7 +107,6 @@ dependencies {
     // Hilt
     implementation(libs.hilt.core)
     implementation(libs.hilt.android)
-    implementation(libs.firebase.crashlytics.buildtools)
     ksp(libs.hilt.compiler)
     kspAndroidTest(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -119,6 +118,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+    implementation(kotlin("reflect"))
 
     // Retrofit + OkHttp
     implementation(libs.retrofit)
@@ -209,4 +209,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.firebase.message)
 }

@@ -15,6 +15,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +29,7 @@ import com.dnd.safety.presentation.designsystem.component.getMapDefaultPropertie
 import com.dnd.safety.presentation.designsystem.theme.Gray60
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.ui.home.component.MyLocationMarker
+import com.dnd.safety.presentation.ui.location_search.component.PushCheckDialog
 import com.dnd.safety.presentation.ui.location_search.effect.LocationConfirmEffect
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -42,6 +47,8 @@ fun LocationConfirmScreen(
     onShowSnackBar: (String) -> Unit,
     viewModel: LocationConfirmViewModel = hiltViewModel(),
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     val cameraPositionState = rememberCameraPositionState {
         CameraPosition.fromLatLngZoom(location, 15f)
     }
@@ -55,7 +62,9 @@ fun LocationConfirmScreen(
         bottomBar = {
             WatchOutButton(
                 text = "확인",
-                onClick = viewModel::addMyTown,
+                onClick = {
+                    showDialog = true
+                },
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 20.dp)
             )
@@ -63,7 +72,6 @@ fun LocationConfirmScreen(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding(),
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -106,6 +114,19 @@ fun LocationConfirmScreen(
                 modifier = Modifier.padding(horizontal = 4.dp)
             )
         }
+    }
+
+    if (showDialog) {
+        PushCheckDialog(
+            onYesClick = {
+                viewModel.complete(true)
+                showDialog = false
+            },
+            onDismissRequest = {
+                viewModel.complete(false)
+                showDialog = false
+            }
+        )
     }
 
     LaunchedEffect(location) {

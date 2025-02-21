@@ -34,6 +34,8 @@ fun Switch(
                 uncheckedThumbColor = White,
                 checkedTrackColor = checkedColor,
                 uncheckedTrackColor = uncheckedColor,
+                uncheckedBorderColor = uncheckedColor,
+                checkedBorderColor = checkedColor
             ),
             thumbContent = {
                 Canvas(modifier = Modifier.fillMaxSize()) {

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,7 +31,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dnd.safety.R
+import com.dnd.safety.domain.model.Setting
 import com.dnd.safety.presentation.designsystem.component.Switch
 import com.dnd.safety.presentation.designsystem.component.TextFieldBox
 import com.dnd.safety.presentation.designsystem.component.TopAppbar
@@ -44,8 +48,10 @@ fun MyPageRoute(
     onGoBack: () -> Unit,
     onShowMyReport: () -> Unit,
     onShowMyTown: () -> Unit,
-    onShowSingOut: () -> Unit
+    onShowSingOut: () -> Unit,
+    viewModel: MyPageViewModel = hiltViewModel()
 ) {
+    val setting by viewModel.setting.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -61,9 +67,12 @@ fun MyPageRoute(
                 .padding(it)
         ) {
             MyPageContent(
+                name = viewModel.name,
+                setting = setting,
                 onShowMyReport = onShowMyReport,
                 onShowMyTown = onShowMyTown,
-                onShowSingOut = onShowSingOut
+                onShowSingOut = onShowSingOut,
+                onUpdateNotificationSetting = viewModel::updateNotificationSetting
             )
         }
     }
@@ -71,24 +80,31 @@ fun MyPageRoute(
 
 @Composable
 fun MyPageContent(
+    name: String,
+    setting: Setting,
     onShowMyReport: () -> Unit,
     onShowMyTown: () -> Unit,
-    onShowSingOut: () -> Unit
+    onShowSingOut: () -> Unit,
+    onUpdateNotificationSetting: (Boolean) -> Unit,
 ) {
     MyPageScreen(
-        name = "홍길동",
+        name = name,
+        setting = setting,
         onShowMyReport = onShowMyReport,
         onShowMyTown = onShowMyTown,
-        onShowSingOut = onShowSingOut
+        onShowSingOut = onShowSingOut,
+        onUpdateNotificationSetting = onUpdateNotificationSetting
     )
 }
 
 @Composable
 fun MyPageScreen(
     name: String,
+    setting: Setting,
     onShowMyReport: () -> Unit,
     onShowMyTown: () -> Unit,
-    onShowSingOut: () -> Unit
+    onShowSingOut: () -> Unit,
+    onUpdateNotificationSetting: (Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -115,7 +131,7 @@ fun MyPageScreen(
                 )
                 Spacer(modifier = Modifier.height(12.5.dp))
                 Text(
-                    text = "$name 님",
+                    text = "${name.ifBlank { "홍길동" }} 님",
                     style = SafetyTheme.typography.title2
                 )
             }
@@ -143,8 +159,8 @@ fun MyPageScreen(
                 paddingValues = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
             ) {
                 Switch(
-                    checked = true,
-                    onCheckedChange = {},
+                    checked = setting.isNotificationEnabled,
+                    onCheckedChange = onUpdateNotificationSetting,
                     modifier = Modifier
                         .size(24.dp)
                         .padding(end = 16.dp)
@@ -180,7 +196,7 @@ fun MyPageScreen(
                     style = SafetyTheme.typography.label3,
                     color = Gray50,
                     modifier = Modifier
-                        .clickable {  }
+                        .clickable { }
                         .padding(8.dp)
                 )
                 Text(
@@ -223,9 +239,11 @@ private fun MyPageScreenPreview() {
     SafetyTheme {
         MyPageScreen(
             name = "홍길동",
+            setting = Setting(),
             onShowMyReport = {},
             onShowMyTown = {},
-            onShowSingOut = {}
+            onShowSingOut = {},
+            onUpdateNotificationSetting = {}
         )
     }
 }

@@ -114,7 +114,6 @@ fun LocationSearchScreen(
         containerColor = White,
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
     ) { paddingValues ->
         Box(
             modifier = Modifier

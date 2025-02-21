@@ -3,4 +3,8 @@
 
     <string name="home">Home</string>
 
+    <string name="fcm_description">WatchOut 사고 알림입니다</string>
+
+    <string name="fcm_topic">watchout</string>
+
 </resources>

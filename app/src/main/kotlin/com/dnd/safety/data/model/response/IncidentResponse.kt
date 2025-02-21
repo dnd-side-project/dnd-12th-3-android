@@ -25,6 +25,9 @@ data class IncidentResponse(
         val mediaFiles: List<MediaFileDto>,
         val roadNameAddress: String,
         val writerId: Int,
-        val writerName: String
+        val writerName: String,
+        val createdAt: String,
+        val updatedAt: String,
+        val distance: String,
     )
 }

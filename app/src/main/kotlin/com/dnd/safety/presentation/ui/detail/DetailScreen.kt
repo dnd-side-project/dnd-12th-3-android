@@ -185,7 +185,6 @@ private fun DetailScreen(
         },
         containerColor = White,
         modifier = Modifier
-            .navigationBarsPadding()
             .imePadding()
     ) { paddingValues ->
         Column(

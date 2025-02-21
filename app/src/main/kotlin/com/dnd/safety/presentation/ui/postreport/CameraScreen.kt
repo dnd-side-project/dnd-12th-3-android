@@ -49,7 +49,6 @@ fun CameraScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

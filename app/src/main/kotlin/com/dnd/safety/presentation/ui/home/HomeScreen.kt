@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -118,7 +119,6 @@ private fun HomeScreen(
             )
         },
         modifier = Modifier
-            .navigationBarsPadding()
     ) { paddingValues ->
         HomeBottomSheetScaffold(
             sheetContent = {
@@ -130,21 +130,12 @@ private fun HomeScreen(
                     )
                 }
             },
-            modifier = Modifier.padding(paddingValues)
         ) {
             val padding = PaddingValues(
-                start = (it.calculateLeftPadding(LayoutDirection.Ltr) - paddingValues.calculateLeftPadding(
-                    LayoutDirection.Ltr
-                )).coerceAtLeast(0.dp),
-                top = (it.calculateTopPadding() - paddingValues.calculateTopPadding()).coerceAtLeast(
-                    0.dp
-                ),
-                end = (it.calculateRightPadding(LayoutDirection.Ltr) - paddingValues.calculateRightPadding(
-                    LayoutDirection.Ltr
-                )).coerceAtLeast(0.dp),
-                bottom = (it.calculateBottomPadding() - paddingValues.calculateBottomPadding()).coerceAtLeast(
-                    0.dp
-                )
+                start = (it.calculateLeftPadding(LayoutDirection.Ltr) - paddingValues.calculateLeftPadding(LayoutDirection.Ltr)).coerceAtLeast(0.dp),
+                top = (it.calculateTopPadding() - paddingValues.calculateTopPadding()).coerceAtLeast(0.dp),
+                end = (it.calculateRightPadding(LayoutDirection.Ltr) - paddingValues.calculateRightPadding(LayoutDirection.Ltr)).coerceAtLeast(0.dp),
+                bottom = (it.calculateBottomPadding() - paddingValues.calculateBottomPadding()).coerceAtLeast(0.dp)
             )
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -168,6 +159,7 @@ private fun HomeScreen(
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(padding)
+                        .padding(bottom = 40.dp)
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                 ) {
@@ -185,6 +177,7 @@ private fun HomeScreen(
                     visible = incidentsState is IncidentsState.Success && incidentsState.incidents.isEmpty(),
                     modifier = Modifier
                         .padding(padding)
+                        .padding(bottom = 40.dp)
                         .align(Alignment.BottomCenter)
                 ) {
                     Surface(

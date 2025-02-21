@@ -100,7 +100,6 @@ private fun LoginScreen(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
     ) { paddingValues ->
         Box(
             modifier = Modifier

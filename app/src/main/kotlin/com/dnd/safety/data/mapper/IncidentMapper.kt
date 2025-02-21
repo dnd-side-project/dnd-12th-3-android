@@ -4,7 +4,7 @@ import com.dnd.safety.data.model.response.IncidentResponse
 import com.dnd.safety.data.model.response.MediaFileDto
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.IncidentCategory
-import java.time.LocalDateTime
+import com.dnd.safety.utils.toLocalDateTime
 
 fun IncidentResponse.Data.toIncident() = Incident(
     id = id,
@@ -21,7 +21,7 @@ fun IncidentResponse.Data.toIncident() = Incident(
     liked = liked,
     editable = editable,
     mediaFiles = mediaFiles.map(MediaFileDto::toMediaFile),
-    createdDate = LocalDateTime.now(),
-    updatedDate = LocalDateTime.now(),
-    distance = ""
+    createdDate = createdAt.toLocalDateTime(),
+    updatedDate = updatedAt.toLocalDateTime(),
+    distance = distance
 )

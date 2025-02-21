@@ -8,8 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.dnd.safety.data.datasorce.datastore.model.UserPreferences
-import com.dnd.safety.data.datasorce.datastore.serializer.UserPreferencesSerializer
+import com.dnd.safety.data.local.datastore.model.UserPreferences
+import com.dnd.safety.data.local.datastore.serializer.UserPreferencesSerializer
 import javax.inject.Singleton
 
 @Module

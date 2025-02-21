@@ -73,7 +73,6 @@ private fun SignOutScreen(
         },
         containerColor = MaterialTheme.colorScheme.surfaceDim,
         modifier = Modifier
-            .navigationBarsPadding()
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -3,6 +3,7 @@ package com.dnd.safety.di
 import com.dnd.safety.data.repository.AuthRepositoryImpl
 import com.dnd.safety.data.repository.CameraRepositoryImpl
 import com.dnd.safety.data.repository.CommentRepositoryImpl
+import com.dnd.safety.data.repository.FcmRepositoryImpl
 import com.dnd.safety.data.repository.IncidentListRepositoryImpl
 import com.dnd.safety.data.repository.IncidentRepositoryImpl
 import com.dnd.safety.data.repository.LawDistrictRepositoryImpl
@@ -11,10 +12,12 @@ import com.dnd.safety.data.repository.LoginRepositoryImpl
 import com.dnd.safety.data.repository.MediaRepositoryImpl
 import com.dnd.safety.data.repository.MyReportRepositoryImpl
 import com.dnd.safety.data.repository.MyTownRepositoryImpl
+import com.dnd.safety.data.repository.SettingRepositoryImpl
 import com.dnd.safety.data.repository.UserInfoRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.CameraRepository
 import com.dnd.safety.domain.repository.CommentRepository
+import com.dnd.safety.domain.repository.FcmRepository
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.domain.repository.IncidentRepository
 import com.dnd.safety.domain.repository.LawDistrictRepository
@@ -23,6 +26,7 @@ import com.dnd.safety.domain.repository.LoginRepository
 import com.dnd.safety.domain.repository.MediaRepository
 import com.dnd.safety.domain.repository.MyReportRepository
 import com.dnd.safety.domain.repository.MyTownRepository
+import com.dnd.safety.domain.repository.SettingRepository
 import com.dnd.safety.domain.repository.UserInfoRepository
 import com.dnd.safety.utils.AndroidFileManager
 import com.dnd.safety.utils.FileManager
@@ -111,4 +115,16 @@ abstract class RepositoryModule {
     abstract fun provideLikeRepository(
         repositoryImpl: LikeRepositoryImpl
     ): LikeRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideSettingRepository(
+        repositoryImpl: SettingRepositoryImpl
+    ): SettingRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideFcmRepository(
+        repositoryImpl: FcmRepositoryImpl
+    ): FcmRepository
 }

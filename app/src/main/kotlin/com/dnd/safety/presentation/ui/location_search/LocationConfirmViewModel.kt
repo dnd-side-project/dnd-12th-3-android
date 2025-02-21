@@ -8,6 +8,7 @@ import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.MyTownRepository
+import com.dnd.safety.domain.repository.SettingRepository
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.location_search.effect.LocationConfirmEffect
 import com.skydoves.sandwich.onFailure
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationConfirmViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val myTownRepository: MyTownRepository
+    private val myTownRepository: MyTownRepository,
+    private val settingRepository: SettingRepository
 ) : ViewModel() {
 
     val location = savedStateHandle.toRoute<Route.LocationConfirm>()
@@ -31,7 +33,14 @@ class LocationConfirmViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<LocationConfirmEffect>()
     val effect = _effect.asSharedFlow()
 
-    fun addMyTown() {
+    fun complete(
+        pushCheck: Boolean
+    ) {
+        addMyTown()
+        updateNotificationSetting(pushCheck)
+    }
+
+    private fun addMyTown() {
         viewModelScope.launch {
             myTownRepository.addMyTown(
                 title = location.title,
@@ -45,6 +54,12 @@ class LocationConfirmViewModel @Inject constructor(
             }.suspendOnFailure {
                 _effect.emit(LocationConfirmEffect.ShowSnackBar("오류가 발생했습니다"))
             }
+        }
+    }
+
+    private fun updateNotificationSetting(isNotificationEnabled: Boolean) {
+        viewModelScope.launch {
+            settingRepository.updateNotificationSetting(isNotificationEnabled)
         }
     }
 }
