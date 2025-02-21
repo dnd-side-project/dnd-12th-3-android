@@ -47,6 +47,7 @@ enum class ExpandedType {
 @Composable
 fun HomeBottomSheetScaffold(
     modifier: Modifier = Modifier,
+    onExpandTypeChanged: (ExpandedType) -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -78,6 +79,7 @@ fun HomeBottomSheetScaffold(
             val scope = rememberCoroutineScope()
             BottomSheetGestureWrapper(
                 onExpandTypeChanged = {
+                    onExpandTypeChanged(it)
                     scope.launch {
                         peekHeight = when (it) {
                             ExpandedType.COLLAPSED -> 84

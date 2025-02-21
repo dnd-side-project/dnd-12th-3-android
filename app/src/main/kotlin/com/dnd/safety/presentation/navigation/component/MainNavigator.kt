@@ -16,6 +16,7 @@ import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.ui.detail.navigation.navigateToDetail
+import com.dnd.safety.presentation.ui.fcm_message.navigation.navigateToFcmMessage
 import com.dnd.safety.presentation.ui.home.navigation.navigateToHome
 import com.dnd.safety.presentation.ui.location_search.navigation.navigateToLocationSearch
 import com.dnd.safety.presentation.ui.location_search.navigation.navigationToLocationConfirm
@@ -82,6 +83,10 @@ class MainNavigator(
 
     fun navigateToIncidentEdit(incident: Incident) {
         navController.navigateToPostReportEdit(incident)
+    }
+
+    fun navigateToFcmMessage() {
+        navController.navigateToFcmMessage()
     }
 
     fun popBackStackIfNotHome(): Boolean {

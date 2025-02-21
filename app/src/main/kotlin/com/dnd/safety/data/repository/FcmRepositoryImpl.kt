@@ -16,8 +16,10 @@ class FcmRepositoryImpl @Inject constructor(
     private val fcmDao: FcmDao
 ) : FcmRepository {
 
-    override fun getFcmFlow(): Flow<FcmMessage> {
-        return fcmDao.getFcmFlow().map { it.toFcmMessage() }
+    override fun getFcmFlow(): Flow<List<FcmMessage>> {
+        return fcmDao.getFcmFlow().map { fcmEntities ->
+            fcmEntities.map { it.toFcmMessage() }
+        }
     }
 
     override suspend fun insertFcm(fcmDto: FcmDto) {

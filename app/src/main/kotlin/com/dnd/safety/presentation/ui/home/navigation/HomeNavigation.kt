@@ -2,7 +2,6 @@ package com.dnd.safety.presentation.ui.home.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.dnd.safety.domain.model.Incident
@@ -25,11 +24,13 @@ fun NavController.navigateToHome() {
 
 fun NavGraphBuilder.homeNavGraph(
     onShowDetail: (Incident) -> Unit,
+    onShowFcmMessage: () -> Unit,
     onBottomNavClicked: (MainTab) -> Unit,
     onShowSnackBar: (String) -> Unit,
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
+            onShowFcmMessage = onShowFcmMessage,
             onIncidentDetail = onShowDetail,
             onBottomNavClicked = onBottomNavClicked,
             onShowSnackBar = onShowSnackBar

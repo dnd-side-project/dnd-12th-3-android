@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FcmRepository {
 
-    fun getFcmFlow(): Flow<FcmMessage>
+    fun getFcmFlow(): Flow<List<FcmMessage>>
 
     suspend fun insertFcm(fcmDto: FcmDto)
 

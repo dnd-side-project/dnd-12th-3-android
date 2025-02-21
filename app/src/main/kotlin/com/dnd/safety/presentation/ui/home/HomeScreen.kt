@@ -6,11 +6,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -22,20 +19,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dnd.safety.R
 import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.designsystem.component.BottomToTopAnimatedVisibility
+import com.dnd.safety.presentation.designsystem.component.FadeAnimatedVisibility
 import com.dnd.safety.presentation.designsystem.component.circleBackground
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray70
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
 import com.dnd.safety.presentation.navigation.MainTab
+import com.dnd.safety.presentation.ui.home.component.ExpandedType
 import com.dnd.safety.presentation.ui.home.component.HomeBottomBar
 import com.dnd.safety.presentation.ui.home.component.HomeBottomSheetScaffold
 import com.dnd.safety.presentation.ui.home.component.HomeMapView
@@ -57,6 +61,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeRoute(
+    onShowFcmMessage: () -> Unit,
     onIncidentDetail: (Incident) -> Unit,
     onBottomNavClicked: (MainTab) -> Unit,
     onShowSnackBar: (String) -> Unit,
@@ -79,6 +84,7 @@ fun HomeRoute(
         myLocation = myLocation,
         keyword = keyword,
         viewModel = viewModel,
+        onShowFcmMessage = onShowFcmMessage,
         onBottomNavClicked = onBottomNavClicked
     )
 
@@ -109,8 +115,13 @@ private fun HomeScreen(
     myLocation: LatLng?,
     keyword: String,
     viewModel: HomeViewModel,
+    onShowFcmMessage: () -> Unit,
     onBottomNavClicked: (MainTab) -> Unit,
 ) {
+    var expandedType by remember {
+        mutableStateOf(ExpandedType.HALF)
+    }
+
     Scaffold(
         bottomBar = {
             HomeBottomBar(
@@ -121,8 +132,9 @@ private fun HomeScreen(
         modifier = Modifier
     ) { paddingValues ->
         HomeBottomSheetScaffold(
+            onExpandTypeChanged = { expandedType = it },
             sheetContent = {
-                Box{
+                Box {
                     IncidentContent(
                         incidentsState = incidentsState,
                         homeUiState = homeUiState,
@@ -155,22 +167,45 @@ private fun HomeScreen(
                         .padding(16.dp)
                 )
                 Surface(
-                    onClick = viewModel::setLocationCurrent,
+                    onClick = onShowFcmMessage,
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(padding)
                         .padding(bottom = 40.dp)
-                        .align(Alignment.BottomEnd)
+                        .align(Alignment.TopEnd)
                         .padding(16.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.MyLocation,
-                        contentDescription = "내 위치로 이동",
+                        painter = painterResource(id = R.drawable.ic_bell),
+                        contentDescription = "알림 설정 이동",
                         tint = Gray70,
                         modifier = Modifier
                             .padding(9.dp)
                             .circleBackground(White)
                     )
+                }
+                FadeAnimatedVisibility(
+                    visible = expandedType != ExpandedType.FULL,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                ) {
+                    Surface(
+                        onClick = viewModel::setLocationCurrent,
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .padding(padding)
+                            .padding(bottom = 40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MyLocation,
+                            contentDescription = "내 위치로 이동",
+                            tint = Gray70,
+                            modifier = Modifier
+                                .padding(9.dp)
+                                .circleBackground(White)
+                        )
+                    }
                 }
 
                 BottomToTopAnimatedVisibility(

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface FcmDao {
 
     @Query("SELECT * FROM fcmTable")
-    fun getFcmFlow(): Flow<FcmEntity>
+    fun getFcmFlow(): Flow<List<FcmEntity>>
 
     @Insert
     suspend fun insertFcm(fcmEntity: FcmEntity)

@@ -13,6 +13,7 @@ import com.dnd.safety.presentation.navigation.MainTab
 import com.dnd.safety.presentation.navigation.Route
 import com.dnd.safety.presentation.navigation.component.MainNavigator
 import com.dnd.safety.presentation.ui.detail.navigation.detailNavGraph
+import com.dnd.safety.presentation.ui.fcm_message.navigation.fcmMessageNavGraph
 import com.dnd.safety.presentation.ui.home.navigation.homeNavGraph
 import com.dnd.safety.presentation.ui.location_search.navigation.locationNavGraph
 import com.dnd.safety.presentation.ui.login.navigation.loginNavGraph
@@ -39,6 +40,7 @@ fun MainNavHost(
         ) {
             homeNavGraph(
                 onShowDetail = navigator::navigateToDetail,
+                onShowFcmMessage = navigator::navigateToFcmMessage,
                 onBottomNavClicked = navigator::navigateTo,
                 onShowSnackBar = onShowSnackBar
             )
@@ -74,6 +76,9 @@ fun MainNavHost(
                 onGoBack = navigator::popBackStackIfNotHome,
                 onShowSnackBar = onShowSnackBar,
                 onShowIncidentEdit = navigator::navigateToIncidentEdit
+            )
+            fcmMessageNavGraph(
+                onGoBack = navigator::popBackStackIfNotHome,
             )
         }
     }

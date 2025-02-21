@@ -15,6 +15,9 @@ sealed interface Route {
     data object SearchLocation : Route
 
     @Serializable
+    data object FcmMessage : Route
+
+    @Serializable
     data class IncidentDetail(
         val incidentId: Long
     ) : Route

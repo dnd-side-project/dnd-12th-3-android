@@ -37,8 +37,7 @@ fun TopAppbar(
         modifier = modifier
             .fillMaxWidth()
             .background(containerColor)
-            .padding(horizontal = 4.dp)
-            .padding(top = 4.dp)
+            .padding(horizontal = 4.dp, vertical = 10.dp)
     ) {
         Box(
             modifier = Modifier
