@@ -67,6 +67,8 @@ fun LoginScreen(
                     val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
                     viewModel.loginByGoogle(task.result.idToken!!)
                 }
+            } else {
+                onShowSnackBar("${result.resultCode}")
             }
         }
 

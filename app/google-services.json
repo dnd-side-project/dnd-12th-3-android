@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "751673400845-em3g162oi3bmhro82mkkhueikr99o5kp.apps.googleusercontent.com",
+          "client_id": "751673400845-741vjglh05oqf5qdi1c14tn8l49or04c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.dnd.safety",
-            "certificate_hash": "3f0c03e79490b225a6e3016afefbb6f5950159cc"
+            "certificate_hash": "54d2c58ccc0bcf65265a1efe29a9c52067324455"
           }
         },
         {
