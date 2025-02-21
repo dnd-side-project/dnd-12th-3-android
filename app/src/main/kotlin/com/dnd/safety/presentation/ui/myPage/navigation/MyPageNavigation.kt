@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.presentation.navigation.MainTabRoute
 import com.dnd.safety.presentation.ui.myPage.MyPageRoute
 import com.dnd.safety.presentation.ui.myPage.MyReportRoute
@@ -31,7 +32,8 @@ fun NavGraphBuilder.myPageNavGraph(
     onShowMyReport: () -> Unit,
     onShowMyTown: () -> Unit,
     onShowSingOut: () -> Unit,
-    onShowSnackBar: (String) -> Unit
+    onShowSnackBar: (String) -> Unit,
+    onShowIncidentEdit: (Incident) -> Unit
 ) {
     composable<MainTabRoute.MyPage.Home> {
         MyPageRoute(
@@ -45,6 +47,8 @@ fun NavGraphBuilder.myPageNavGraph(
     composable<MainTabRoute.MyPage.MyReport> {
         MyReportRoute(
             onGoBack = onGoBack,
+            onShowSnackBar = onShowSnackBar,
+            onShowIncidentEdit = onShowIncidentEdit
         )
     }
 

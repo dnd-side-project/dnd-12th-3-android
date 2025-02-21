@@ -118,7 +118,6 @@ private fun HomeScreen(
             )
         },
         modifier = Modifier
-            .statusBarsPadding()
             .navigationBarsPadding()
     ) { paddingValues ->
         HomeBottomSheetScaffold(

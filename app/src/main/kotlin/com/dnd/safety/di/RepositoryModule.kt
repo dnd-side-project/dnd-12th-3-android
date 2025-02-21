@@ -53,6 +53,7 @@ abstract class RepositoryModule {
     ): IncidentRepository
 
     @Binds
+    @Singleton
     abstract fun bindFileManager(
         impl: AndroidFileManager
     ): FileManager

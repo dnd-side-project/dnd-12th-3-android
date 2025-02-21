@@ -43,16 +43,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dnd.safety.R
 import com.dnd.safety.domain.model.Comment
 import com.dnd.safety.domain.model.Incident
+import com.dnd.safety.presentation.designsystem.component.Action
+import com.dnd.safety.presentation.designsystem.component.ActionBuilder
+import com.dnd.safety.presentation.designsystem.component.ActionMenu
 import com.dnd.safety.presentation.designsystem.component.FadeAnimatedVisibility
+import com.dnd.safety.presentation.designsystem.component.NormalDialog
 import com.dnd.safety.presentation.designsystem.component.TopAppbar
 import com.dnd.safety.presentation.designsystem.component.TopAppbarIcon
 import com.dnd.safety.presentation.designsystem.component.TopAppbarType
@@ -64,9 +66,9 @@ import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.Main
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
 import com.dnd.safety.presentation.designsystem.theme.White
-import com.dnd.safety.presentation.ui.detail.component.CommentActionMenu
 import com.dnd.safety.presentation.ui.detail.effect.DetailModalEffect
 import com.dnd.safety.presentation.ui.detail.effect.DetailUiEffect
+import com.dnd.safety.presentation.ui.detail.state.DetailUiState
 import com.dnd.safety.presentation.ui.home.component.IncidentsItem
 import com.dnd.safety.utils.daysAgo
 import kotlinx.coroutines.flow.collectLatest
@@ -75,6 +77,8 @@ import java.time.LocalDateTime
 @Composable
 fun DetailRoute(
     onGoBack: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
+    onShowIncidentEdit: (Incident) -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val commentState by viewModel.commentState.collectAsStateWithLifecycle()
@@ -83,16 +87,12 @@ fun DetailRoute(
     val incident by viewModel.incident.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    DetailScreen(
+    DetailContent(
         commentMode = commentMode,
-        incident = incident,
-        comments = commentState,
+        commentState = commentState,
         onGoBack = onGoBack,
-        onWriteComment = viewModel::writeComment,
-        onEditComment = viewModel::editComment,
-        onShowCommentActionMenu = viewModel::showCommentActionMenu,
-        onCloseEditMode = viewModel::closeCommentEditMode,
-        onLike = viewModel::likeIncident
+        detailUiState = incident,
+        viewModel = viewModel
     )
 
     DetailModalEffect(
@@ -103,12 +103,39 @@ fun DetailRoute(
     LaunchedEffect(Unit) {
         viewModel.detailUiEffect.collectLatest {
             when (it) {
-                is DetailUiEffect.ShowSnackBar -> {
-                    // Show snackbar
-                }
                 DetailUiEffect.HideKeyboard -> keyboardController?.hide()
+                is DetailUiEffect.ShowSnackBar -> onShowSnackBar(it.message)
+                is DetailUiEffect.NavigateToIncidentEdit -> onShowIncidentEdit(it.incident)
             }
 
+        }
+    }
+}
+
+@Composable
+private fun DetailContent(
+    commentMode: CommentMode,
+    commentState: List<Comment>,
+    onGoBack: () -> Unit,
+    detailUiState: DetailUiState,
+    viewModel: DetailViewModel
+) {
+    FadeAnimatedVisibility(
+        visible = detailUiState is DetailUiState.IncidentDetail,
+    ) {
+        if (detailUiState is DetailUiState.IncidentDetail) {
+            DetailScreen(
+                commentMode = commentMode,
+                incident = detailUiState.incident,
+                comments = commentState,
+                onGoBack = onGoBack,
+                onWriteComment = viewModel::writeComment,
+                onEditComment = viewModel::editComment,
+                onShowCommentActionMenu = viewModel::showCommentActionMenu,
+                onShowIncidentsActionMenu = viewModel::showIncidentsActionMenu,
+                onCloseEditMode = viewModel::closeCommentEditMode,
+                onLike = viewModel::likeIncident
+            )
         }
     }
 }
@@ -122,6 +149,7 @@ private fun DetailScreen(
     onWriteComment: (String) -> Unit,
     onEditComment: (Long, String) -> Unit,
     onShowCommentActionMenu: (Comment) -> Unit,
+    onShowIncidentsActionMenu: () -> Unit,
     onCloseEditMode: () -> Unit,
     onLike: () -> Unit
 ) {
@@ -140,7 +168,7 @@ private fun DetailScreen(
                             TopAppbarIcon(
                                 icon = Icons.Default.MoreVert,
                                 tint = Gray80,
-                                onClick = {},
+                                onClick = onShowIncidentsActionMenu,
                             )
                         }
                     }
@@ -157,7 +185,6 @@ private fun DetailScreen(
         },
         containerColor = White,
         modifier = Modifier
-            .statusBarsPadding()
             .navigationBarsPadding()
             .imePadding()
     ) { paddingValues ->
@@ -402,15 +429,45 @@ private fun DetailModalEffect(
     when (effect) {
         is DetailModalEffect.Hidden -> {}
         is DetailModalEffect.ShowCommentActionMenu -> {
-            CommentActionMenu(
-                onEdit = {
-                    viewModel.dismiss()
-                    viewModel.showCommentEditMode(effect.comment)
-                },
-                onDelete = {
-                    viewModel.deleteComment(effect.comment.commentId)
+            ActionMenu(
+                actions = ActionBuilder.build {
+                    action(
+                        text = "댓글 수정",
+                        onClick = {
+                            viewModel.showCommentEditMode(effect.comment)
+                        }
+                    )
+                    action(
+                        text = "댓글 삭제",
+                        onClick = {
+                            viewModel.deleteComment(effect.comment.commentId)
+                        }
+                    )
                 },
                 onDismissRequest = viewModel::dismiss
+            )
+        }
+        DetailModalEffect.ShowIncidentsActionMenu -> {
+            ActionMenu(
+                actions = ActionBuilder.build {
+                    action(
+                        text = "게시글 수정",
+                        onClick = viewModel::showIncidentEditScreen
+                    )
+                    action(
+                        text = "게시글 삭제",
+                        onClick = viewModel::showDeleteCheckDialog
+                    )
+                },
+                onDismissRequest = viewModel::dismiss
+            )
+        }
+        DetailModalEffect.ShowDeleteCheckDialog -> {
+            NormalDialog(
+                title = "",
+                description = "개시글을 삭제할까요?",
+                onDismissRequest = viewModel::dismiss,
+                onPositiveClick = viewModel::deleteIncident
             )
         }
     }
@@ -443,6 +500,7 @@ private fun DetailScreenPreview() {
             onShowCommentActionMenu = {},
             onCloseEditMode = {},
             onEditComment = { _, _ -> },
+            onShowIncidentsActionMenu = {},
             onLike = {}
         )
     }

@@ -4,6 +4,8 @@
 
 package com.dnd.safety.presentation.ui.home.component
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,7 +59,20 @@ fun HomeBottomSheetScaffold(
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetSt)
     var peekHeight: Int by remember { mutableIntStateOf(0) }
 
+    val cornerValue by animateDpAsState(
+        targetValue = if (bottomSheetSt.currentValue == SheetValue.Expanded) 0.dp else 16.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+
+    LaunchedEffect(bottomSheetSt.currentValue) {
+        if (bottomSheetSt.currentValue == SheetValue.Expanded) {
+            // 바텀시트가 완전히 펼쳐졌을 때 처리할 로직
+        }
+    }
+
     BottomSheetScaffold(
+        sheetShape = RoundedCornerShape(topStart = cornerValue, topEnd = cornerValue),
         scaffoldState = scaffoldState,
         sheetContent = {
             val scope = rememberCoroutineScope()
@@ -75,7 +91,8 @@ fun HomeBottomSheetScaffold(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
                     DragHandle(color = Gray30)
                     sheetContent()

@@ -2,6 +2,7 @@ package com.dnd.safety.presentation.ui.main
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -39,7 +40,8 @@ private fun MainScreenContent(
 ) {
     Scaffold(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .statusBarsPadding(),
         content = {
             MainNavHost(
                 navigator = navigator,

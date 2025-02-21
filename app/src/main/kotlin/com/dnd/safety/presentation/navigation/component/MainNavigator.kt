@@ -26,6 +26,7 @@ import com.dnd.safety.presentation.ui.myPage.navigation.navigateToMyTown
 import com.dnd.safety.presentation.ui.myPage.navigation.navigateToSignOut
 import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReport
 import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReportCamera
+import com.dnd.safety.presentation.ui.postreport.navigation.navigateToPostReportEdit
 
 class MainNavigator(
     val navController: NavHostController
@@ -77,6 +78,10 @@ class MainNavigator(
 
     fun navigateToDetail(incident: Incident) {
         navController.navigateToDetail(incident)
+    }
+
+    fun navigateToIncidentEdit(incident: Incident) {
+        navController.navigateToPostReportEdit(incident)
     }
 
     fun popBackStackIfNotHome(): Boolean {

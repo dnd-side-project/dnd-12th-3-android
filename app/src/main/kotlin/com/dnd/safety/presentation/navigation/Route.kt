@@ -16,7 +16,7 @@ sealed interface Route {
 
     @Serializable
     data class IncidentDetail(
-        val incident: Incident
+        val incidentId: Long
     ) : Route
 
     @Serializable
@@ -41,6 +41,9 @@ sealed interface MainTabRoute : Route {
 
         @Serializable
         data class Report(val url: String) : PostReport
+
+        @Serializable
+        data class Edit(val incident: Incident) : PostReport
     }
 
     @Serializable

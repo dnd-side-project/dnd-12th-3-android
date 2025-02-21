@@ -45,3 +45,24 @@ fun BottomToTopAnimatedVisibility(
         content = content,
     )
 }
+
+@Composable
+fun TopToBottomAnimatedVisibility(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable() AnimatedVisibilityScope.() -> Unit
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(
+            initialOffsetY = { fullHeight -> -fullHeight }, // 화면 상단에서 시작
+            animationSpec = tween(100)
+        ),
+        exit = slideOutVertically(
+            targetOffsetY = { fullHeight -> -fullHeight }, // 화면 상단으로 사라짐
+            animationSpec = tween()
+        ),
+        modifier = modifier,
+        content = content,
+    )
+}

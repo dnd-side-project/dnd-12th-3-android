@@ -23,8 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -114,6 +116,11 @@ private fun SearchAddressDialogContent(
     onGetPoint: (LawDistrict) -> Unit,
     onSearchToCurrentLocation: () -> Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -135,6 +142,8 @@ private fun SearchAddressDialogContent(
                 value = searchText,
                 onValueChange = onTextChange,
                 hint = "장소 검색",
+                removeButton = true,
+                focusRequester = focusRequester,
                 modifier = Modifier.weight(1f),
             )
             Spacer(modifier = Modifier.width(16.dp))

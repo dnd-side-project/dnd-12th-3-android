@@ -63,7 +63,6 @@ fun LocationConfirmScreen(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
             .navigationBarsPadding(),
     ) { paddingValues ->
         Column(

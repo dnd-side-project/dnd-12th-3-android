@@ -1,11 +1,6 @@
 package com.dnd.safety.presentation.ui.postreport
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,7 +35,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -48,6 +42,7 @@ import coil.request.ImageRequest
 import com.dnd.safety.R
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.IncidentCategory
+import com.dnd.safety.presentation.designsystem.component.FadeAnimatedVisibility
 import com.dnd.safety.presentation.designsystem.component.FilterButton
 import com.dnd.safety.presentation.designsystem.component.ProgressIndicator
 import com.dnd.safety.presentation.designsystem.component.TextField
@@ -65,8 +60,14 @@ import com.dnd.safety.presentation.ui.postreport.state.PostReportState
 import com.dnd.safety.presentation.ui.search_address_dialog.SearchAddressDialog
 import com.google.accompanist.flowlayout.FlowRow
 
+enum class PostReportMode {
+    CREATE,
+    EDIT
+}
+
 @Composable
 fun PostReportScreen(
+    postReportMode: PostReportMode,
     onGoBackToHome: () -> Unit,
     onShowSnackBar: (String) -> Unit,
     viewModel: PostReportViewModel = hiltViewModel(),
@@ -75,27 +76,16 @@ fun PostReportScreen(
     val modalEffect by viewModel.modalEffect.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val allGranted = permissions.values.all { it }
-        if (allGranted) {
-            viewModel.fetchCurrentLocation()
-        }
-    }
+    PostReportContent(
+        state = state,
+        viewModel = viewModel,
+    )
 
-    LaunchedEffect(Unit) {
-        if (hasLocationPermissions(context)) {
-            viewModel.fetchCurrentLocation()
-        } else {
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
-    }
+    PostReportModalContent(
+        onShowSnackBar = onShowSnackBar,
+        modalEffect = modalEffect,
+        viewModel = viewModel
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -106,36 +96,33 @@ fun PostReportScreen(
         }
     }
 
-    PostReportContent(
-        state = state,
-        onImageAdd = viewModel::showPhotoPicker,
-        onContentChange = viewModel::updateContent,
-        onCategorySelect = viewModel::updateCategory,
-        onLocationClick = viewModel::showSearchDialog,
-        onCompleteClick = viewModel::onCompleteClick
-    )
-
-    PostReportModalContent(
-        onShowSnackBar = onShowSnackBar,
-        modalEffect = modalEffect,
-        viewModel = viewModel
-    )
-}
-
-private fun hasLocationPermissions(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+    LaunchedEffect(Unit) {
+        viewModel.initMode(postReportMode)
+    }
 }
 
 @Composable
-private fun PostReportContent(
+fun PostReportContent(
     state: PostReportState,
+    viewModel: PostReportViewModel
+) {
+    FadeAnimatedVisibility(
+        visible = state is PostReportState.Success
+    ) {
+        PostReportScreen(
+            state = state as? PostReportState.Success ?: return@FadeAnimatedVisibility,
+            onImageAdd = viewModel::showPhotoPicker,
+            onContentChange = viewModel::updateContent,
+            onCategorySelect = viewModel::updateCategory,
+            onLocationClick = viewModel::showSearchDialog,
+            onCompleteClick = viewModel::onCompleteClick
+        )
+    }
+}
+
+@Composable
+private fun PostReportScreen(
+    state: PostReportState.Success,
     onImageAdd: () -> Unit,
     onContentChange: (String) -> Unit,
     onCategorySelect: (IncidentCategory) -> Unit,
@@ -340,8 +327,8 @@ private fun PostReportModalContent(
 @Composable
 private fun PostReportScreenPreview() {
     SafetyTheme {
-        PostReportContent(
-            state = PostReportState(
+        PostReportScreen(
+            state = PostReportState.Success(
                 content = "",
                 selectedCategory = null,
                 imageUris = listOf(),
@@ -367,8 +354,8 @@ private fun PostReportScreenPreview() {
 @Composable
 private fun PostReportScreenWithContentPreview() {
     SafetyTheme {
-        PostReportContent(
-            state = PostReportState(
+        PostReportScreen(
+            state = PostReportState.Success(
                 content = "사고 내용을 작성한 상태입니다.",
                 selectedCategory = IncidentCategory.TRAFFIC,
                 imageUris = listOf(),

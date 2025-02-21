@@ -3,15 +3,18 @@ package com.dnd.safety.presentation.designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,14 +22,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dnd.safety.presentation.designsystem.theme.Gray10
 import com.dnd.safety.presentation.designsystem.theme.Gray50
 import com.dnd.safety.presentation.designsystem.theme.Gray80
 import com.dnd.safety.presentation.designsystem.theme.SafetyTheme
+import com.dnd.safety.presentation.designsystem.theme.White
 
 @Composable
 fun TextField(
@@ -39,7 +46,8 @@ fun TextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     readOnly: Boolean = false,
-    button: @Composable BoxScope.() -> Unit = {}
+    removeButton: Boolean = false,
+    focusRequester: FocusRequester = FocusRequester()
 ) {
     BasicTextField(
         value = value,
@@ -50,7 +58,7 @@ fun TextField(
         cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
         singleLine = true,
         readOnly = readOnly,
-        modifier = modifier
+        modifier = modifier.focusRequester(focusRequester)
     ) { innerTextField ->
         Surface(
             shape = shape,
@@ -73,7 +81,18 @@ fun TextField(
                         )
                     }
                     innerTextField()
-                    button()
+                }
+                if (value.isNotEmpty() && removeButton) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Clear",
+                        tint = Gray50,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clickable {
+                                onValueChange("")
+                            }
+                    )
                 }
             }
         }

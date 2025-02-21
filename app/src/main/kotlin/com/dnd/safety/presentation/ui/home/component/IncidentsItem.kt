@@ -159,7 +159,7 @@ fun IncidentsItem(
             Spacer(modifier = Modifier.height(2.dp))
             onShowComment?.let {
                 Text(
-                    text = "댓글 쓰기",
+                    text = "댓글 쓰기...",
                     style = SafetyTheme.typography.paragraph2,
                     color = Gray30,
                     modifier = Modifier

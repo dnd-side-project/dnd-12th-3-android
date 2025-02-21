@@ -39,7 +39,6 @@ fun TopAppbar(
             .background(containerColor)
             .padding(horizontal = 4.dp)
             .padding(top = 4.dp)
-            .statusBarsPadding()
     ) {
         Box(
             modifier = Modifier
@@ -93,7 +92,7 @@ fun TopAppbarIcon(
     Box(
         modifier = modifier
             .clickable(onClick = onClick)
-            .padding(12.dp)
+            .padding(8.dp)
     ) {
         Icon(
             imageVector = icon,

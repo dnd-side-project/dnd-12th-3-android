@@ -12,4 +12,10 @@ sealed interface DetailModalEffect {
 
     @Immutable
     data class ShowCommentActionMenu(val comment: Comment) : DetailModalEffect
+
+    @Immutable
+    data object ShowIncidentsActionMenu : DetailModalEffect
+
+    @Immutable
+    data object ShowDeleteCheckDialog : DetailModalEffect
 }

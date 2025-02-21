@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ fun MainNavHost(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceDim)
+            .padding(paddingValues)
     ) {
         NavHost(
             navController = navigator.navController,
@@ -51,7 +53,8 @@ fun MainNavHost(
                 onGoBack = navigator::popBackStackIfNotHome,
                 onShowMyTown = navigator::navigateToMyTown,
                 onShowMyReport = navigator::navigateToMyReport,
-                onShowSingOut = navigator::navigateToSignOut
+                onShowSingOut = navigator::navigateToSignOut,
+                onShowIncidentEdit = navigator::navigateToIncidentEdit
             )
             loginNavGraph(
                 onShowHome = { navigator.navigateTo(MainTab.Home) },
@@ -68,7 +71,9 @@ fun MainNavHost(
                 onPermissionAllowed = navigator::navigateToLogin
             )
             detailNavGraph(
-                onGoBack = navigator::popBackStackIfNotHome
+                onGoBack = navigator::popBackStackIfNotHome,
+                onShowSnackBar = onShowSnackBar,
+                onShowIncidentEdit = navigator::navigateToIncidentEdit
             )
         }
     }

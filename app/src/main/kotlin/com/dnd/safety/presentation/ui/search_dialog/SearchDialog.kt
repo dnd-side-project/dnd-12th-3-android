@@ -19,9 +19,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -78,6 +81,12 @@ fun SearchDialogContent(
     onPredictionClick: (AutocompletePrediction) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,6 +109,8 @@ fun SearchDialogContent(
                 value = searchText,
                 onValueChange = onTextChange,
                 hint = "주소 장소 검색",
+                removeButton = true,
+                focusRequester = focusRequester,
                 modifier = Modifier.weight(1f),
             )
             Spacer(modifier = Modifier.width(24.dp))
