@@ -150,12 +150,12 @@ private fun LoginButtons(
     onGoogleLoginClick: () -> Unit,
 ) {
     Column {
-        SocialLoginButton(
-            isLoading = isLoading,
-            type = SocialLoginType.KAKAO,
-            onClick = onKakaoLoginClick,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+//        SocialLoginButton(
+//            isLoading = isLoading,
+//            type = SocialLoginType.KAKAO,
+//            onClick = onKakaoLoginClick,
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
         SocialLoginButton(
             isLoading = isLoading,
             type = SocialLoginType.GOOGLE,
