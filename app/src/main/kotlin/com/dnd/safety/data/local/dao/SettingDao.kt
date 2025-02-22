@@ -13,7 +13,7 @@ interface SettingDao {
     suspend fun insertSetting(settingEntity: SettingEntity)
 
     @Query("SELECT * FROM setting")
-    suspend fun getSetting(): SettingEntity
+    suspend fun getSetting(): SettingEntity?
 
     @Query("SELECT * FROM setting")
     fun getSettingFlow(): Flow<SettingEntity>

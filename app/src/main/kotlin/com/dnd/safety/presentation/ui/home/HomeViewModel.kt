@@ -8,8 +8,10 @@ import com.dnd.safety.domain.model.Incident
 import com.dnd.safety.domain.model.Incident.Companion.incidentFilter
 import com.dnd.safety.domain.model.IncidentTypeFilter
 import com.dnd.safety.domain.model.Point
+import com.dnd.safety.domain.model.Setting
 import com.dnd.safety.domain.repository.IncidentListRepository
 import com.dnd.safety.domain.repository.LikeRepository
+import com.dnd.safety.domain.repository.SettingRepository
 import com.dnd.safety.presentation.ui.home.effect.HomeUiEffect
 import com.dnd.safety.presentation.ui.home.state.BoundingBoxState
 import com.dnd.safety.presentation.ui.home.state.HomeModalState
@@ -37,7 +39,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     locationService: LocationService,
     private val incidentListRepository: IncidentListRepository,
-    private val likeRepository: LikeRepository
+    private val likeRepository: LikeRepository,
+    private val settingRepository: SettingRepository
+
 ) : ViewModel() {
 
     val myLocation = locationService.requestLocationUpdates()
@@ -82,7 +86,16 @@ class HomeViewModel @Inject constructor(
 
         initLocation()
     }
-    
+
+
+    init {
+        viewModelScope.launch {
+            Logger.d("SplashViewModel init ${settingRepository.getSetting()}")
+            if (settingRepository.getSetting() == null) {
+                settingRepository.insertSetting(Setting(isNotificationEnabled = true))
+            }
+        }
+    }
     private suspend fun handleBoundingState(
         boxState: BoundingBoxState,
         uiState: HomeUiState

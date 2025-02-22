@@ -6,16 +6,19 @@ import com.dnd.safety.data.remote.api.MyTownService
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.Point
 import com.dnd.safety.domain.repository.MyTownRepository
+import com.dnd.safety.domain.repository.TopicRepository
 import com.dnd.safety.utils.Logger
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onFailure
+import com.skydoves.sandwich.suspendMapSuccess
 import javax.inject.Inject
 
 class MyTownRepositoryImpl @Inject constructor(
-    private val myTownService: MyTownService
+    private val myTownService: MyTownService,
+    private val topicRepository: TopicRepository
 ) : MyTownRepository {
 
     override suspend fun getMyTownList(): ApiResponse<List<MyTown>> {
@@ -49,7 +52,9 @@ class MyTownRepositoryImpl @Inject constructor(
                     emd = emd
                 )
             )
-            .mapSuccess {}
+            .suspendMapSuccess {
+//                topicRepository.insert(it.id, title)
+            }
             .onFailure {
                 Logger.e(message())
             }.onError {
@@ -59,8 +64,10 @@ class MyTownRepositoryImpl @Inject constructor(
 
     override suspend fun deleteMyTown(id: Long): ApiResponse<Unit> {
         return myTownService
-            .deleteMyTown(id.toLong())
-            .mapSuccess {}
+            .deleteMyTown(id)
+            .suspendMapSuccess {
+                topicRepository.delete(id)
+            }
             .onFailure {
                 Logger.e(message())
             }.onError {

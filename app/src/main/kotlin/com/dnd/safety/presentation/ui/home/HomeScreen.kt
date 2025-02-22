@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package com.dnd.safety.presentation.ui.home
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi

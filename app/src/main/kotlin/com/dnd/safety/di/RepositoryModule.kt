@@ -13,6 +13,7 @@ import com.dnd.safety.data.repository.MediaRepositoryImpl
 import com.dnd.safety.data.repository.MyReportRepositoryImpl
 import com.dnd.safety.data.repository.MyTownRepositoryImpl
 import com.dnd.safety.data.repository.SettingRepositoryImpl
+import com.dnd.safety.data.repository.TopicRepositoryImpl
 import com.dnd.safety.data.repository.UserInfoRepositoryImpl
 import com.dnd.safety.domain.repository.AuthRepository
 import com.dnd.safety.domain.repository.CameraRepository
@@ -27,6 +28,7 @@ import com.dnd.safety.domain.repository.MediaRepository
 import com.dnd.safety.domain.repository.MyReportRepository
 import com.dnd.safety.domain.repository.MyTownRepository
 import com.dnd.safety.domain.repository.SettingRepository
+import com.dnd.safety.domain.repository.TopicRepository
 import com.dnd.safety.domain.repository.UserInfoRepository
 import com.dnd.safety.utils.AndroidFileManager
 import com.dnd.safety.utils.FileManager
@@ -127,4 +129,10 @@ abstract class RepositoryModule {
     abstract fun provideFcmRepository(
         repositoryImpl: FcmRepositoryImpl
     ): FcmRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideTopicRepository(
+        repositoryImpl: TopicRepositoryImpl
+    ): TopicRepository
 }

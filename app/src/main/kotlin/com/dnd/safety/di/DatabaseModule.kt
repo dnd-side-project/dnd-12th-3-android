@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dnd.safety.data.local.AppDatabase
 import com.dnd.safety.data.local.dao.FcmDao
 import com.dnd.safety.data.local.dao.SettingDao
+import com.dnd.safety.data.local.dao.TopicDao
 import com.dnd.safety.data.local.entity.SettingEntity
 import dagger.Module
 import dagger.Provides
@@ -55,6 +56,12 @@ object DatabaseModule {
     fun provideFcmDao(
         database: AppDatabase
     ): FcmDao = database.fcmDao()
+
+    @Provides
+    @Singleton
+    fun provideTopicDao(
+        database: AppDatabase
+    ): TopicDao = database.topicDao()
 
     private const val DATABASE_NAME = "app_database"
 }

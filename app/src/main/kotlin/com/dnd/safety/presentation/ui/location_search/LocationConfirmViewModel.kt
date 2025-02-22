@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.dnd.safety.data.model.Location
 import com.dnd.safety.domain.model.MyTown
 import com.dnd.safety.domain.model.Point
+import com.dnd.safety.domain.model.Setting
 import com.dnd.safety.domain.repository.MyTownRepository
 import com.dnd.safety.domain.repository.SettingRepository
 import com.dnd.safety.presentation.navigation.Route

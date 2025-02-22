@@ -7,7 +7,7 @@ interface SettingRepository {
 
     suspend fun insertSetting(setting: Setting)
 
-    suspend fun getSetting(): Setting
+    suspend fun getSetting(): Setting?
 
     fun getSettingFlow(): Flow<Setting>
 

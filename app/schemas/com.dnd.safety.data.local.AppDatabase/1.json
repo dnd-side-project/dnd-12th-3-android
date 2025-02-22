@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "649f0915a70f43466582cca6c48dfa72",
+    "identityHash": "caed3fddd5841aee5f74d79dc55c74eb",
     "entities": [
       {
         "tableName": "setting",
@@ -73,12 +73,38 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "topic",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topic",
+            "columnName": "topic",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '649f0915a70f43466582cca6c48dfa72')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'caed3fddd5841aee5f74d79dc55c74eb')"
     ]
   }
 }

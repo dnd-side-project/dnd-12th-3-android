@@ -2,6 +2,9 @@ package com.dnd.safety.presentation.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dnd.safety.domain.model.Setting
+import com.dnd.safety.domain.repository.SettingRepository
+import com.dnd.safety.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
